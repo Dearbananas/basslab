@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BassLab — 贝斯学习实验室</title>
+<script>if(!sessionStorage.getItem('basslab_logged_in')||sessionStorage.getItem('basslab_role')==='guest'||!sessionStorage.getItem('basslab_role')){window.location.href='login.html'}</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f0f1a;--bg2:#16162a;--bg3:#1e1e38;--bg4:#252544;--fg:#e8e8f0;--fg2:#a0a0b8;--fg3:#6a6a85;--accent:#f5a623;--accent2:#e94560;--accent3:#00d4aa;--purple:#9b5de5;--blue:#3a86ff;--radius:12px;--radius-sm:8px;--font:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;--mono:'Cascadia Code','Fira Code','Consolas',monospace}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);background:var(--bg);color:var(--fg);line-height:1.7;overflow-x:hidden}
+a{color:var(--accent);text-decoration:none;transition:color .2s}
+a:hover{color:var(--accent2)}
+::selection{background:var(--accent);color:var(--bg)}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+.app{display:flex;min-height:100vh}
+.sidebar{position:fixed;top:0;left:0;width:280px;height:100vh;background:var(--bg2);border-right:1px solid var(--bg4);overflow-y:auto;z-index:100;padding:24px 0;transition:transform .3s ease}
+.sidebar-brand{display:flex;align-items:center;gap:10px;padding:0 24px 24px;border-bottom:1px solid var(--bg4);margin-bottom:16px}
+.sidebar-brand .logo{font-size:28px}
+.sidebar-brand h1{font-size:20px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sidebar-brand span{font-size:11px;color:var(--fg3);display:block;margin-top:2px}
+.nav-group{margin-bottom:8px}
+.nav-group-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--fg3);padding:12px 24px 6px}
+.nav-item{display:block;padding:7px 24px 7px 32px;color:var(--fg2);font-size:14px;border-left:3px solid transparent;transition:all .15s;cursor:pointer}
+.nav-item:hover{color:var(--fg);background:var(--bg3)}
+.nav-item.active{color:var(--accent);border-left-color:var(--accent);background:var(--bg3)}
+.nav-sub{padding-left:40px;font-size:13px}
+.main{margin-left:280px;flex:1;min-width:0}
+.hero{position:relative;padding:80px 60px 60px;background:linear-gradient(135deg,var(--bg2) 0%,var(--bg) 100%);border-bottom:1px solid var(--bg4);overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;right:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(245,166,35,.08) 0%,transparent 70%);pointer-events:none}
+.hero h2{font-size:48px;font-weight:900;letter-spacing:-1px;margin-bottom:16px;background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:18px;color:var(--fg2);max-width:680px;margin-bottom:28px}
+.hero-stats{display:flex;gap:32px;flex-wrap:wrap}
+.hero-stat .num{font-size:32px;font-weight:800;color:var(--accent)}
+.hero-stat .label{font-size:13px;color:var(--fg3)}
+.menu-btn{display:none;position:fixed;top:16px;left:16px;z-index:200;background:var(--bg3);border:1px solid var(--bg4);color:var(--fg);width:40px;height:40px;border-radius:8px;font-size:20px;cursor:pointer}
+.section{padding:60px;border-bottom:1px solid var(--bg4)}
+.section-header{margin-bottom:40px}
+.section-tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.section-header h3{font-size:36px;font-weight:800;margin-bottom:8px}
+.section-header p{font-size:16px;color:var(--fg2);max-width:700px}
+.card-grid{display:grid;gap:20px}
+.cards-2{grid-template-columns:repeat(2,1fr)}
+.cards-3{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:28px;transition:all .2s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3)}
+.card-icon{font-size:32px;margin-bottom:12px}
+.card h4{font-size:18px;font-weight:700;margin-bottom:10px}
+.card p{color:var(--fg2);font-size:14px;line-height:1.8}
+.t-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.t-table th{background:var(--bg3);color:var(--accent);padding:10px 14px;text-align:left;font-weight:600}
+.t-table td{padding:10px 14px;border-bottom:1px solid var(--bg4)}
+.t-table tr:hover td{background:var(--bg3)}
+.t-table code{font-family:var(--mono);font-size:13px;background:var(--bg4);padding:2px 6px;border-radius:4px;color:var(--accent3)}
+.callout{background:var(--bg3);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:16px 20px;margin:20px 0}
+.callout.tip{border-left-color:var(--accent3)}
+.callout.warn{border-left-color:var(--accent2)}
+.callout-title{font-weight:700;margin-bottom:6px;font-size:14px}
+.callout p{font-size:14px;color:var(--fg2)}
+.fretboard-container{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:24px;margin:20px 0}
+.fretboard-controls{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.fb-btn{background:var(--bg4);color:var(--fg2);border:1px solid var(--bg4);padding:6px 14px;border-radius:6px;font-size:13px;cursor:pointer;transition:all .15s}
+.fb-btn:hover{border-color:var(--accent)}
+.fb-btn.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.fretboard{display:flex;flex-direction:column;gap:0;overflow-x:auto;padding-bottom:8px}
+.fb-string-row{display:flex;align-items:center;height:44px}
+.fb-string-label{width:24px;font-size:13px;font-weight:700;color:var(--fg3);text-align:center;flex-shrink:0}
+.fb-nut{width:6px;height:100%;background:#d4a017;flex-shrink:0;z-index:2}
+.fb-note{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;flex-shrink:0;z-index:1}
+.fb-note.root{background:var(--accent2);color:#fff}
+.fb-note.scale{background:var(--accent);color:var(--bg)}
+.fb-note.chord{background:var(--accent3);color:var(--bg)}
+.fb-note.empty{background:transparent;color:var(--fg3);font-size:10px;cursor:default}
+.fb-note:hover{transform:scale(1.2)}
+.fb-fret{width:36px;height:2px;background:var(--fg3);flex-shrink:0;opacity:.3}
+.fb-fret-num{font-size:10px;color:var(--fg3);text-align:center;width:36px;flex-shrink:0}
+.tab-block{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:20px;margin:16px 0;font-family:var(--mono);font-size:13px;overflow-x:auto}
+.tab-block .tab-title{font-family:var(--font);font-size:14px;font-weight:600;color:var(--accent);margin-bottom:8px}
+.tab-line{white-space:pre;color:var(--fg2);line-height:1.5}
+.tab-line .s{color:var(--accent3)}
+.style-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);overflow:hidden;margin-bottom:40px}
+.style-header{padding:28px 32px;display:flex;align-items:center;gap:16px}
+.style-header .emoji{font-size:36px}
+.style-header h4{font-size:24px;font-weight:800}
+.style-header .subtitle{font-size:13px;color:var(--fg3)}
+.style-body{padding:0 32px 32px}
+.style-section{margin-top:24px}
+.style-section h5{font-size:15px;font-weight:700;color:var(--accent);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bg4)}
+.style-section p{font-size:14px;color:var(--fg2);line-height:1.9}
+.style-section ul{list-style:none;padding:0}
+.style-section ul li{padding:4px 0 4px 20px;font-size:14px;color:var(--fg2);position:relative}
+.style-section ul li::before{content:'\25B8';color:var(--accent);position:absolute;left:0}
+.song-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.song-item{background:var(--bg3);padding:8px 12px;border-radius:6px;font-size:13px}
+.song-item .title{color:var(--fg);font-weight:600}
+.song-item .artist{color:var(--fg3);font-size:12px}
+.song-item .diff{float:right;font-size:11px;padding:1px 8px;border-radius:10px}
+.diff-easy{background:rgba(0,212,170,.2);color:var(--accent3)}
+.diff-med{background:rgba(245,166,35,.2);color:var(--accent)}
+.diff-hard{background:rgba(233,69,96,.2);color:var(--accent2)}
+.info-block{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:24px;margin:20px 0}
+.info-block h4{font-size:16px;font-weight:700;margin-bottom:12px;color:var(--accent)}
+.info-block p{font-size:14px;color:var(--fg2);line-height:1.9}
+.info-block ul{list-style:none;padding:0}
+.info-block ul li{padding:4px 0 4px 20px;font-size:14px;color:var(--fg2);position:relative}
+.info-block ul li::before{content:'\25B8';color:var(--accent);position:absolute;left:0}
+.scale-box{background:var(--bg3);border-radius:var(--radius-sm);padding:20px;border-left:4px solid var(--accent)}
+.scale-box h5{font-size:14px;font-weight:700;margin-bottom:8px}
+.scale-formula{font-family:var(--mono);font-size:13px;color:var(--accent3);margin:8px 0}
+.scale-notes{font-family:var(--mono);font-size:14px;color:var(--accent);margin:8px 0}
+.footer{padding:40px 60px;text-align:center;color:var(--fg3);font-size:13px}
+.footer p{margin:4px 0}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-accent{background:rgba(245,166,35,.15);color:var(--accent)}
+.badge-green{background:rgba(0,212,170,.15);color:var(--accent3)}
+.badge-red{background:rgba(233,69,96,.15);color:var(--accent2)}
+.badge-purple{background:rgba(155,93,229,.15);color:var(--purple)}
+.badge-blue{background:rgba(58,134,255,.15);color:var(--blue)}
+.back-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;background:var(--accent);color:var(--bg);border:none;border-radius:50%;font-size:20px;cursor:pointer;opacity:0;transition:all .3s;z-index:99;display:flex;align-items:center;justify-content:center}
+.back-top.show{opacity:1}
+.back-top:hover{background:var(--accent2)}
+.metronome{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:24px;margin:20px 0;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.bpm-display{font-size:48px;font-weight:800;color:var(--accent);font-family:var(--mono);min-width:100px;text-align:center}
+.bpm-controls{display:flex;align-items:center;gap:8px}
+.bpm-btn{background:var(--bg4);color:var(--fg);border:none;width:36px;height:36px;border-radius:8px;font-size:18px;cursor:pointer}
+.bpm-btn:hover{background:var(--accent);color:var(--bg)}
+.bpm-start{background:var(--accent);color:var(--bg);border:none;padding:8px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer}
+.bpm-start:hover{background:var(--accent2)}
+.beat-dot{width:16px;height:16px;border-radius:50%;background:var(--bg4);transition:all .1s}
+.beat-dot.active{background:var(--accent2);box-shadow:0 0 12px var(--accent2)}
+.beat-dots{display:flex;gap:8px}
+.c-rock{border-top:3px solid #e94560}
+.c-punk{border-top:3px solid #f5a623}
+.c-metal{border-top:3px solid #6a0dad}
+.c-jazz{border-top:3px solid #3a86ff}
+.c-funk{border-top:3px solid #ff006e}
+.c-disco{border-top:3px solid #ffbe0b}
+.c-reggae{border-top:3px solid #00d4aa}
+.c-blues{border-top:3px solid #6a4c93}
+.c-rnb{border-top:3px solid #9b5de5}
+.c-latin{border-top:3px solid #fb5607}
+@media(max-width:1024px){.cards-3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.menu-btn{display:flex;align-items:center;justify-content:center}.hero,.section{padding:60px 24px 40px}.hero h2{font-size:32px}.cards-2,.cards-3{grid-template-columns:1fr}.song-list{grid-template-columns:1fr}}
+
+/* === 顶部用户栏 === */
+.top-bar{position:fixed;top:0;right:0;z-index:150;display:flex;align-items:center;gap:12px;padding:12px 20px}
+.top-bar .user-badge{font-size:13px;color:var(--fg2);background:var(--bg3);border:1px solid var(--bg4);padding:6px 14px;border-radius:20px;display:flex;align-items:center;gap:6px}
+.top-bar .user-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--accent3)}
+.top-bar .user-badge.admin .dot{background:var(--accent)}
+.top-bar .btn-sm{font-size:13px;padding:6px 16px;border-radius:8px;border:1px solid var(--bg4);background:var(--bg3);color:var(--fg2);cursor:pointer;transition:all .2s;font-family:var(--font)}
+.top-bar .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+.top-bar .btn-sm.danger:hover{border-color:var(--accent2);color:var(--accent2)}
+@media(max-width:768px){.top-bar{padding:10px 12px}.top-bar .user-badge{font-size:12px;padding:4px 10px}}
+
+/* === 管理员面板弹窗 === */
+.admin-overlay{position:fixed;inset:0;z-index:9998;background:rgba(15,15,26,.7);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;opacity:0;transition:opacity .3s}
+.admin-overlay.show{display:flex;opacity:1}
+.admin-modal{width:560px;max-width:92vw;max-height:80vh;overflow-y:auto;background:var(--bg2);border:1px solid var(--bg4);border-radius:16px;padding:32px;position:relative;box-shadow:0 25px 80px rgba(0,0,0,.5)}
+.admin-modal::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:16px 16px 0 0}
+.admin-modal h3{font-size:22px;font-weight:800;margin-bottom:6px}
+.admin-modal .modal-sub{font-size:13px;color:var(--fg3);margin-bottom:24px}
+.admin-modal .close-btn{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--fg3);font-size:22px;cursor:pointer;transition:color .2s;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px}
+.admin-modal .close-btn:hover{color:var(--accent2);background:var(--bg3)}
+.user-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg3);border-radius:10px;margin-bottom:8px;border:1px solid var(--bg4);transition:border-color .2s}
+.user-row:hover{border-color:var(--accent)}
+.user-row .u-info{display:flex;align-items:center;gap:10px}
+.user-row .u-icon{font-size:22px}
+.user-row .u-name{font-weight:600;font-size:14px}
+.user-row .u-role{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.user-row .u-role.admin{background:rgba(245,166,35,.15);color:var(--accent)}
+.user-row .u-role.user{background:rgba(0,212,170,.15);color:var(--accent3)}
+.user-row .u-role.guest{background:rgba(106,106,133,.2);color:var(--fg3)}
+.user-row .del-btn{font-size:12px;padding:5px 12px;border-radius:6px;border:1px solid var(--accent2);background:transparent;color:var(--accent2);cursor:pointer;transition:all .2s;font-family:var(--font)}
+.user-row .del-btn:hover{background:var(--accent2);color:#fff}
+.user-row .del-btn:disabled{opacity:.35;cursor:not-allowed;border-color:var(--fg3);color:var(--fg3)}
+.add-user-form{margin-top:20px;padding:20px;background:var(--bg3);border-radius:10px;border:1px dashed var(--bg4)}
+.add-user-form h4{font-size:15px;margin-bottom:14px;color:var(--accent)}
+.add-user-form .form-row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.add-user-form input,.add-user-form select{flex:1;min-width:120px;padding:10px 14px;background:var(--bg);border:1.5px solid var(--bg4);border-radius:8px;color:var(--fg);font-size:14px;font-family:var(--font);outline:none;transition:border-color .2s}
+.add-user-form input:focus,.add-user-form select:focus{border-color:var(--accent)}
+.add-user-form select{cursor:pointer}
+.add-user-form .btn-add{padding:10px 24px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-family:var(--font);font-size:14px;transition:transform .15s}
+.add-user-form .btn-add:hover{transform:translateY(-1px)}
+.form-msg{font-size:12px;margin-top:8px;min-height:16px}
+.form-msg.ok{color:var(--accent3)}
+.form-msg.err{color:var(--accent2)}
+</style>
+</head>
+<body>
+<button class="menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">&#9776;</button>
+
+<!-- 顶部用户栏 -->
+<div class="top-bar" id="topBar" style="display:none">
+  <div class="user-badge" id="userBadge">
+    <span class="dot"></span>
+    <span id="userBadgeText">游客</span>
+  </div>
+  <button class="btn-sm" id="adminBtn" style="display:none" onclick="openAdmin()">用户管理</button>
+  <button class="btn-sm danger" onclick="logout()">退出</button>
+</div>
+
+<!-- 管理员面板 -->
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-modal">
+    <button class="close-btn" onclick="closeAdmin()">&times;</button>
+    <h3>用户管理</h3>
+    <div class="modal-sub">管理员可在此添加或删除登录账号</div>
+    <div id="userList"></div>
+    <div class="add-user-form">
+      <h4>+ 添加新用户</h4>
+      <div class="form-row">
+        <input type="text" id="newUsername" placeholder="账号">
+        <input type="text" id="newPassword" placeholder="密码">
+        <select id="newRole">
+          <option value="user">普通用户</option>
+          <option value="admin">管理员</option>
+        </select>
+      </div>
+      <button class="btn-add" onclick="addUser()">添加用户</button>
+      <div class="form-msg" id="formMsg"></div>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-brand"><span class="logo">🎸</span><div><h1>BassLab</h1><span>贝斯学习实验室</span></div></div>
+  <div class="nav-group">
+    <div class="nav-group-title">起点</div>
+    <a class="nav-item" href="#hero">首页</a>
+    <a class="nav-item" href="#overview">贝斯是什么</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">乐理知识</div>
+    <a class="nav-item" href="#basics">一、贝斯基础</a>
+    <a class="nav-item nav-sub" href="#basics-tuning">调弦与持琴</a>
+    <a class="nav-item nav-sub" href="#basics-fingerboard">指板音位</a>
+    <a class="nav-item" href="#scales">二、音阶系统</a>
+    <a class="nav-item nav-sub" href="#scales-major">大调音阶</a>
+    <a class="nav-item nav-sub" href="#scales-minor">小调音阶</a>
+    <a class="nav-item nav-sub" href="#scales-penta">五声与蓝调</a>
+    <a class="nav-item nav-sub" href="#scales-modes">调式音阶</a>
+    <a class="nav-item" href="#chords">三、音程与和弦</a>
+    <a class="nav-item nav-sub" href="#chords-interval">音程关系</a>
+    <a class="nav-item nav-sub" href="#chords-triad">三和弦与七和弦</a>
+    <a class="nav-item nav-sub" href="#chords-progression">和弦走向</a>
+    <a class="nav-item" href="#rhythm">四、节奏训练</a>
+    <a class="nav-item nav-sub" href="#rhythm-basics">基础节拍</a>
+    <a class="nav-item nav-sub" href="#rhythm-groove">Groove与Pocket</a>
+    <a class="nav-item" href="#technique">五、技巧大全</a>
+    <a class="nav-item nav-sub" href="#tech-finger">指弹</a>
+    <a class="nav-item nav-sub" href="#tech-slap">Slap & Pop</a>
+    <a class="nav-item nav-sub" href="#tech-pick">拨片</a>
+    <a class="nav-item" href="#bassline">六、贝斯线条构建</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">风格化练习</div>
+    <a class="nav-item" href="#style-rock">摇滚 Rock</a>
+    <a class="nav-item" href="#style-punk">朋克 Punk</a>
+    <a class="nav-item" href="#style-metal">金属 Metal</a>
+    <a class="nav-item" href="#style-jazz">爵士 Jazz</a>
+    <a class="nav-item" href="#style-funk">放克 Funk</a>
+    <a class="nav-item" href="#style-disco">迪斯科 Disco</a>
+    <a class="nav-item" href="#style-reggae">雷鬼 Reggae</a>
+    <a class="nav-item" href="#style-blues">蓝调 Blues</a>
+    <a class="nav-item" href="#style-rnb">R&B / Soul</a>
+    <a class="nav-item" href="#style-latin">拉丁 Latin</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">工具</div>
+    <a class="nav-item" href="#fretboard-tool">交互指板</a>
+    <a class="nav-item" href="#metronome-tool">节拍器</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <h2>BassLab</h2>
+  <p>从零到能弹——一份给贝斯手的完整学习指南。涵盖乐理基础、技巧训练、以及十大音乐风格的实战练习路线。</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">6</div><div class="label">乐理板块</div></div>
+    <div class="hero-stat"><div class="num">10</div><div class="label">音乐风格</div></div>
+    <div class="hero-stat"><div class="num">80+</div><div class="label">推荐曲目</div></div>
+    <div class="hero-stat"><div class="num">1</div><div class="label">交互式指板</div></div>
+  </div>
+</section>
+
+<!-- OVERVIEW -->
+<section class="section" id="overview">
+  <div class="section-header">
+    <span class="section-tag">START HERE</span>
+    <h3>贝斯是什么</h3>
+    <p>在深入乐理和技巧之前，先搞清楚你手里这把乐器在乐队中到底扮演什么角色。</p>
+  </div>
+  <div class="card-grid cards-3">
+    <div class="card"><div class="card-icon">🌉</div><h4>桥梁</h4><p>贝斯连接节奏组（鼓）和旋律组（吉他/键盘/人声）。你同时要和鼓手"锁死"，又要给旋律提供和声根基。这是贝斯最核心的使命。</p></div>
+    <div class="card"><div class="card-icon">🫀</div><h4>心脏</h4><p>一首歌的"律动感"（groove）主要来自贝斯和鼓的组合。一个好的贝斯线能让人的身体不由自主地跟着动——这就是 pocket。你是整首歌的心跳。</p></div>
+    <div class="card"><div class="card-icon">🏗️</div><h4>地基</h4><p>所有和弦的低音都由你提供。你弹什么音，听众就会感知到什么和弦色彩。你弹错了根音，整个乐队的和声结构就会崩塌。你是地基，不是装饰。</p></div>
+  </div>
+  <div class="callout tip" style="margin-top:24px">
+    <div class="callout-title">💡 学习心态</div>
+    <p>贝斯不是"简单的吉他"。它是一门完全不同的乐器，有不同的审美、不同的思维方式。不要急着弹快——先学会弹"对"、弹"稳"、弹"有感觉"。速度是最后的事。</p>
+  </div>
+</section>
+
+<!-- ====== 1. BASICS ====== -->
+<section class="section" id="basics">
+  <div class="section-header">
+    <span class="section-tag">THEORY 01</span>
+    <h3>一、贝斯基础</h3>
+    <p>调弦、持琴姿势、左右手基本动作、指板音位——一切的地基。</p>
+  </div>
+  <div id="basics-tuning">
+    <h4 style="font-size:22px;margin-bottom:16px">调弦与持琴</h4>
+    <div class="info-block">
+      <h4>标准调弦（4弦贝斯）</h4>
+      <p>四弦贝斯从低到高的弦为：<strong>E-A-D-G</strong>，即 E1 → A1 → D2 → G2。</p>
+      <ul>
+        <li><strong>E弦</strong>（最低音）= E1，频率约 41.2Hz，比吉他低八度</li>
+        <li><strong>A弦</strong> = A1，频率约 55.0Hz</li>
+        <li><strong>D弦</strong> = D2，频率约 73.4Hz</li>
+        <li><strong>G弦</strong>（最高音）= G2，频率约 98.0Hz</li>
+      </ul>
+      <p style="margin-top:12px">相邻两根弦的音程都是<strong>纯四度</strong>。这和吉他前三弦（E-B-G）的调弦逻辑不同，导致贝斯指板上的音型有些"不对称"的地方。</p>
+    </div>
+    <div class="card-grid cards-2">
+      <div class="info-block">
+        <h4>🎸 坐姿持琴</h4>
+        <ul>
+          <li>琴身放在同侧大腿上，琴颈略向上倾斜</li>
+          <li>琴颈不要下垂——保持手腕自然弯曲</li>
+          <li>右前臂自然搭在琴身上，不要悬空</li>
+          <li>座椅高度使大腿与地面基本平行</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h4>🧍 站姿持琴</h4>
+        <ul>
+          <li>背带长度：琴身大致在腰部到胸口之间</li>
+          <li><strong>不要挂太低</strong>——好看但伤手腕，左手按弦困难</li>
+          <li>初学者建议稍高，和坐姿时位置接近</li>
+          <li>双脚与肩同宽，重心稳定</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout warn">
+      <div class="callout-title">⚠️ 手腕健康</div>
+      <p>左手手腕不要过度弯曲（尤其是低把位），长期错误姿势会导致腕管综合征。如果感到疼痛，立刻停止练习并检查姿势。</p>
+    </div>
+  </div>
+  <div id="basics-fingerboard" style="margin-top:40px">
+    <h4 style="font-size:22px;margin-bottom:16px">指板音位</h4>
+    <p style="color:var(--fg2);margin-bottom:20px">贝斯指板是所有音阶、和弦、贝斯线的基础地图。先记住空弦音 E-A-D-G，然后记住每根弦上的自然音位置。每个品格是半音，两格是全音。重点关注 <strong>3品、5品、7品、12品</strong>。</p>
+    <div class="callout tip">
+      <div class="callout-title">💡 记忆技巧</div>
+      <p>不要一格一格背。先记空弦音，再记 5 品（和下一根弦空弦同音）、7 品（和再下一根弦同音）、12 品（八度）。用下方的交互指板工具反复练习。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== 2. SCALES ====== -->
+<section class="section" id="scales">
+  <div class="section-header">
+    <span class="section-tag">THEORY 02</span>
+    <h3>二、音阶系统</h3>
+    <p>音阶是贝斯线的"词汇库"。你弹的每一个音符都来自某个音阶——掌握音阶，你就掌握了"什么音听起来对"的直觉。</p>
+  </div>
+  <div id="scales-major">
+    <h4 style="font-size:22px;margin-bottom:16px">大调音阶</h4>
+    <div class="scale-box" style="margin-bottom:20px">
+      <h5>大调音阶公式</h5>
+      <p style="font-size:14px;color:var(--fg2)">以 C 大调为例：</p>
+      <div class="scale-formula">全 全 半 全 全 全 半（W-W-H-W-W-W-H）</div>
+      <div class="scale-notes">C - D - E - F - G - A - B - C</div>
+      <p style="font-size:14px;color:var(--fg2);margin-top:8px">"全" = 全音（2品），"半" = 半音（1品）。适用于任何起始音。比如 G 大调：G-A-B-C-D-E-F#-G。</p>
+    </div>
+    <div class="card-grid cards-2">
+      <div class="info-block">
+        <h4>指板上的大调音阶指型</h4>
+        <p>以 G 大调为例，在 G 弦上从空弦开始：</p>
+        <div class="tab-block">
+          <div class="tab-title">G 大调音阶（G弦 + D弦）</div>
+<div class="tab-line"><span class="s">G</span>|0--2--4--|--1--3--5--|
+<span class="s">D</span>|----------------------|
+<span class="s">A</span>|----------------------|
+<span class="s">E</span>|----------------------|</div>
+        </div>
+        <p style="font-size:13px;color:var(--fg3);margin-top:8px">数字 = 品数。G弦 0-2-4 是 G-A-B，D弦 1-3-5 是 C-D-E。</p>
+      </div>
+      <div class="info-block">
+        <h4>练习方法</h4>
+        <ul>
+          <li>用节拍器 60-80 BPM 弹，每个音一拍</li>
+          <li>上行 + 下行各练 5 遍</li>
+          <li>换不同起始弦弹同一音阶</li>
+          <li>练 12 个调：C, G, D, A, E, B, F#, F, Bb, Eb, Ab, Db</li>
+          <li>进阶：三连音节奏弹音阶（一拍三音）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div id="scales-minor" style="margin-top:40px">
+    <h4 style="font-size:22px;margin-bottom:16px">小调音阶</h4>
+    <p style="color:var(--fg2);margin-bottom:20px">小调音阶有三种变体，在不同音乐风格中各有用途：</p>
+    <div class="card-grid cards-3">
+      <div class="scale-box">
+        <h5>自然小调</h5>
+        <div class="scale-formula">全 半 全 全 半 全 全</div>
+        <div class="scale-notes">A-B-C-D-E-F-G-A</div>
+        <p style="font-size:13px;color:var(--fg2);margin-top:8px">大调的第 6 级音阶。A 自然小调 = C 大调。用于摇滚、金属。</p>
+        <span class="badge badge-blue">摇滚/金属</span>
+      </div>
+      <div class="scale-box">
+        <h5>和声小调</h5>
+        <div class="scale-formula">全 半 全 全 半 增二 半</div>
+        <div class="scale-notes">A-B-C-D-E-F-G#-A</div>
+        <p style="font-size:13px;color:var(--fg2);margin-top:8px">升高第 7 级，制造解决感。用于爵士、古典、金属。</p>
+        <span class="badge badge-purple">爵士/古典</span>
+      </div>
+      <div class="scale-box">
+        <h5>旋律小调</h5>
+        <div class="scale-formula">上行: 全 半 全 全 全 全 半</div>
+        <div class="scale-notes">A-B-C-D-E-F#-G#-A</div>
+        <p style="font-size:13px;color:var(--fg2);margin-top:8px">上行升 6、7 级。爵士中上下行都升。用于爵士融合、R&B。</p>
+        <span class="badge badge-accent">爵士融合</span>
+      </div>
+    </div>
+  </div>
+  <div id="scales-penta" style="margin-top:40px">
+    <h4 style="font-size:22px;margin-bottom:16px">五声音阶与蓝调音阶</h4>
+    <div class="card-grid cards-2">
+      <div class="scale-box">
+        <h5>小调五声音阶</h5>
+        <div class="scale-notes">A-C-D-E-G-A</div>
+        <p style="font-size:13px;color:var(--fg2);margin-top:8px">去掉自然小调的 2 级和 6 级。5 个音，几乎不会弹错。是摇滚、布鲁斯、放克、R&B 的万能音阶。</p>
+        <div class="tab-block" style="margin-top:12px">
+          <div class="tab-title">A 小调五声（最常用指型）</div>
+<div class="tab-line"><span class="s">G</span>|--------5--|
+<span class="s">D</span>|-----5--7---|
+<span class="s">A</span>|--5--7------|
+<span class="s">E</span>|--5---------|</div>
+        </div>
+        <span class="badge badge-green">万能音阶</span>
+      </div>
+      <div class="scale-box">
+        <h5>蓝调音阶</h5>
+        <div class="scale-notes">A-C-D-Eb-E-G-A</div>
+        <p style="font-size:13px;color:var(--fg2);margin-top:8px">在小调五声基础上加一个降 5 级（Eb）。这个"蓝调音"是布鲁斯和摇滚的灵魂。</p>
+        <div class="tab-block" style="margin-top:12px">
+          <div class="tab-title">A 蓝调音阶</div>
+<div class="tab-line"><span class="s">G</span>|--------5--|
+<span class="s">D</span>|-----5--6--7-|
+<span class="s">A</span>|--5--7------|
+<span class="s">E</span>|--5---------|</div>
+        </div>
+        <span class="badge badge-red">布鲁斯灵魂</span>
+      </div>
+    </div>
+  </div>
+  <div id="scales-modes" style="margin-top:40px">
+    <h4 style="font-size:22px;margin-bottom:16px">调式音阶</h4>
+    <p style="color:var(--fg2);margin-bottom:20px">调式是高级贝斯手的必修课。每个调式都有独特的色彩——同一个调里，用不同的调式会产生完全不同的情绪。</p>
+    <table class="t-table">
+      <thead><tr><th>调式</th><th>变化</th><th>C调中的音</th><th>色彩</th><th>使用场景</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Ionian</strong></td><td>=大调</td><td><code>C D E F G A B</code></td><td>明亮稳定</td><td>流行</td></tr>
+        <tr><td><strong>Dorian</strong></td><td>降3级</td><td><code>D E F G A B C</code></td><td>忧郁有希望</td><td>放克/爵士/R&B</td></tr>
+        <tr><td><strong>Phrygian</strong></td><td>降2,3,6,7</td><td><code>E F G A B C D</code></td><td>暗黑异域</td><td>金属/弗拉明戈</td></tr>
+        <tr><td><strong>Lydian</strong></td><td>升4级</td><td><code>F G A B C D E</code></td><td>梦幻空灵</td><td>爵士融合</td></tr>
+        <tr><td><strong>Mixolydian</strong></td><td>降7级</td><td><code>G A B C D E F</code></td><td>布鲁斯味大调</td><td>摇滚/布鲁斯</td></tr>
+        <tr><td><strong>Aeolian</strong></td><td>=自然小调</td><td><code>A B C D E F G</code></td><td>悲伤阴暗</td><td>摇滚/金属</td></tr>
+        <tr><td><strong>Locrian</strong></td><td>降2,3,5,6,7</td><td><code>B C D E F G A</code></td><td>紧张不协和</td><td>前卫金属</td></tr>
+      </tbody>
+    </table>
+    <div class="callout tip" style="margin-top:16px">
+      <div class="callout-title">💡 贝斯手最常用的三个调式</div>
+      <p><strong>Dorian</strong>（放克/爵士）、<strong>Mixolydian</strong>（摇滚/布鲁斯）、<strong>Aeolian</strong>（金属/摇滚）。先把这三个练熟。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== 3. CHORDS ====== -->
+<section class="section" id="chords">
+  <div class="section-header">
+    <span class="section-tag">THEORY 03</span>
+    <h3>三、音程与和弦</h3>
+    <p>音程是两个音之间的距离，和弦是三个以上音的叠加。贝斯手需要听懂和弦走向，并为每个和弦提供正确的根音和色彩音。</p>
+  </div>
+  <div id="chords-interval">
+    <h4 style="font-size:22px;margin-bottom:16px">音程关系</h4>
+    <table class="t-table">
+      <thead><tr><th>音程</th><th>半音数</th><th>示例</th><th>听感</th></tr></thead>
+      <tbody>
+        <tr><td>纯一度</td><td>0</td><td><code>C→C</code></td><td>同音</td></tr>
+        <tr><td>小二度</td><td>1</td><td><code>C→Db</code></td><td>紧张刺耳</td></tr>
+        <tr><td>大二度</td><td>2</td><td><code>C→D</code></td><td>明亮开阔</td></tr>
+        <tr><td>小三度</td><td>3</td><td><code>C→Eb</code></td><td>忧郁悲伤</td></tr>
+        <tr><td>大三度</td><td>4</td><td><code>C→E</code></td><td>明亮欢快</td></tr>
+        <tr><td>纯四度</td><td>5</td><td><code>C→F</code></td><td>开放悬浮</td></tr>
+        <tr><td>三全音</td><td>6</td><td><code>C→F#</code></td><td>不安、布鲁斯</td></tr>
+        <tr><td>纯五度</td><td>7</td><td><code>C→G</code></td><td>力量稳定</td></tr>
+        <tr><td>小七度</td><td>10</td><td><code>C→Bb</code></td><td>放克、爵士</td></tr>
+        <tr><td>大七度</td><td>11</td><td><code>C→B</code></td><td>华丽、爵士</td></tr>
+        <tr><td>纯八度</td><td>12</td><td><code>C→C</code></td><td>完全统一</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div id="chords-triad" style="margin-top:40px">
+    <h4 style="font-size:22px;margin-bottom:16px">三和弦与七和弦</h4>
+    <div class="card-grid cards-2">
+      <div class="info-block">
+        <h4>三和弦（Triad）</h4>
+        <p>三和弦 = 根音 + 三音 + 五音，是所有和弦的基础。</p>
+        <table class="t-table" style="margin-top:12px">
+          <thead><tr><th>类型</th><th>结构</th><th>示例（C调）</th></tr></thead>
+          <tbody>
+            <tr><td>大三和弦</td><td><code>1-3-5</code></td><td>C-E-G</td></tr>
+            <tr><td>小三和弦</td><td><code>1-b3-5</code></td><td>C-Eb-G</td></tr>
+            <tr><td>增三和弦</td><td><code>1-3-#5</code></td><td>C-E-G#</td></tr>
+            <tr><td>减三和弦</td><td><code>1-b3-b5</code></td><td>C-Eb-Gb</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="info-block">
+        <h4>七和弦（7th Chord）</h4>
+        <p>在三和弦上再加一个七音。七和弦是爵士、R&B、放克的基石。</p>
+        <table class="t-table" style="margin-top:12px">
+          <thead><tr><th>类型</th><th>结构</th><th>示例</th><th>使用</th></tr></thead>
+          <tbody>
+            <tr><td>大七</td><td><code>1-3-5-7</code></td><td>C-E-G-B</td><td>爵士/R&B</td></tr>
+            <tr><td>属七</td><td><code>1-3-5-b7</code></td><td>C-E-G-Bb</td><td>布鲁斯/放克</td></tr>
+            <tr><td>小七</td><td><code>1-b3-5-b7</code></td><td>C-Eb-G-Bb</td><td>放克/爵士</td></tr>
+            <tr><td>小七降五</td><td><code>1-b3-b5-b7</code></td><td>C-Eb-Gb-Bb</td><td>爵士 II-V</td></tr>
+            <tr><td>减七</td><td><code>1-b3-b5-bb7</code></td><td>C-Eb-Gb-Bbb</td><td>爵士/古典</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="callout tip" style="margin-top:16px">
+      <div class="callout-title">💡 贝斯手看和弦的核心思路</div>
+      <p>看到和弦标记（如 Am7），第一步：<strong>找到根音 A</strong>。然后根据风格决定弹什么——放克可能只弹根音和五度，爵士弹 walking bass，摇滚弹根音加八度。根音永远是第一优先级。</p>
+    </div>
+  </div>
+  <div id="chords-progression" style="margin-top:40px">
+    <h4 style="font-size:22px;margin-bottom:16px">和弦走向</h4>
+    <p style="color:var(--fg2);margin-bottom:20px">和弦走向是歌曲的和声骨架。贝斯手需要认识常见走向，才能预判下一个和弦的根音。</p>
+    <table class="t-table">
+      <thead><tr><th>走向</th><th>和弦</th><th>调性</th><th>使用场景</th></tr></thead>
+      <tbody>
+        <tr><td><strong>I-V-vi-IV</strong></td><td><code>C-G-Am-F</code></td><td>大调</td><td>流行万能走向</td></tr>
+        <tr><td><strong>12 Bar Blues</strong></td><td><code>I7-I7-I7-I7 / IV7-IV7-I7-I7 / V7-IV7-I7-V7</code></td><td>属七</td><td>布鲁斯基础</td></tr>
+        <tr><td><strong>ii-V-I</strong></td><td><code>Dm7-G7-Cmaj7</code></td><td>大调</td><td>爵士核心走向</td></tr>
+        <tr><td><strong>i-VII-VI-V</strong></td><td><code>Am-G-F-E</code></td><td>小调</td><td>金属/弗拉明戈</td></tr>
+        <tr><td><strong>I-IV-V</strong></td><td><code>C-F-G</code></td><td>大调</td><td>摇滚/乡村</td></tr>
+        <tr><td><strong>i-VI-III-VII</strong></td><td><code>Am-F-C-G</code></td><td>小调</td><td>流行小调</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ====== 4. RHYTHM ====== -->
+<section class="section" id="rhythm">
+  <div class="section-header">
+    <span class="section-tag">THEORY 04</span>
+    <h3>四、节奏训练</h3>
+    <p>贝斯手的节奏感比任何技巧都重要。一个节奏稳的贝斯手比一个弹得快但不稳的贝斯手有价值一百倍。</p>
+  </div>
+  <div id="rhythm-basics">
+    <h4 style="font-size:22px;margin-bottom:16px">基础节拍</h4>
+    <div class="card-grid cards-3">
+      <div class="card"><div class="card-icon">♩</div><h4>四分音符</h4><p>一拍一个音。最基础的节奏。4/4 拍中一小节 4 个。练习：节拍器弹根音，每拍一个，保证时值均匀。</p></div>
+      <div class="card"><div class="card-icon">♪♪</div><h4>八分音符</h4><p>一拍两个音。摇滚贝斯最常用。重点：两个音间距完全相等，不能"长-短"。</p></div>
+      <div class="card"><div class="card-icon">♬♬</div><h4>十六分音符</h4><p>一拍四个音。放克、迪斯科核心。需要快速交替指弹。每个音力度一致。</p></div>
+    </div>
+    <div class="card-grid cards-3" style="margin-top:20px">
+      <div class="card"><div class="card-icon"> triplet</div><h4>三连音</h4><p>一拍三个音平均分配。布鲁斯 Shuffle 的基础。爵士、放克大量使用。</p></div>
+      <div class="card"><div class="card-icon">⤫</div><h4>切分音</h4><p>在弱拍或反拍上弹音，制造"推"的感觉。放克的灵魂——第 8 个十六分位置弹根音 = 典型放克律动。</p></div>
+      <div class="card"><div class="card-icon"> rests</div><h4>休止与留白</h4><p>不弹也是一种节奏。James Jamerson 说"你弹什么很重要，你不弹什么更重要"。用休止制造张力。</p></div>
+    </div>
+  </div>
+  <div id="rhythm-groove" style="margin-top:40px">
+    <h4 style="font-size:22px;margin-bottom:16px">Groove 与 Pocket</h4>
+    <div class="info-block">
+      <h4>什么是 Groove？</h4>
+      <p>Groove 是贝斯和鼓合在一起产生的"让人想动"的律动感。它不是某个节奏型，而是<strong>节奏感 + 音符选择 + 力度变化 + 留白</strong>的综合体。</p>
+    </div>
+    <div class="info-block" style="margin-top:16px">
+      <h4>什么是 Pocket？</h4>
+      <p>Pocket 指贝斯和鼓之间"完美对位"的感觉——当两者完美合拍时，你会感受到一种"锁死"状态：</p>
+      <ul>
+        <li><strong>在拍子上弹</strong>：不抢拍、不拖拍。有些风格需要刻意"靠后"（R&B、放克），有些需要"靠前"（朋克）</li>
+        <li><strong>和底鼓对齐</strong>：贝斯根音和底鼓同时响 = 最强 pocket</li>
+        <li><strong>和军鼓呼应</strong>：在军鼓位置弹反拍 = 制造放克感</li>
+        <li><strong>力度控制</strong>：不是每个音都一样重，强拍重、弱拍轻</li>
+      </ul>
+    </div>
+    <div class="callout tip">
+      <div class="callout-title">💡 终极练习法：跟着鼓机练</div>
+      <p>不要只跟节拍器练。找一个鼓机 App，设一个简单的 4/4 拍鼓型，只用<strong>根音和五度</strong>弹出 groove。不断调整时机和力度，直到感觉到"锁死"。这比练任何音阶都重要。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== 5. TECHNIQUE ====== -->
+<section class="section" id="technique">
+  <div class="section-header">
+    <span class="section-tag">THEORY 05</span>
+    <h3>五、技巧大全</h3>
+    <p>不同技巧决定了你的音色和表现力。掌握多种技巧，才能适应不同风格。</p>
+  </div>
+  <div id="tech-finger">
+    <h4 style="font-size:22px;margin-bottom:16px">指弹（Fingerstyle）</h4>
+    <div class="card-grid cards-2">
+      <div class="info-block">
+        <h4>基础指法</h4>
+        <ul>
+          <li>右手食指（i）和中指（m）交替拨弦</li>
+          <li>每次只动一个手指，另一个准备</li>
+          <li>拨弦方向：从下往上，手指自然弯曲</li>
+          <li>触弦点：指尖偏侧面，不是指甲</li>
+          <li>拨弦后停靠在相邻弦上（rest stroke）</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h4>练习路线</h4>
+        <ul>
+          <li><strong>阶段一</strong>：食中交替，单弦四分音符（60 BPM）</li>
+          <li><strong>阶段二</strong>：两根弦交替八分音符（70-80 BPM）</li>
+          <li><strong>阶段三</strong>：跨弦练习（E-A-E-A 节奏型）</li>
+          <li><strong>阶段四</strong>：三指轮指提速十六分</li>
+          <li><strong>阶段五</strong>：跟着真实歌曲弹，关注时机和力度</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div id="tech-slap" style="margin-top:40px">
+    <h4 style="font-size:22px;margin-bottom:16px">Slap & Pop（拍勾弦）</h4>
+    <div class="card-grid cards-2">
+      <div class="info-block">
+        <h4>Slap（拍弦）</h4>
+        <ul>
+          <li>用右手大拇指根部以"甩"的动作击打琴弦</li>
+          <li>拇指像鞭子弹出去，击弦后迅速弹回</li>
+          <li>击弦点：指板末端附近（明亮）或琴颈连接处（厚实）</li>
+          <li>不要"按"下去——是"打"下去然后弹回来</li>
+          <li>目标弦通常是 E 或 A 弦</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h4>Pop（勾弦）</h4>
+        <ul>
+          <li>用食指或中指从下方勾住弦（通常 D 或 G 弦）</li>
+          <li>向上拉起弦然后释放，让弦打在指板上发出"啪"声</li>
+          <li>勾弦力度要够——轻轻拉没有效果</li>
+          <li>经典组合：Slap 根音 → Pop 八度/五度</li>
+          <li>进阶：Ghost note 填充空隙制造律动</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tab-block" style="margin-top:16px">
+      <div class="tab-title">经典 Slap 律动（A 小调） — S=Slap P=Pop g=ghost</div>
+<div class="tab-line"><span class="s">G</span>|--P-----------|--P-----------|
+<span class="s">D</span>|-----P--------|-----P--------|
+<span class="s">A</span>|--S-----S--g--|--S-----S--g--|
+<span class="s">E</span>|--S-----------|--S-----------|</div>
+    </div>
+    <div class="callout tip" style="margin-top:12px">
+      <div class="callout-title">💡 Slap 的精髓</div>
+      <p>Slap 不是为了炫技——它是为了制造<strong>打击乐般的律动</strong>。最好的 slap 演奏（如 Larry Graham、Marcus Miller）都像在打鼓一样，每个 slap 和 pop 都有明确的节奏功能。</p>
+    </div>
+  </div>
+  <div id="tech-pick" style="margin-top:40px">
+    <h4 style="font-size:22px;margin-bottom:16px">拨片（Pick / Plectrum）</h4>
+    <div class="card-grid cards-2">
+      <div class="info-block">
+        <h4>为什么用拨片？</h4>
+        <ul>
+          <li>音色更亮、更有攻击性——适合朋克、金属、摇滚</li>
+          <li>下拨速度快，适合高速段落</li>
+          <li>交替拨弦可弹非常均匀的十六分音符</li>
+          <li>Palm mute（右手掌根靠弦）可制造沉闷有力音色</li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h4>拨片选择</h4>
+        <ul>
+          <li><strong>厚度</strong>：0.73-1.0mm 最常用。太薄音色虚</li>
+          <li><strong>材质</strong>：Tortex 最常用（均衡）、Nylon 温暖、Ultex 明亮</li>
+          <li><strong>握法</strong>：拇指和食指夹住，露出 5-8mm</li>
+          <li><strong>角度</strong>：拨片与弦成 15-30 度角，音色更顺滑</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:40px">
+    <h4 style="font-size:22px;margin-bottom:16px">其他技巧</h4>
+    <div class="card-grid cards-3">
+      <div class="card"><div class="card-icon">🤫</div><h4>消音（Muting）</h4><p>被低估的最重要的技巧。右手掌根消低音弦，左手浮在弦上消不需要的音。不消音 = 音响糊成一团。所有风格都需要。</p></div>
+      <div class="card"><div class="card-icon">↗️</div><h4>滑音（Slide）</h4><p>从一个品滑到另一个品连接两个音。左手按住弦不放，沿指板滑动。常用于贝斯线连接。</p></div>
+      <div class="card"><div class="card-icon">🔨</div><h4>击勾弦</h4><p>不用右手拨弦就能发声。击弦：手指用力敲下弦；勾弦：手指勾拉弦释放。用于圆滑音和速弹乐句。</p></div>
+      <div class="card"><div class="card-icon">~</div><h4>颤音（Vibrato）</h4><p>左手在按住的弦上做微小抖动，让长音有"歌唱感"。表现情感的关键技巧。Jaco 的颤音是教科书级。</p></div>
+      <div class="card"><div class="card-icon">⤴</div><h4>推弦（Bend）</h4><p>推弦改变音高，通常推半音到全音。布鲁斯和摇滚常用。贝斯弦粗，需要较大力度。注意音准。</p></div>
+      <div class="card"><div class="card-icon">👻</div><h4>Ghost Note</h4><p>左手轻触弦不按实，右手正常拨弦，发出"咔"的闷音。放克节奏的灵魂——填充空隙制造律动感。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== 6. BASSLINE ====== -->
+<section class="section" id="bassline">
+  <div class="section-header">
+    <span class="section-tag">THEORY 06</span>
+    <h3>六、贝斯线条构建</h3>
+    <p>把前面学的一切组合起来——音阶、和弦、节奏、技巧——构建出属于你的贝斯线。</p>
+  </div>
+  <div class="card-grid cards-3">
+    <div class="card">
+      <div class="card-icon">1️⃣</div>
+      <h4>根音-五度-八度模式</h4>
+      <p>最基础的框架。弹根音建立和声基础，加五度增加稳定性，加八度增加能量。适合摇滚、乡村、流行。90% 的歌曲可以从此开始。</p>
+      <div class="tab-block" style="margin-top:8px">
+<div class="tab-line"><span class="s">G</span>|--------|
+<span class="s">D</span>|--5--7--|
+<span class="s">A</span>|--3--5--|
+<span class="s">E</span>|--1-----|</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🚶</div>
+      <h4>Walking Bass</h4>
+      <p>爵士的灵魂。每个四分音符弹一个音，通过半音/全音经过音连接和弦。规则：拍1弹根音，拍4弹目标和弦根音的上/下方半音。</p>
+      <div class="tab-block" style="margin-top:8px">
+<div class="tab-line"><span class="s">G</span>|-----------|
+<span class="s">D</span>|-----7--5--|
+<span class="s">A</span>|--5--5--3--|
+<span class="s">E</span>|--3--------|</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎵</div>
+      <h4>旋律贝斯线</h4>
+      <p>贝斯不只是根音——它可以是一段旋律。参考 Paul McCartney（"Something"）、Jaco Pastorius（"The Chicken"）。用音阶音做旋律走向，但永远记得回到根音。</p>
+    </div>
+  </div>
+  <div class="callout tip" style="margin-top:24px">
+    <div class="callout-title">💡 构建贝斯线的思考流程</div>
+    <p><strong>1.</strong> 确定调性和和弦走向 → <strong>2.</strong> 找到每个和弦的根音 → <strong>3.</strong> 确定节奏型（跟着鼓） → <strong>4.</strong> 加入五度/八度 → <strong>5.</strong> 加入经过音/幽灵音 → <strong>6.</strong> 精简——去掉不需要的音。记住：<strong>少即是多</strong>。</p>
+  </div>
+</section>
+
+<!-- ====== STYLES SECTION ====== -->
+<section class="section" id="styles" style="padding-bottom:0">
+  <div class="section-header">
+    <span class="section-tag">STYLES</span>
+    <h3>风格化练习</h3>
+    <p>每种音乐风格都有独特的贝斯语言——音色、节奏、技巧、音阶选择都不同。以下是十大风格的实战练习指南。</p>
+  </div>
+</section>
+
+<!-- ====== ROCK ====== -->
+<div class="section" style="padding-top:0" id="style-rock">
+  <div class="style-card c-rock">
+    <div class="style-header"><span class="emoji">🤘</span><div><h4>摇滚 Rock</h4><span class="subtitle">贝斯的主战场——稳、重、有力量</span></div></div>
+    <div class="style-body">
+      <div class="style-section"><h5>风格特征</h5><p>摇滚贝斯的核心是<strong>稳和重</strong>。你不炫技，你是整首歌的地基。节奏紧贴底鼓，音符以根音、五度、八度为主，偶尔用蓝调音阶加点料。经典摇滚倾向指弹（暖厚），硬摇滚/朋克倾向拨片（明亮有攻击性）。</p></div>
+      <div class="style-section"><h5>音色设定</h5><ul>
+        <li><strong>经典摇滚</strong>：指弹，P-Bass + 厚中频，稍微过载。Tone 开 60-70%。</li>
+        <li><strong>硬摇滚</strong>：拨片，更多高音 + 轻微失真。Bridge pickup + 前级过载。</li>
+        <li><strong>另类/独立摇滚</strong>：指弹，音色偏干暗，flats wound 平绕弦增加暖度。</li>
+      </ul></div>
+      <div class="style-section"><h5>节奏特点</h5><p>以八分音符为主，紧密跟随底鼓。反拍偶尔切分增加推动力。摇滚贝斯的力量来自于<strong>少而重</strong>。</p>
+        <div class="tab-block"><div class="tab-title">经典摇滚律动（E 大调）</div>
+<div class="tab-line"><span class="s">G</span>|--------------|
+<span class="s">D</span>|--------------|
+<span class="s">A</span>|--2--2--5--2--|
+<span class="s">E</span>|--0--0-----0--|</div></div>
+      </div>
+      <div class="style-section"><h5>练习方法</h5><ul>
+        <li>练根音-五度-八度模式，在所有 12 个调上练</li>
+        <li>跟着鼓机练，重点关注和底鼓的对齐</li>
+        <li>练习 palm mute 拨片技巧，制造沉闷有力音色</li>
+        <li>学习歌曲时先扒根音走向，再加节奏，最后加装饰音</li>
+        <li>练八分音符持续弹奏耐力（连续弹 5 分钟不停）</li>
+      </ul></div>
+      <div class="style-section"><h5>推荐练习曲目</h5><div class="song-list">
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Smoke on the Water</span> — <span class="artist">Deep Purple</span></div>
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Another One Bites the Dust</span> — <span class="artist">Queen</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Come Together</span> — <span class="artist">The Beatles</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Money</span> — <span class="artist">Pink Floyd</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Longview</span> — <span class="artist">Green Day</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">YYZ</span> — <span class="artist">Rush</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Roundabout</span> — <span class="artist">Yes</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Schism</span> — <span class="artist">Tool</span></div>
+      </div></div>
+      <div class="style-section"><h5>必听贝斯手</h5><p>John Paul Jones (Led Zeppelin) · John Entwistle (The Who) · Geezer Butler (Black Sabbath) · Cliff Burton (Metallica) · Flea (RHCP) · Geddy Lee (Rush)</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PUNK ====== -->
+<div class="section" style="padding-top:0" id="style-punk">
+  <div class="style-card c-punk">
+    <div class="style-header"><span class="emoji">⚡</span><div><h4>朋克 Punk</h4><span class="subtitle">速度、态度、八分音符——不需要复杂，需要能量</span></div></div>
+    <div class="style-body">
+      <div class="style-section"><h5>风格特征</h5><p>朋克贝斯 = <strong>快速八分音符 + 根音</strong>。简单到笨的贝斯线反而最有朋克味。用拨片下拨，音色亮硬快。不追求技巧，追求能量和速度。节奏要<strong>靠前</strong>（push the beat），制造紧迫感。</p></div>
+      <div class="style-section"><h5>音色设定</h5><ul>
+        <li>拨片（0.88-1.0mm Tortex）+ 下拨为主</li>
+        <li>Pickup 选 Bridge 或中间档（更亮）</li>
+        <li>Tone 全开（100%），高音突出</li>
+        <li>轻微过踏 / 失真踏板增加攻击力</li>
+        <li>弦选 round wound 圆绕弦（有攻击感）</li>
+      </ul></div>
+      <div class="style-section"><h5>节奏特点</h5><p>全程八分音符下拨，速度 160-220 BPM。根音为主，偶尔八度或五度点缀。朋克的力量来自于<strong>连续不断的直来直去</strong>。</p>
+        <div class="tab-block"><div class="tab-title">朋克八分音符律动（A 大调）</div>
+<div class="tab-line"><span class="s">G</span>|
+<span class="s">D</span>|
+<span class="s">A</span>|--0-0-0-0-0-0-0-0--|--5-5-5-5-5-5-5-5--|
+<span class="s">E</span>|--------------------|--------------------|</div></div>
+      </div>
+      <div class="style-section"><h5>练习方法</h5><ul>
+        <li><strong>核心练习</strong>：连续下拨八分音符 5 分钟不间断，从 120 BPM 逐步加速到 200 BPM</li>
+        <li>练习 palm mute 消音——只让目标弦响</li>
+        <li>练 I-IV-V 走向（A-D-E）的八分音符根音轰炸</li>
+        <li>练反拍重音：在 and 拍上加重</li>
+        <li>练快速的弦切换（E 弦到 A 弦根音切换不掉速）</li>
+        <li>体能训练：朋克需要手臂耐力，每天练 30 分钟连续下拨</li>
+      </ul></div>
+      <div class="style-section"><h5>推荐练习曲目</h5><div class="song-list">
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Blitzkrieg Bop</span> — <span class="artist">Ramones</span></div>
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">London Calling</span> — <span class="artist">The Clash</span></div>
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Basket Case</span> — <span class="artist">Green Day</span></div>
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Brain Stew</span> — <span class="artist">Green Day</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Anarchy in the U.K.</span> — <span class="artist">Sex Pistols</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Jesse Girl</span> — <span class="artist">Rick Springfield</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Maxwell Murder</span> — <span class="artist">Rancid</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Journey to the End</span> — <span class="artist">Rancid</span></div>
+      </div></div>
+      <div class="style-section"><h5>必听贝斯手</h5><p>Dee Dee Ramone (Ramones) · Paul Simonon (The Clash) · Matt Freeman (Rancid) · Mike Dirnt (Green Day)</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== METAL ====== -->
+<div class="section" style="padding-top:0" id="style-metal">
+  <div class="style-card c-metal">
+    <div class="style-header"><span class="emoji">🔥</span><div><h4>金属 Metal</h4><span class="subtitle">暗黑、重型、高速——贝斯也可以是一把武器</span></div></div>
+    <div class="style-body">
+      <div class="style-section"><h5>风格特征</h5><p>金属贝斯的核心是<strong>暗黑和重型</strong>。大量使用自然小调（Aeolian）、Phrygian 调式（降 2 级制造异域暗黑感）。节奏上常与吉他的 Riff 完全同步，弹相同的音符但低八度。速度可达 200+ BPM。很多金属贝斯手使用失真踏板让音色接近吉他。</p></div>
+      <div class="style-section"><h5>音色设定</h5><ul>
+        <li><strong>传统金属</strong>：指弹或拨片，P-Bass + 中频 scoop（V 型 EQ），轻微过载</li>
+        <li><strong>极端金属</strong>：拨片 + 重失真踏板（Big Muff / Darkglass），音色和吉他融合</li>
+        <li><strong>前卫金属</strong>：多弦贝斯（5-6 弦，低音 B 或 F#），清洁 + 偶尔失真切换</li>
+        <li>低频饱满 + 高频削减，制造暗的感觉</li>
+      </ul></div>
+      <div class="style-section"><h5>节奏特点</h5><p>十六分音符 galloping（马蹄节奏）= 金属标志节奏型：三连十六分 + 休止，循环。速度从 140 BPM（传统金属）到 220+ BPM（极端金属）。</p>
+        <div class="tab-block"><div class="tab-title">Galloping 节奏（E 小调）</div>
+<div class="tab-line"><span class="s">G</span>|
+<span class="s">D</span>|
+<span class="s">A</span>|
+<span class="s">E</span>|--0-000-0-000-0-000--|</div></div>
+        <div class="tab-block" style="margin-top:8px"><div class="tab-title">Phrygian Riff（E Phrygian）</div>
+<div class="tab-line"><span class="s">G</span>|
+<span class="s">D</span>|
+<span class="s">A</span>|--2--1----2--1----|
+<span class="s">E</span>|--0-------0-------|</div></div>
+      </div>
+      <div class="style-section"><h5>练习方法</h5><ul>
+        <li><strong>下拨速度训练</strong>：连续 palm mute 下拨十六分音符，从 120 加速到 200 BPM</li>
+        <li><strong>Galloping 节奏</strong>：单独练三连十六分 + 休止的循环，右手节奏感是关键</li>
+        <li><strong>Riff 同步</strong>：和吉他弹完全一样的 Riff，速度要跟上</li>
+        <li><strong>小调和 Phrygian</strong>：背熟指板上的 Aeolian 和 Phrygian 指型</li>
+        <li><strong>消音纪律</strong>：金属贝斯不消音 = 音糊 = 死。每根不需要的弦必须消掉</li>
+        <li>练习三指轮指（食中无）以应对高速段落</li>
+      </ul></div>
+      <div class="style-section"><h5>推荐练习曲目</h5><div class="song-list">
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">For Whom The Bell Tolls</span> — <span class="artist">Metallica</span></div>
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Iron Man</span> — <span class="artist">Black Sabbath</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Master of Puppets</span> — <span class="artist">Metallica</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Fear of the Dark</span> — <span class="artist">Iron Maiden</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">YYZ</span> — <span class="artist">Rush</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Lateralus</span> — <span class="artist">Tool</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">The Dance of Eternity</span> — <span class="artist">Dream Theater</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Bleed</span> — <span class="artist">Meshuggah</span></div>
+      </div></div>
+      <div class="style-section"><h5>必听贝斯手</h5><p>Geezer Butler (Black Sabbath) · Steve Harris (Iron Maiden) · Cliff Burton (Metallica) · Justin Chancellor (Tool) · John Myung (Dream Theater)</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== JAZZ ====== -->
+<div class="section" style="padding-top:0" id="style-jazz">
+  <div class="style-card c-jazz">
+    <div class="style-header"><span class="emoji">🎷</span><div><h4>爵士 Jazz</h4><span class="subtitle">Walking bass、ii-V-I、即兴——贝斯手的终极挑战</span></div></div>
+    <div class="style-body">
+      <div class="style-section"><h5>风格特征</h5><p>爵士贝斯是贝斯学习的终极副本。需要：<strong>walking bass line</strong>（每拍一个四分音符，用经过音连接和弦）、<strong>即兴能力</strong>、<strong>swing feel</strong>（摇摆节奏感）。音阶上需要掌握所有调式、旋律小调、减音阶。指弹为主，音色温暖圆润。</p></div>
+      <div class="style-section"><h5>音色设定</h5><ul>
+        <li>指弹，Jazz Bass（双线圈拾音器）+ 扁绕弦（flat wound）</li>
+        <li>Neck pickup 为主，Tone 开 40-50%（暖暗）</li>
+        <li>音箱：清音贝斯音箱，不加效果器</li>
+        <li>弦选 flat wound 扁绕弦增加丝滑质感</li>
+      </ul></div>
+      <div class="style-section"><h5>节奏特点</h5><p>核心是 <strong>Walking Bass</strong>：4/4 拍中每小节弹 4 个四分音符，音的选择遵循和弦连接原则。Swing feel 让八分音符变成长短的摇摆感。</p>
+        <div class="tab-block"><div class="tab-title">Walking Bass（ii-V-I in C: Dm7-G7-Cmaj7）</div>
+<div class="tab-line"><span class="s">G</span>|
+<span class="s">D</span>|--5--7--9----|--5--4--2----|
+<span class="s">A</span>|--5-----------|--3-----------|
+<span class="s">E</span>|--3--3--5----|--------------|
+
+  规则: 拍1弹根音, 拍4弹半音/全音过渡到下一和弦</div></div>
+      </div>
+      <div class="style-section"><h5>练习方法</h5><ul>
+        <li><strong>Walking Bass 规则</strong>：拍 1 弹根音；拍 4 弹目标和弦根音的上/下方半音</li>
+        <li>练所有调的 ii-V-I 走向（12 调）</li>
+        <li>练三全音替代（tritone substitution）的 walking line</li>
+        <li>练标准曲 Real Book 曲目（Autumn Leaves、Blue Bossa）</li>
+        <li>练 swing feel：用节拍器只开 2、4 拍（模拟踩镲）</li>
+        <li>练即兴：先在 ii-V-I 上用 Dorian/Mixolydian 即兴短句</li>
+        <li>听 Ray Brown、Ron Carter、Paul Chambers 并扒谱</li>
+      </ul></div>
+      <div class="style-section"><h5>推荐练习曲目</h5><div class="song-list">
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Autumn Leaves</span> — <span class="artist">标准曲</span></div>
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Blue Bossa</span> — <span class="artist">Kenny Dorham</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">So What</span> — <span class="artist">Miles Davis</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">All The Things You Are</span> — <span class="artist">标准曲</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">A Night in Tunisia</span> — <span class="artist">Dizzy Gillespie</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Donna Lee</span> — <span class="artist">Charlie Parker</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">The Chicken</span> — <span class="artist">Jaco Pastorius</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Teen Town</span> — <span class="artist">Jaco Pastorius</span></div>
+      </div></div>
+      <div class="style-section"><h5>必听贝斯手</h5><p>Charles Mingus · Ray Brown · Ron Carter · Paul Chambers · Jaco Pastorius · Christian McBride · Esperanza Spalding</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== FUNK ====== -->
+<div class="section" style="padding-top:0" id="style-funk">
+  <div class="style-card c-funk">
+    <div class="style-header"><span class="emoji">🕺</span><div><h4>放克 Funk</h4><span class="subtitle">Ghost note、十六分音符、Slap——贝斯就是主角</span></div></div>
+    <div class="style-body">
+      <div class="style-section"><h5>风格特征</h5><p>在放克里，<strong>贝斯就是主角</strong>。特征：十六分音符密集弹奏、大量 ghost note 填充空隙、Slap & Pop 大量使用、切分音创造弹跳感。音阶多用 Dorian 和小调五声。律动要<strong>靠后</strong>（laid back），制造松弛但有力的 pocket。</p></div>
+      <div class="style-section"><h5>音色设定</h5><ul>
+        <li><strong>指弹放克</strong>：Jazz Bass，Bridge pickup 为主，Tone 全开（明亮）</li>
+        <li><strong>Slap 放克</strong>：Jazz Bass 双线圈，Tone 全开，偶尔加 chorus</li>
+        <li>弦选 round wound 圆绕弦（明亮有攻击感）</li>
+        <li>压缩器（Compressor）是必备——让 slap 和 pop 的音量均衡</li>
+      </ul></div>
+      <div class="style-section"><h5>节奏特点</h5><p>核心是 <strong>十六分音符网格</strong>。一拍 4 个十六分音符，一小节 16 个位置。Ghost note（g）放在弱位填充。经典模式：slap 根音（拍 1）到 ghost notes 到 pop 八度。</p>
+        <div class="tab-block"><div class="tab-title">经典 Funk 律动（A Dorian） — S=Slap P=Pop g=ghost</div>
+<div class="tab-line"><span class="s">G</span>|-----P-----------P--|
+<span class="s">D</span>|--7----7-----7------|
+<span class="s">A</span>|--S--g--S--g--S--g--|
+<span class="s">E</span>|--5-----------------|
+
+  节奏: 1  e  &  a  2  e  &  a
+  右手: S  g  P  g  S  g  P  g</div></div>
+      </div>
+      <div class="style-section"><h5>练习方法</h5><ul>
+        <li><strong>十六分音符网格训练</strong>：60 BPM 弹连续十六分音符，保证力度和时值均匀</li>
+        <li><strong>Ghost note 独立训练</strong>：左手轻触弦但按实 = 实音；轻搭不按 = 闷音</li>
+        <li><strong>Slap 基础</strong>：Slap 到 Pop 八度，慢速练 60 BPM，逐步加速</li>
+        <li><strong>切分训练</strong>：在十六分音符的 e 和 a 位置弹重音</li>
+        <li><strong>放克短句</strong>：扒 James Brown、Tower of Power 的贝斯线</li>
+        <li><strong>Dorian 音阶</strong>：放克最常用调式，所有调上练十六分跑动</li>
+      </ul></div>
+      <div class="style-section"><h5>推荐练习曲目</h5><div class="song-list">
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Good Times</span> — <span class="artist">Chic</span></div>
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Get Lucky</span> — <span class="artist">Daft Punk</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Thank You</span> — <span class="artist">Sly & Family Stone</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Come On Come Over</span> — <span class="artist">Jaco Pastorius</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">What Is Hip?</span> — <span class="artist">Tower of Power</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">The Chicken</span> — <span class="artist">Jaco Pastorius</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Thank You Falettinme</span> — <span class="artist">Sly Stone</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Power of Soul</span> — <span class="artist">Jimi Hendrix</span></div>
+      </div></div>
+      <div class="style-section"><h5>必听贝斯手</h5><p>Larry Graham (Sly & Family Stone) · Bootsy Collins (P-Funk) · Jaco Pastorius · Rocco Prestia (Tower of Power) · Verdine White (EWF) · Marcus Miller · Victor Wooten</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== DISCO ====== -->
+<div class="section" style="padding-top:0" id="style-disco">
+  <div class="style-card c-disco">
+    <div class="style-header"><span class="emoji">🪩</span><div><h4>迪斯科 Disco</h4><span class="subtitle">Four-on-the-floor——均匀、闪亮、让人跳舞</span></div></div>
+    <div class="style-body">
+      <div class="style-section"><h5>风格特征</h5><p>迪斯科贝斯 = <strong>稳定、均匀、闪亮</strong>。核心节奏是 four-on-the-floor——每拍都弹（通常八分或十六分音符），和鼓的底鼓完全同步。贝斯线旋律性强，经常用十六分音符跑动连接根音。音色明亮有切割力，用指弹。</p></div>
+      <div class="style-section"><h5>音色设定</h5><ul>
+        <li>指弹，Jazz Bass，Bridge pickup 或混合档</li>
+        <li>Tone 全开——需要明亮穿透力</li>
+        <li>压缩器必开——长时间均匀弹奏需要音量一致</li>
+        <li>可选 chorus 合唱效果增加闪烁感</li>
+        <li>round wound 圆绕弦（明亮）</li>
+      </ul></div>
+      <div class="style-section"><h5>节奏特点</h5><p>经典模式：<strong>八分或十六分音符持续弹奏</strong>，根音在拍 1 和拍 3，拍 2 和拍 4 可以用经过音或五度/八度。和底鼓完全同步。</p>
+        <div class="tab-block"><div class="tab-title">经典 Disco 律动（F# 小调）</div>
+<div class="tab-line"><span class="s">G</span>|
+<span class="s">D</span>|--4--4--4--4--4--4--4--4--|
+<span class="s">A</span>|--4--4--4--4--2--2--4--4--|
+<span class="s">E</span>|--2--2--2--2-----------2--|
+
+  参考 Good Times by Chic — 十六分音符均匀弹奏</div></div>
+      </div>
+      <div class="style-section"><h5>练习方法</h5><ul>
+        <li><strong>耐力训练</strong>：连续十六分音符弹奏 5 分钟不停（120 BPM）</li>
+        <li><strong>均匀度训练</strong>：用压缩器+调音器视觉监控每个音的音量</li>
+        <li>练 four-on-the-floor 模式：每拍根音 + 反拍八度交替</li>
+        <li>练十六分音符跑动模式：根音到经过音到五度到八度到根音</li>
+        <li>跟着 Good Times 弹，注意 Bernard Edwards 的精确时机</li>
+        <li>练交替指弹(i-m-i-m)的均匀度——两个手指力度完全一致</li>
+      </ul></div>
+      <div class="style-section"><h5>推荐练习曲目</h5><div class="song-list">
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">I Will Survive</span> — <span class="artist">Gloria Gaynor</span></div>
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Get Lucky</span> — <span class="artist">Daft Punk</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Good Times</span> — <span class="artist">Chic</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Le Freak</span> — <span class="artist">Chic</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Stayin Alive</span> — <span class="artist">Bee Gees</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Forget Me Nots</span> — <span class="artist">Patrice Rushen</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Rappers Delight</span> — <span class="artist">Sugarhill Gang</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Boogie Wonderland</span> — <span class="artist">Earth Wind & Fire</span></div>
+      </div></div>
+      <div class="style-section"><h5>必听贝斯手</h5><p>Bernard Edwards (Chic) · Verdine White (EWF) · James Jamerson · Bob Babbitt · Bootsy Collins</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== REGGAE ====== -->
+<div class="section" style="padding-top:0" id="style-reggae">
+  <div class="style-card c-reggae">
+    <div class="style-header"><span class="emoji">🌴</span><div><h4>雷鬼 Reggae</h4><span class="subtitle">反拍、低沉、松弛——弹少一点，感觉多一点</span></div></div>
+    <div class="style-body">
+      <div class="style-section"><h5>风格特征</h5><p>雷鬼贝斯 = <strong>少而准</strong>。你弹得越少，感觉越对。核心特征：大量休止（留白），音符集中在反拍和弱拍。根音为主，偶尔五度。节奏上有独特的靠后感——几乎拖拍，但不是真的慢，是有意制造的松弛 pocket。音色低沉温暖。</p></div>
+      <div class="style-section"><h5>音色设定</h5><ul>
+        <li>指弹，P-Bass 为主，Neck pickup</li>
+        <li>Tone 开 30-40%（暗暖闷）</li>
+        <li>低频饱满，高频大幅削减</li>
+        <li>flat wound 扁绕弦增加暖度</li>
+        <li>Dub 风格：加大量延迟、混响、偶尔回声</li>
+      </ul></div>
+      <div class="style-section"><h5>节奏特点</h5><p>经典模式：拍 1 休止或轻弹，<strong>拍 2 弹根音</strong>，拍 3 休止，拍 4 弹五度或根音。和吉他的 skank（反拍扫弦）互补。不要弹太多——雷鬼的力量在于<strong>空间感</strong>。</p>
+        <div class="tab-block"><div class="tab-title">雷鬼律动（A 小调）</div>
+<div class="tab-line"><span class="s">G</span>|
+<span class="s">D</span>|
+<span class="s">A</span>|--5--------5-----|
+<span class="s">E</span>|-----0-----------|
+
+  拍1休 拍2弹A(E弦5品) 拍3休 拍4弹D(A弦5品=五度)
+  感觉: 像心跳——沉稳、低、有间隔</div></div>
+      </div>
+      <div class="style-section"><h5>练习方法</h5><ul>
+        <li><strong>留白训练</strong>：强迫自己每小节只弹 2 个音，其余全部休止</li>
+        <li><strong>反拍感</strong>：用节拍器只开反拍（&），在正拍弹根音</li>
+        <li><strong>靠后感</strong>：刻意在拍点之后几毫秒弹，制造松弛拖拽感</li>
+        <li>练根音-五度交替模式（A-D, G-C, E-A 等调）</li>
+        <li>练习时右手用拇指拨弦（音色更暗更暖）</li>
+        <li>扒 Bob Marley 的贝斯线，注意 Aston Barrett 的极简风格</li>
+      </ul></div>
+      <div class="style-section"><h5>推荐练习曲目</h5><div class="song-list">
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Three Little Birds</span> — <span class="artist">Bob Marley</span></div>
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Stir It Up</span> — <span class="artist">Bob Marley</span></div>
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Redemption Song</span> — <span class="artist">Bob Marley</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Could You Be Loved</span> — <span class="artist">Bob Marley</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Israelites</span> — <span class="artist">Desmond Dekker</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">54-46 Was My Number</span> — <span class="artist">Toots & Maytals</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Welcome to Jamrock</span> — <span class="artist">Damian Marley</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Sun Is Shining</span> — <span class="artist">Bob Marley</span></div>
+      </div></div>
+      <div class="style-section"><h5>必听贝斯手</h5><p>Aston Family Man Barrett (Bob Marley) · Robbie Shakespeare (Sly & Robbie) · Lloyd Brevett (The Skatalites) · Flabba Holt (Roots Radics)</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== BLUES ====== -->
+<div class="section" style="padding-top:0" id="style-blues">
+  <div class="style-card c-blues">
+    <div class="style-header"><span class="emoji">🎵</span><div><h4>蓝调 Blues</h4><span class="subtitle">12 小节、Shuffle、蓝调音阶——所有流行音乐的根基</span></div></div>
+    <div class="style-body">
+      <div class="style-section"><h5>风格特征</h5><p>蓝调是摇滚、放克、R&B 的祖先。<strong>12 小节蓝调</strong>是基础结构：I7-I7-I7-I7 / IV7-IV7-I7-I7 / V7-IV7-I7-V7。核心是 <strong>Shuffle 节奏</strong>——八分音符不是平均的，而是长短的摇摆感。蓝调音阶（1-b3-4-b5-5-b7）是灵魂，尤其是 b5 的使用。</p></div>
+      <div class="style-section"><h5>音色设定</h5><ul>
+        <li><strong>传统蓝调</strong>：指弹，P-Bass，Neck pickup，Tone 50%（温暖中频）</li>
+        <li><strong>蓝调摇滚</strong>：拨片，轻微过踏/失真增加颗粒感</li>
+        <li>弦选 round wound（有颗粒感）或 flat wound（更暖）</li>
+        <li>可选：轻微的混响增加空间感</li>
+      </ul></div>
+      <div class="style-section"><h5>节奏特点</h5><p><strong>Shuffle feel</strong> 是关键。不要弹均匀的八分音符——要弹三连音的前两个音。一拍弹两个音，第一个占 2/3，第二个占 1/3。感觉像哒-哒 哒-哒。</p>
+        <div class="tab-block"><div class="tab-title">12 小节蓝调 Walking（E 大调）</div>
+<div class="tab-line"><span class="s">G</span>|
+<span class="s">D</span>|--4--6--7--6--|--4--6--7--6--|
+<span class="s">A</span>|--5--7--9--7--|--5--7--9--7--|
+<span class="s">E</span>|--0-----------|--0-----------|
+
+  I7(E7): E-G#-B-G#  |  IV7(A7): A-C#-E-C#
+  V7(B7): B-D#-F#-D#  |  Shuffle: 每拍两音, 前长后短</div></div>
+      </div>
+      <div class="style-section"><h5>练习方法</h5><ul>
+        <li><strong>12 小节结构</strong>：在所有调上练 12 小节蓝调 walking bass</li>
+        <li><strong>Shuffle feel</strong>：用节拍器开三连音模式，弹 shuffle 八分音符</li>
+        <li><strong>蓝调音阶</strong>：在所有调上练蓝调音阶指型，重点练 b5 的使用</li>
+        <li><strong>Turnaround</strong>：练习最后两小节的回旋乐句</li>
+        <li><strong>慢蓝调</strong>：60 BPM 的慢蓝调，每个音都要有感情（加颤音）</li>
+        <li><strong>快蓝调 Shuffle</strong>：140+ BPM 的快 shuffle，练耐力和时机</li>
+      </ul></div>
+      <div class="style-section"><h5>推荐练习曲目</h5><div class="song-list">
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Sweet Home Chicago</span> — <span class="artist">Blues Brothers</span></div>
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Pride and Joy</span> — <span class="artist">Stevie Ray Vaughan</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">The Thrill Is Gone</span> — <span class="artist">B.B. King</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Red House</span> — <span class="artist">Jimi Hendrix</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Got My Mojo Working</span> — <span class="artist">Muddy Waters</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Crossroads</span> — <span class="artist">Cream</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Voodoo Child</span> — <span class="artist">Jimi Hendrix</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Cold Shot</span> — <span class="artist">Stevie Ray Vaughan</span></div>
+      </div></div>
+      <div class="style-section"><h5>必听贝斯手</h5><p>Willie Dixon · Tommy Shannon (SRV) · Jack Bruce (Cream) · Donald Duck Dunn · James Jamerson</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== R&B / SOUL ====== -->
+<div class="section" style="padding-top:0" id="style-rnb">
+  <div class="style-card c-rnb">
+    <div class="style-header"><span class="emoji">💜</span><div><h4>R&B / Soul</h4><span class="subtitle">旋律性、感情、Pocket——贝斯也可以唱歌</span></div></div>
+    <div class="style-body">
+      <div class="style-section"><h5>风格特征</h5><p>R&B/Soul 贝斯 = <strong>旋律性 + 感情 + 完美的 pocket</strong>。贝斯线经常有明确的旋律，像在唱歌。大量使用大调和小调音阶、五声音阶。节奏上强调靠后的松弛感（laid back），但和鼓锁死。Motown 时代的 James Jamerson 是鼻祖——他用一根食指弹出了无数经典。</p></div>
+      <div class="style-section"><h5>音色设定</h5><ul>
+        <li>指弹（通常一根食指，The Hook），P-Bass</li>
+        <li>Neck pickup 为主，Tone 50-60%（温暖但不过暗）</li>
+        <li>flat wound 扁绕弦（暖丝滑）</li>
+        <li>压缩器开轻量——保持音色圆润</li>
+        <li>现代 R&B：Jazz Bass + 轻微 chorus，音色更现代</li>
+      </ul></div>
+      <div class="style-section"><h5>节奏特点</h5><p>不拘泥于固定模式——R&B 贝斯线跟着歌曲的情感走。可能一小节弹 2 个音（慢歌），也可能密集跑动（快歌）。核心是 <strong>靠后 pocket</strong>——音符略晚于节拍出现，制造松弛性感的感觉。但不是拖拍——是恰好在那里。</p>
+        <div class="tab-block"><div class="tab-title">R&B 律动（D 大调）</div>
+<div class="tab-line"><span class="s">G</span>|--7-----5--7-----|
+<span class="s">D</span>|--7--5-----------7-|
+<span class="s">A</span>|--5-----5--5-------|
+<span class="s">E</span>|--------------------|
+
+  参考: Motown / James Jamerson 风格
+  旋律性贝斯线, 不是死板根音
+  靠后 pocket: 略微晚于拍点</div></div>
+      </div>
+      <div class="style-section"><h5>练习方法</h5><ul>
+        <li><strong>一根手指训练</strong>：学 Jamerson 用一根食指弹旋律性贝斯线</li>
+        <li><strong>靠后训练</strong>：刻意在拍点之后弹，找 laid back 的感觉</li>
+        <li><strong>旋律性贝斯线</strong>：不只弹根音，用音阶音构建有歌唱性的线条</li>
+        <li><strong>力度控制</strong>：同一个音符用不同力度弹，听情感差异</li>
+        <li>扒 James Jamerson 的贝斯线（注意装饰音和滑音）</li>
+        <li>练慢速 R&B（60-80 BPM），每个音都要有感情</li>
+        <li>学习和弦内音的使用：不只弹根音，偶尔弹三音七音</li>
+      </ul></div>
+      <div class="style-section"><h5>推荐练习曲目</h5><div class="song-list">
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Stand By Me</span> — <span class="artist">Ben E. King</span></div>
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Lets Stay Together</span> — <span class="artist">Al Green</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Whats Going On</span> — <span class="artist">Marvin Gaye</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">I Heard It Through the Grapevine</span> — <span class="artist">Marvin Gaye</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Superstition</span> — <span class="artist">Stevie Wonder</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">For Once In My Life</span> — <span class="artist">Stevie Wonder</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Sir Duke</span> — <span class="artist">Stevie Wonder</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Forget Me Nots</span> — <span class="artist">Patrice Rushen</span></div>
+      </div></div>
+      <div class="style-section"><h5>必听贝斯手</h5><p>James Jamerson (Motown) · Carol Kaye · Bob Babbitt · Chuck Rainey · Pino Palladino · Nathan Watts (Stevie Wonder)</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== LATIN ====== -->
+<div class="section" style="padding-top:0" id="style-latin">
+  <div class="style-card c-latin">
+    <div class="style-header"><span class="emoji">🥁</span><div><h4>拉丁 Latin</h4><span class="subtitle">Bossa Nova、Salsa、Cumbia——节奏复杂、色彩丰富</span></div></div>
+    <div class="style-body">
+      <div class="style-section"><h5>风格特征</h5><p>拉丁音乐不是一个单一风格，而是一个大家族。<strong>Bossa Nova</strong>（巴西）轻柔、有固定节奏模式；<strong>Salsa</strong>（古巴/纽约）热情、节奏复杂；<strong>Cumbia</strong>（哥伦比亚）有独特的反拍律动。共同点是：<strong>节奏复杂、切分多、色彩丰富</strong>。贝斯需要理解 Clave（拉丁音乐的节奏基石）。</p></div>
+      <div class="style-section"><h5>音色设定</h5><ul>
+        <li><strong>Bossa Nova</strong>：指弹，Jazz Bass，Neck pickup，温暖圆润，flat wound</li>
+        <li><strong>Salsa</strong>：指弹，P-Bass 或 5 弦，中频突出，Tone 60-70%</li>
+        <li><strong>现代 Latin Pop</strong>：Jazz Bass + 轻微 chorus，明亮现代</li>
+      </ul></div>
+      <div class="style-section"><h5>节奏特点</h5><p><strong>Bossa Nova</strong> 贝斯有固定模式：根音在拍 1，五度或根音在拍 2 的后半拍。形成长短休的循环。<strong>Salsa</strong> 的 tumbao 节奏更复杂。核心是理解 Clave。</p>
+        <div class="tab-block"><div class="tab-title">Bossa Nova 律动（D 大调）</div>
+<div class="tab-line"><span class="s">G</span>|
+<span class="s">D</span>|--0--------0-----|
+<span class="s">A</span>|--5-----------5--|
+<span class="s">E</span>|-----------------|
+
+  拍1: D(根)  拍2&: D(根)  拍3: A(五度)  拍4: 休
+  Bossa Nova: 轻柔、固定模式、根音+五度交替</div></div>
+      </div>
+      <div class="style-section"><h5>练习方法</h5><ul>
+        <li><strong>Clave 训练</strong>：手拍 Clave 节奏，同时脚踩 4/4 拍——内化拉丁节奏感</li>
+        <li><strong>Bossa Nova 模式</strong>：练根音到五度到休止的固定模式，所有调上练</li>
+        <li><strong>切分训练</strong>：拉丁音乐大量使用十六分音符位置的切分，练反拍弹根音</li>
+        <li><strong>Salsa tumbao</strong>：学习古巴 tumbao bass 模式（反拍底鼓式样）</li>
+        <li>扒 Antonio Carlos Jobim 的 Bossa Nova 曲目</li>
+        <li>练大七和弦的 walking——Bossa Nova 和弦经常是 maj7</li>
+      </ul></div>
+      <div class="style-section"><h5>推荐练习曲目</h5><div class="song-list">
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">The Girl from Ipanema</span> — <span class="artist">Jobim</span></div>
+        <div class="song-item"><span class="diff diff-easy">入门</span><span class="title">Desafinado</span> — <span class="artist">Jobim</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Oye Como Va</span> — <span class="artist">Santana</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Black Orpheus</span> — <span class="artist">Luiz Bonfa</span></div>
+        <div class="song-item"><span class="diff diff-med">进阶</span><span class="title">Smooth Operator</span> — <span class="artist">Sade</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Oye Como Va (原版)</span> — <span class="artist">Tito Puente</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Pedro Navaja</span> — <span class="artist">Ruben Blades</span></div>
+        <div class="song-item"><span class="diff diff-hard">高阶</span><span class="title">Watermelon Man</span> — <span class="artist">Herbie Hancock</span></div>
+      </div></div>
+      <div class="style-section"><h5>必听贝斯手</h5><p>Bobby Valentin (Salsa) · Cachao Lopez (Mambo 创始人) · Lincoln Goines (Latin Jazz) · Oscar Stagnaro</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== FRETBOARD TOOL ====== -->
+<section class="section" id="fretboard-tool">
+  <div class="section-header">
+    <span class="section-tag">TOOL</span>
+    <h3>交互式指板</h3>
+    <p>选择一个音阶或和弦，在指板上查看所有音符位置。根音为红色，音阶音为橙色，和弦音为绿色。</p>
+  </div>
+  <div class="fretboard-container">
+    <div class="fretboard-controls">
+      <button class="fb-btn active" data-mode="notes">自然音</button>
+      <button class="fb-btn" data-mode="major">大调音阶</button>
+      <button class="fb-btn" data-mode="minor">自然小调</button>
+      <button class="fb-btn" data-mode="penta">小调五声</button>
+      <button class="fb-btn" data-mode="blues">蓝调音阶</button>
+      <button class="fb-btn" data-mode="dorian">Dorian</button>
+      <button class="fb-btn" data-mode="mixolydian">Mixolydian</button>
+    </div>
+    <div class="fretboard-controls">
+      <label style="font-size:13px;color:var(--fg2)">根音选择：</label>
+      <select id="root-select" style="background:var(--bg4);color:var(--fg);border:1px solid var(--bg4);border-radius:6px;padding:4px 10px;font-size:13px">
+        <option value="0">C</option>
+        <option value="2">D</option>
+        <option value="4">E</option>
+        <option value="5">F</option>
+        <option value="7" selected>G</option>
+        <option value="9">A</option>
+        <option value="11">B</option>
+        <option value="1">C#/Db</option>
+        <option value="3">D#/Eb</option>
+        <option value="6">F#/Gb</option>
+        <option value="8">G#/Ab</option>
+        <option value="10">A#/Bb</option>
+      </select>
+    </div>
+    <div id="interactive-fretboard"></div>
+    <div style="margin-top:16px;display:flex;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:14px;border-radius:50%;background:#e94560"></div><span style="font-size:13px;color:var(--fg2)">根音 Root</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:14px;border-radius:50%;background:#f5a623"></div><span style="font-size:13px;color:var(--fg2)">音阶音 Scale</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:14px;border-radius:50%;background:#00d4aa"></div><span style="font-size:13px;color:var(--fg2)">和弦音 Chord</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== METRONOME ====== -->
+<section class="section" id="metronome-tool">
+  <div class="section-header">
+    <span class="section-tag">TOOL</span>
+    <h3>节拍器</h3>
+    <p>贝斯手最好的朋友。点击开始，设置 BPM，跟着弹。</p>
+  </div>
+  <div class="metronome">
+    <div>
+      <div class="bpm-display" id="bpm-value">80</div>
+      <div style="font-size:13px;color:var(--fg3);text-align:center">BPM</div>
+    </div>
+    <div class="bpm-controls">
+      <button class="bpm-btn" onclick="adjustBPM(-10)">-10</button>
+      <button class="bpm-btn" onclick="adjustBPM(-1)">-1</button>
+      <button class="bpm-btn" onclick="adjustBPM(1)">+1</button>
+      <button class="bpm-btn" onclick="adjustBPM(10)">+10</button>
+    </div>
+    <button class="bpm-start" id="metro-start" onclick="toggleMetronome()">开始</button>
+    <div class="beat-dots" id="beat-dots">
+      <div class="beat-dot"></div>
+      <div class="beat-dot"></div>
+      <div class="beat-dot"></div>
+      <div class="beat-dot"></div>
+    </div>
+    <div style="font-size:13px;color:var(--fg3)">4/4 拍</div>
+  </div>
+  <div class="callout tip">
+    <div class="callout-title">节拍器练习法</div>
+    <p><strong>基础</strong>：每个四分音符弹一个根音。 <strong>进阶</strong>：每拍弹两个八分音符。 <strong>高级</strong>：把节拍器声音关掉只在 2、4 拍响（模拟踩镲），练 swing feel。 <strong>大师</strong>：关掉只在 1 拍响，弹整首歌。</p>
+  </div>
+</section>
+
+<!-- ====== FOOTER ====== -->
+<footer class="footer">
+  <p>BassLab — 贝斯学习实验室</p>
+  <p>乐理 · 风格 · 技巧 · 实战</p>
+  <p style="margin-top:8px">记住：速度是最后的事。先学会弹对、弹稳、弹有感觉。</p>
+</footer>
+
+</div>
+</div>
+
+<button class="back-top" id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">UP</button>
+
+<script>
+const NOTE_NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const STRINGS=[{name:'G',open:7},{name:'D',open:2},{name:'A',open:9},{name:'E',open:4}];
+const SCALES={
+  notes:{intervals:[0,2,4,5,7,9,11],chordTones:[0,4,7]},
+  major:{intervals:[0,2,4,5,7,9,11],chordTones:[0,4,7]},
+  minor:{intervals:[0,2,3,5,7,8,10],chordTones:[0,3,7]},
+  penta:{intervals:[0,3,5,7,10],chordTones:[0,3,7]},
+  blues:{intervals:[0,3,5,6,7,10],chordTones:[0,3,7]},
+  dorian:{intervals:[0,2,3,5,7,9,10],chordTones:[0,3,7]},
+  mixolydian:{intervals:[0,2,4,5,7,9,10],chordTones:[0,4,7]}
+};
+function renderFretboard(cid,mode,rootPitch){
+  const c=document.getElementById(cid);if(!c)return;
+  const frets=12,scale=SCALES[mode]||SCALES.notes;
+  const rootPc=rootPitch!==undefined?rootPitch:0;
+  const sn=scale.intervals.map(iv=>(rootPc+iv)%12);
+  const cn=scale.chordTones.map(iv=>(rootPc+iv)%12);
+  let h='<div class="fretboard">';
+  STRINGS.forEach(str=>{
+    h+='<div class="fb-string-row"><div class="fb-string-label">'+str.name+'</div><div class="fb-nut"></div>';
+    for(let f=0;f<=frets;f++){
+      const pc=(str.open+f)%12,nn=NOTE_NAMES[pc];
+      let cls,disp;
+      if(mode==='notes'){cls='fb-note scale';disp=nn;}
+      else if(pc===rootPc){cls='fb-note root';disp=nn;}
+      else if(cn.includes(pc)){cls='fb-note chord';disp=nn;}
+      else if(sn.includes(pc)){cls='fb-note scale';disp=nn;}
+      else{cls='fb-note empty';disp='';}
+      h+='<div class="'+cls+'" title="'+nn+' (fret '+f+')">'+disp+'</div>';
+      if(f<frets)h+='<div class="fb-fret"></div>';
+    }
+    h+='</div>';
+  });
+  h+='<div class="fb-string-row"><div class="fb-string-label"></div><div class="fb-nut" style="background:transparent"></div>';
+  for(let f=0;f<=frets;f++){h+='<div class="fb-fret-num">'+f+'</div>';if(f<frets)h+='<div class="fb-fret"></div>';}
+  h+='</div></div>';
+  c.innerHTML=h;
+}
+let curMode='notes',curRoot=7;
+document.querySelectorAll('.fb-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.fb-btn').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+    curMode=this.dataset.mode;
+    renderFretboard('interactive-fretboard',curMode,curRoot);
+  });
+});
+document.getElementById('root-select').addEventListener('change',function(){
+  curRoot=parseInt(this.value);
+  renderFretboard('interactive-fretboard',curMode,curRoot);
+});
+renderFretboard('interactive-fretboard','notes',7);
+
+const navItems=document.querySelectorAll('.nav-item');
+function updateActiveNav(){
+  let cur='';const sy=window.scrollY+120;
+  document.querySelectorAll('section[id],div.section[id]').forEach(s=>{
+    if(sy>=s.offsetTop)cur=s.id;
+  });
+  navItems.forEach(n=>n.classList.toggle('active',n.getAttribute('href')==='#'+cur));
+}
+window.addEventListener('scroll',updateActiveNav);
+updateActiveNav();
+document.querySelectorAll('.nav-item').forEach(i=>{
+  i.addEventListener('click',()=>{if(window.innerWidth<=768)document.querySelector('.sidebar').classList.remove('open');});
+});
+const bt=document.getElementById('back-top');
+window.addEventListener('scroll',()=>bt.classList.toggle('show',window.scrollY>600));
+
+let bpm=80,running=false,timer=null,beat=0,ac=null;
+function adjustBPM(d){bpm=Math.max(40,Math.min(250,bpm+d));document.getElementById('bpm-value').textContent=bpm;if(running){stopM();startM();}}
+function playBeat(b){
+  if(!ac)return;
+  const o=ac.createOscillator(),g=ac.createGain();
+  o.connect(g);g.connect(ac.destination);
+  o.frequency.value=b===0?880:440;
+  g.gain.setValueAtTime(0.5,ac.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.01,ac.currentTime+0.05);
+  o.start(ac.currentTime);o.stop(ac.currentTime+0.05);
+  document.querySelectorAll('.beat-dot').forEach((d,i)=>d.classList.toggle('active',i===b));
+}
+function startM(){
+  if(!ac)ac=new(window.AudioContext||window.webkitAudioContext)();
+  running=true;document.getElementById('metro-start').textContent='停止';
+  beat=0;playBeat(0);beat=1;
+  const interval=60000/bpm;
+  timer=setInterval(()=>{playBeat(beat);beat=(beat+1)%4;},interval);
+}
+function stopM(){
+  running=false;document.getElementById('metro-start').textContent='开始';
+  clearInterval(timer);
+  document.querySelectorAll('.beat-dot').forEach(d=>d.classList.remove('active'));
+}
+function toggleMetronome(){if(running)stopM();else startM();}
+</script>
+
+<!-- === 用户系统脚本 === -->
+<script>
+var DEFAULT_USERS=[
+  {username:'Watermelon',password:'52zyl1314.',role:'admin'},
+  {username:'SharkChili',password:'shayulajiao',role:'user'}
+];
+
+function getUsers(){
+  var s=localStorage.getItem('basslab_users');
+  if(!s){localStorage.setItem('basslab_users',JSON.stringify(DEFAULT_USERS));return DEFAULT_USERS.slice()}
+  try{return JSON.parse(s)}catch(e){localStorage.setItem('basslab_users',JSON.stringify(DEFAULT_USERS));return DEFAULT_USERS.slice()}
+}
+function saveUsers(arr){localStorage.setItem('basslab_users',JSON.stringify(arr))}
+
+// 初始化顶部栏
+(function initTopBar(){
+  var role=sessionStorage.getItem('basslab_role');
+  var user=sessionStorage.getItem('basslab_user');
+  var bar=document.getElementById('topBar');
+  var badge=document.getElementById('userBadge');
+  var badgeText=document.getElementById('userBadgeText');
+  var adminBtn=document.getElementById('adminBtn');
+  bar.style.display='flex';
+  if(role==='admin'){
+    badge.classList.add('admin');
+    badgeText.textContent=user+' (管理员)';
+    adminBtn.style.display='block';
+  }else if(role==='user'){
+    badgeText.textContent=user+' (用户)';
+  }else{
+    badgeText.textContent=user||'未知用户';
+  }
+})();
+
+// === 退出登录 ===
+function logout(){
+  sessionStorage.removeItem('basslab_logged_in');
+  sessionStorage.removeItem('basslab_user');
+  sessionStorage.removeItem('basslab_role');
+  window.location.href='login.html';
+}
+
+// === 管理员面板 ===
+function openAdmin(){
+  renderUserList();
+  document.getElementById('adminOverlay').classList.add('show');
+}
+function closeAdmin(){
+  document.getElementById('adminOverlay').classList.remove('show');
+  document.getElementById('formMsg').textContent='';
+  document.getElementById('newUsername').value='';
+  document.getElementById('newPassword').value='';
+}
+document.getElementById('adminOverlay').addEventListener('click',function(e){
+  if(e.target===this)closeAdmin();
+});
+
+function renderUserList(){
+  var users=getUsers();
+  var html='';
+  for(var i=0;i<users.length;i++){
+    var u=users[i];
+    var roleLabel=u.role==='admin'?'管理员':'普通用户';
+    var icon=u.role==='admin'?'👑':'🎵';
+    var isProtected=(u.username==='Watermelon');
+    html+='<div class="user-row">'+
+      '<div class="u-info">'+
+        '<span class="u-icon">'+icon+'</span>'+
+        '<div>'+
+          '<div class="u-name">'+escapeHtml(u.username)+'</div>'+
+          '<span class="u-role '+u.role+'">'+roleLabel+'</span>'+
+        '</div>'+
+      '</div>'+
+      '<button class="del-btn" onclick="deleteUser('+i+')" '+(isProtected?'disabled title="主管理员不可删除"':'')+'>删除</button>'+
+    '</div>';
+  }
+  document.getElementById('userList').innerHTML=html;
+}
+
+function addUser(){
+  var name=document.getElementById('newUsername').value.trim();
+  var pass=document.getElementById('newPassword').value.trim();
+  var role=document.getElementById('newRole').value;
+  var msg=document.getElementById('formMsg');
+
+  if(!name){msg.className='form-msg err';msg.textContent='请输入账号';return}
+  if(!pass){msg.className='form-msg err';msg.textContent='请输入密码';return}
+  if(name.length<2){msg.className='form-msg err';msg.textContent='账号至少 2 个字符';return}
+
+  var users=getUsers();
+  for(var i=0;i<users.length;i++){
+    if(users[i].username.toLowerCase()===name.toLowerCase()){
+      msg.className='form-msg err';msg.textContent='该账号已存在';return;
+    }
+  }
+  users.push({username:name,password:pass,role:role});
+  saveUsers(users);
+  msg.className='form-msg ok';msg.textContent='用户 ['+name+"] 添加成功！";
+  document.getElementById('newUsername').value='';
+  document.getElementById('newPassword').value='';
+  renderUserList();
+}
+
+function deleteUser(idx){
+  var users=getUsers();
+  if(idx<0||idx>=users.length)return;
+  if(users[idx].username==='Watermelon')return;
+  var name=users[idx].username;
+  if(!confirm('确认删除用户 ['+name+'] 吗？'))return;
+  users.splice(idx,1);
+  saveUsers(users);
+  renderUserList();
+}
+
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
