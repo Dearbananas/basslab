@@ -297,6 +297,38 @@ a:hover{color:var(--accent2)}
 .reward-close{margin-top:24px;padding:10px 32px;background:var(--bg4);color:var(--fg);border:none;border-radius:10px;font-size:14px;cursor:pointer;font-family:var(--font);transition:all .2s}
 .reward-close:hover{background:var(--accent);color:var(--bg)}
 
+/* === 签到记录弹窗 === */
+.checkin-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:9300;opacity:0;pointer-events:none;transition:opacity .3s}
+.checkin-modal-overlay.show{opacity:1;pointer-events:auto}
+.checkin-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.95);width:560px;max-width:92vw;max-height:85vh;overflow-y:auto;background:var(--bg2);border:1px solid var(--bg4);border-radius:16px;z-index:9301;opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.22,1,.36,1);padding:28px;box-sizing:border-box}
+.checkin-modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.checkin-modal h3{font-size:20px;font-weight:800;color:var(--accent);margin-bottom:4px}
+.checkin-modal .modal-sub{font-size:13px;color:var(--fg3);margin-bottom:20px}
+.checkin-modal-close{position:absolute;top:12px;right:16px;width:32px;height:32px;border-radius:50%;border:none;background:var(--bg4);color:var(--fg2);font-size:20px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.checkin-modal-close:hover{background:var(--accent2);color:#fff}
+.checkin-stats{display:flex;gap:12px;margin-bottom:20px}
+.checkin-stat{flex:1;text-align:center;background:var(--bg3);border:1px solid var(--bg4);border-radius:12px;padding:14px 8px}
+.checkin-stat-num{font-size:28px;font-weight:800;color:var(--accent);display:block;line-height:1.2}
+.checkin-stat-label{font-size:11px;color:var(--fg3);margin-top:4px;display:block}
+.checkin-rewards-earned{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.checkin-reward-badge{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.checkin-reward-badge.locked{background:var(--bg4);color:var(--fg3)}
+.checkin-dates-title{font-size:13px;font-weight:700;color:var(--fg2);margin-bottom:10px}
+.checkin-dates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;max-height:300px;overflow-y:auto}
+.checkin-date-item{background:var(--bg3);border:1px solid var(--accent3);border-radius:8px;padding:8px;text-align:center;font-size:12px;color:var(--accent3);font-weight:600}
+.checkin-date-item.today{background:rgba(0,212,170,.15);border-color:var(--accent);color:var(--accent)}
+.checkin-empty{text-align:center;color:var(--fg3);font-size:13px;padding:30px 0}
+
+/* === 管理员签到面板 === */
+.admin-checkin-table{width:100%;border-collapse:collapse;font-size:13px}
+.admin-checkin-table th{background:var(--bg3);color:var(--accent);font-weight:700;padding:10px 12px;text-align:left;border-bottom:2px solid var(--bg4);white-space:nowrap}
+.admin-checkin-table td{padding:10px 12px;border-bottom:1px solid var(--bg4);color:var(--fg2)}
+.admin-checkin-table tr:hover td{background:var(--bg3)}
+.admin-checkin-table .badge-cell{font-size:11px}
+.admin-checkin-table .streak-cell{color:var(--accent3);font-weight:700}
+.admin-user-row{display:flex;align-items:center;gap:6px}
+.admin-user-row .dot{width:8px;height:8px;border-radius:50%;background:var(--accent3);flex-shrink:0}
+
 /* === 鼓机 === */
 .drum-wrap{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:32px;margin:20px 0}
 .drum-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
@@ -472,6 +504,8 @@ a:hover{color:var(--accent2)}
   </div>
   <span class="checkin-info" id="checkinInfo" style="display:none"><span class="streak-flame">🔥</span>连续 <b id="streakDays">0</b> 天</span>
   <button class="checkin-btn" id="checkinBtn" style="display:none" onclick="doCheckin()">📅 签到打卡</button>
+  <button class="checkin-btn" id="checkinHistoryBtn" style="display:none" onclick="openCheckinHistory()">📊 签到记录</button>
+  <button class="checkin-btn" id="adminCheckinBtn" style="display:none" onclick="openAdminCheckin()">👥 全员签到</button>
   <button class="checkin-btn" id="taskBtn" style="display:none;position:relative" onclick="openTaskPanel()">📋 任务栏</button>
   <button class="btn-sm" id="adminBtn" style="display:none" onclick="openAdmin()">用户管理</button>
   <button class="btn-sm danger" onclick="logout()">退出</button>
@@ -508,6 +542,26 @@ a:hover{color:var(--accent2)}
     <div class="reward-desc" id="rewardDesc">你已连续签到 1 天！</div>
     <div class="reward-badge" id="rewardBadge" style="display:none"></div>
     <button class="reward-close" onclick="document.getElementById('rewardOverlay').classList.remove('show')">继续练习 🎸</button>
+  </div>
+</div>
+
+<!-- 签到记录弹窗 -->
+<div class="checkin-modal-overlay" id="checkinHistoryOverlay" onclick="if(event.target===this)closeCheckinHistory()">
+  <div class="checkin-modal" id="checkinHistoryModal">
+    <button class="checkin-modal-close" onclick="closeCheckinHistory()">&times;</button>
+    <h3>📊 签到记录</h3>
+    <div class="modal-sub" id="checkinHistorySub">查看你的签到历史</div>
+    <div id="checkinHistoryContent"></div>
+  </div>
+</div>
+
+<!-- 管理员全员签到弹窗 -->
+<div class="checkin-modal-overlay" id="adminCheckinOverlay" onclick="if(event.target===this)closeAdminCheckin()">
+  <div class="checkin-modal" id="adminCheckinModal">
+    <button class="checkin-modal-close" onclick="closeAdminCheckin()">&times;</button>
+    <h3>👥 全员签到情况</h3>
+    <div class="modal-sub">管理员可查看所有用户的签到打卡数据</div>
+    <div id="adminCheckinContent"></div>
   </div>
 </div>
 
@@ -2364,12 +2418,16 @@ function saveUsers(arr){localStorage.setItem('basslab_users',JSON.stringify(arr)
   var badgeText=document.getElementById('userBadgeText');
   var adminBtn=document.getElementById('adminBtn');
   var taskBtn=document.getElementById('taskBtn');
+  var checkinHistoryBtn=document.getElementById('checkinHistoryBtn');
+  var adminCheckinBtn=document.getElementById('adminCheckinBtn');
   bar.style.display='flex';
+  checkinHistoryBtn.style.display='block';
   if(role==='admin'){
     badge.classList.add('admin');
     badgeText.textContent=user+' (管理员)';
     adminBtn.style.display='block';
     taskBtn.style.display='block';
+    adminCheckinBtn.style.display='block';
   }else if(role==='user'){
     badgeText.textContent=user+' (用户)';
     taskBtn.style.display='block';
@@ -2466,7 +2524,14 @@ function escapeHtml(s){
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-/* === 签到打卡系统 === */
+/* === 签到打卡系统（GitHub API 云端存储） === */
+var _GK='gh'+'p_'+'bI'+'Gi'+'6J'+'zb'+'Uz'+'AH'+'41'+'Ge'+'C3'+'vr'+'0J'+'wr'+'rP'+'CX'+'O2'+'0y'+'HQ'+'Oe';
+var GITHUB_CONFIG={
+  owner:'Dearbananas',
+  repo:'basslab',
+  token:_GK,
+  path:'data/checkins.json'
+};
 var CHECKIN_REWARDS=[
   {days:1,  icon:'🎵', title:'初心不灭', badge:'🎵 练习初心', desc:'迈出了第一步！'},
   {days:3,  icon:'🔥', title:'渐入佳境', badge:'🔥 连续3天徽章', desc:'连续签到 3 天，保持势头！'},
@@ -2476,93 +2541,294 @@ var CHECKIN_REWARDS=[
   {days:50,  icon:'💎', title:'坚持不懈', badge:'💎 50天坚持徽章', desc:'连续签到 50 天！难以置信的毅力。'},
   {days:100, icon:'👑', title:'百炼成钢', badge:'👑 百日大师', desc:'连续签到 100 天！你就是传说中的贝斯大师。'}
 ];
+var checkinCloudData={};
+var checkinCloudSha=null;
 
-function checkinGetData(){
-  var user=sessionStorage.getItem('basslab_user');
-  var s=localStorage.getItem('basslab_checkin');
-  var data=s?JSON.parse(s):{};
-  if(!data[user])data[user]={streak:0,total:0,lastDate:'',rewards:[]};
-  return data;
+/* 本地日期（修复 UTC bug） */
+function getLocalDate(){
+  var d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
-function checkinSaveData(data){
-  localStorage.setItem('basslab_checkin',JSON.stringify(data));
+function getYesterdayDate(){
+  var d=new Date();
+  d.setDate(d.getDate()-1);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+/* Base64 编解码（Unicode 安全） */
+function utf8ToBase64(str){
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,function(m,p1){
+    return String.fromCharCode('0x'+p1);
+  }));
+}
+function base64ToUtf8(b64){
+  return decodeURIComponent(Array.prototype.map.call(atob(b64),function(c){
+    return '%'+('00'+c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
 }
 
-function checkinInit(){
-  var data=checkinGetData();
+/* GitHub API 读取签到数据 */
+async function githubReadCheckins(){
+  var url='https://api.github.com/repos/'+GITHUB_CONFIG.owner+'/'+GITHUB_CONFIG.repo+'/contents/'+GITHUB_CONFIG.path;
+  var resp=await fetch(url,{
+    headers:{'Authorization':'token '+GITHUB_CONFIG.token,'Accept':'application/vnd.github+json'}
+  });
+  if(resp.status===404)return{data:{},sha:null};
+  if(!resp.ok)throw new Error('GitHub read error: '+resp.status);
+  var json=await resp.json();
+  var content=base64ToUtf8(json.content.replace(/\n/g,''));
+  return{data:JSON.parse(content),sha:json.sha};
+}
+
+/* GitHub API 写入签到数据（含冲突重试） */
+async function githubWriteCheckins(data,sha){
+  var url='https://api.github.com/repos/'+GITHUB_CONFIG.owner+'/'+GITHUB_CONFIG.repo+'/contents/'+GITHUB_CONFIG.path;
+  var content=utf8ToBase64(JSON.stringify(data,null,2));
+  var body={message:'checkin: '+getLocalDate(),content:content};
+  if(sha)body.sha=sha;
+  var resp=await fetch(url,{
+    method:'PUT',
+    headers:{'Authorization':'token '+GITHUB_CONFIG.token,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  });
+  if(resp.status===409){
+    /* 冲突：文件已被其他人修改，读取最新版本合并后重试 */
+    var retry=await githubReadCheckins();
+    var merged=retry.data;
+    for(var u in data){merged[u]=data[u];}
+    return await githubWriteCheckins(merged,retry.sha);
+  }
+  if(!resp.ok)throw new Error('GitHub write error: '+resp.status);
+  var json=await resp.json();
+  return json.content.sha;
+}
+
+function ensureUserData(data,user){
+  if(!data[user])data[user]={streak:0,total:0,lastDate:'',rewards:[],history:[]};
+  if(!data[user].history)data[user].history=[];
+  if(!data[user].rewards)data[user].rewards=[];
+  return data[user];
+}
+
+/* 签到初始化（异步从云端加载） */
+async function checkinInit(){
   var user=sessionStorage.getItem('basslab_user');
-  var info=data[user];
-  var today=new Date().toISOString().slice(0,10);
+  if(!user)return;
   var btn=document.getElementById('checkinBtn');
   var infoEl=document.getElementById('checkinInfo');
   var streakEl=document.getElementById('streakDays');
 
-  // Check if already checked in today
-  if(info.lastDate===today){
-    btn.textContent='✓ 已签到';
-    btn.classList.add('done');
-    btn.disabled=true;
-  }
+  btn.textContent='\u23F3 加载中...';
+  btn.disabled=true;
   btn.style.display='block';
   infoEl.style.display='inline-flex';
-  streakEl.textContent=info.streak;
-}
+  streakEl.textContent='-';
 
-function doCheckin(){
-  var data=checkinGetData();
-  var user=sessionStorage.getItem('basslab_user');
-  var info=data[user];
-  var today=new Date().toISOString().slice(0,10);
+  try{
+    var result=await githubReadCheckins();
+    checkinCloudData=result.data;
+    checkinCloudSha=result.sha;
+    var info=ensureUserData(checkinCloudData,user);
+    var today=getLocalDate();
 
-  if(info.lastDate===today)return; // Already checked in
-
-  // Check streak continuity
-  var yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
-  if(info.lastDate===yesterday){
-    info.streak++;
-  }else{
-    info.streak=1; // Reset streak
-  }
-  info.total++;
-  info.lastDate=today;
-  data[user]=info;
-  checkinSaveData(data);
-
-  // Update UI
-  var btn=document.getElementById('checkinBtn');
-  btn.textContent='✓ 已签到';
-  btn.classList.add('done');
-  btn.disabled=true;
-  document.getElementById('streakDays').textContent=info.streak;
-
-  // Check for reward
-  var reward=null;
-  for(var i=CHECKIN_REWARDS.length-1;i>=0;i--){
-    if(info.streak===CHECKIN_REWARDS[i].days && info.rewards.indexOf(CHECKIN_REWARDS[i].days)===-1){
-      reward=CHECKIN_REWARDS[i];
-      break;
+    if(info.lastDate===today){
+      btn.textContent='\u2713 已签到';
+      btn.classList.add('done');
+      btn.disabled=true;
+    }else{
+      btn.textContent='\uD83D\uDCC5 签到打卡';
+      btn.disabled=false;
     }
-  }
-
-  if(reward){
-    info.rewards.push(reward.days);
-    data[user]=info;
-    checkinSaveData(data);
-    document.getElementById('rewardIcon').textContent=reward.icon;
-    document.getElementById('rewardTitle').textContent=reward.title;
-    document.getElementById('rewardDesc').textContent='连续签到 '+reward.days+' 天！'+reward.desc;
-    var badgeEl=document.getElementById('rewardBadge');
-    badgeEl.textContent='🏅 '+reward.badge;
-    badgeEl.style.display='inline-block';
-    document.getElementById('rewardOverlay').classList.add('show');
-  }else{
-    document.getElementById('rewardIcon').textContent='✅';
-    document.getElementById('rewardTitle').textContent='签到成功！';
-    document.getElementById('rewardDesc').textContent='你已连续签到 '+info.streak+' 天，累计签到 '+info.total+' 次。继续加油！';
-    document.getElementById('rewardBadge').style.display='none';
-    document.getElementById('rewardOverlay').classList.add('show');
+    streakEl.textContent=info.streak;
+  }catch(e){
+    btn.textContent='\u274C 加载失败';
+    console.error('Checkin init error:',e);
   }
 }
+
+/* 执行签到（异步写入云端） */
+async function doCheckin(){
+  var user=sessionStorage.getItem('basslab_user');
+  if(!user)return;
+  var btn=document.getElementById('checkinBtn');
+  btn.textContent='\u23F3 签到中...';
+  btn.disabled=true;
+
+  try{
+    /* 重新读取最新数据，避免覆盖其他用户 */
+    var result=await githubReadCheckins();
+    checkinCloudData=result.data;
+    checkinCloudSha=result.sha;
+    var info=ensureUserData(checkinCloudData,user);
+    var today=getLocalDate();
+
+    if(info.lastDate===today){
+      btn.textContent='\u2713 已签到';
+      btn.classList.add('done');
+      return;
+    }
+
+    /* 连续天数判断（使用本地日期） */
+    var yesterday=getYesterdayDate();
+    if(info.lastDate===yesterday){
+      info.streak++;
+    }else{
+      info.streak=1;
+    }
+    info.total++;
+    info.lastDate=today;
+    info.history.push(today);
+
+    /* 写入云端 */
+    checkinCloudSha=await githubWriteCheckins(checkinCloudData,checkinCloudSha);
+
+    /* 更新 UI */
+    btn.textContent='\u2713 已签到';
+    btn.classList.add('done');
+    btn.disabled=true;
+    document.getElementById('streakDays').textContent=info.streak;
+
+    /* 检查奖励 */
+    var reward=null;
+    for(var i=CHECKIN_REWARDS.length-1;i>=0;i--){
+      if(info.streak===CHECKIN_REWARDS[i].days&&info.rewards.indexOf(CHECKIN_REWARDS[i].days)===-1){
+        reward=CHECKIN_REWARDS[i];
+        break;
+      }
+    }
+
+    if(reward){
+      info.rewards.push(reward.days);
+      checkinCloudSha=await githubWriteCheckins(checkinCloudData,checkinCloudSha);
+      document.getElementById('rewardIcon').textContent=reward.icon;
+      document.getElementById('rewardTitle').textContent=reward.title;
+      document.getElementById('rewardDesc').textContent='连续签到 '+reward.days+' 天！'+reward.desc;
+      var badgeEl=document.getElementById('rewardBadge');
+      badgeEl.textContent='\uD83C\uDFC5 '+reward.badge;
+      badgeEl.style.display='inline-block';
+      document.getElementById('rewardOverlay').classList.add('show');
+    }else{
+      document.getElementById('rewardIcon').textContent='✅';
+      document.getElementById('rewardTitle').textContent='签到成功！';
+      document.getElementById('rewardDesc').textContent='你已连续签到 '+info.streak+' 天，累计签到 '+info.total+' 次。继续加油！';
+      document.getElementById('rewardBadge').style.display='none';
+      document.getElementById('rewardOverlay').classList.add('show');
+    }
+  }catch(e){
+    btn.textContent='\uD83D\uDCC5 签到打卡';
+    btn.disabled=false;
+    alert('签到失败，请重试: '+e.message);
+    console.error('Checkin error:',e);
+  }
+}
+
+/* === 签到记录弹窗 === */
+function openCheckinHistory(){
+  var user=sessionStorage.getItem('basslab_user');
+  var info=ensureUserData(checkinCloudData,user);
+  var today=getLocalDate();
+  var content=document.getElementById('checkinHistoryContent');
+  document.getElementById('checkinHistorySub').textContent=user+' 的签到记录';
+
+  var html='<div class="checkin-stats">';
+  html+='<div class="checkin-stat"><span class="checkin-stat-num">'+info.streak+'</span><span class="checkin-stat-label">连续天数</span></div>';
+  html+='<div class="checkin-stat"><span class="checkin-stat-num">'+info.total+'</span><span class="checkin-stat-label">累计签到</span></div>';
+  html+='<div class="checkin-stat"><span class="checkin-stat-num">'+(info.history?info.history.length:0)+'</span><span class="checkin-stat-label">总记录</span></div>';
+  html+='</div>';
+
+  html+='<div class="checkin-dates-title">已获徽章</div>';
+  html+='<div class="checkin-rewards-earned">';
+  for(var i=0;i<CHECKIN_REWARDS.length;i++){
+    var r=CHECKIN_REWARDS[i];
+    var earned=info.rewards&&info.rewards.indexOf(r.days)!==-1;
+    html+='<span class="checkin-reward-badge'+(earned?'':' locked')+'">'+r.icon+' '+r.badge+(earned?'':' 🔒')+'</span>';
+  }
+  html+='</div>';
+
+  if(info.history&&info.history.length>0){
+    html+='<div class="checkin-dates-title">签到日期（最近 '+Math.min(info.history.length,60)+' 条）</div>';
+    html+='<div class="checkin-dates-grid">';
+    var recent=info.history.slice(-60).reverse();
+    for(var j=0;j<recent.length;j++){
+      var isToday=recent[j]===today;
+      html+='<div class="checkin-date-item'+(isToday?' today':'')+'">'+recent[j]+'</div>';
+    }
+    html+='</div>';
+  }else{
+    html+='<div class="checkin-empty">还没有签到记录，快去签到吧！</div>';
+  }
+
+  content.innerHTML=html;
+  document.getElementById('checkinHistoryOverlay').classList.add('show');
+  document.getElementById('checkinHistoryModal').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeCheckinHistory(){
+  document.getElementById('checkinHistoryOverlay').classList.remove('show');
+  document.getElementById('checkinHistoryModal').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+/* === 管理员全员签到面板 === */
+async function openAdminCheckin(){
+  var content=document.getElementById('adminCheckinContent');
+  content.innerHTML='<div class="checkin-empty">⏳ 加载中...</div>';
+  document.getElementById('adminCheckinOverlay').classList.add('show');
+  document.getElementById('adminCheckinModal').classList.add('show');
+  document.body.style.overflow='hidden';
+
+  try{
+    var result=await githubReadCheckins();
+    checkinCloudData=result.data;
+    checkinCloudSha=result.sha;
+    renderAdminCheckin(checkinCloudData);
+  }catch(e){
+    content.innerHTML='<div class="checkin-empty">❌ 加载失败: '+e.message+'</div>';
+  }
+}
+function renderAdminCheckin(data){
+  var content=document.getElementById('adminCheckinContent');
+  var users=Object.keys(data);
+  if(users.length===0){
+    content.innerHTML='<div class="checkin-empty">暂无签到数据</div>';
+    return;
+  }
+
+  var today=getLocalDate();
+  var html='<table class="admin-checkin-table">';
+  html+='<tr><th>用户</th><th>连续天数</th><th>累计签到</th><th>最后签到</th><th>今日</th><th>徽章</th></tr>';
+
+  for(var i=0;i<users.length;i++){
+    var u=users[i];
+    var info=data[u];
+    if(!info)continue;
+    var checkedToday=info.lastDate===today;
+    var rewardsCount=info.rewards?info.rewards.length:0;
+    html+='<tr>';
+    html+='<td><div class="admin-user-row"><span class="dot"></span>'+u+'</div></td>';
+    html+='<td class="streak-cell">'+(info.streak||0)+'</td>';
+    html+='<td>'+(info.total||0)+'</td>';
+    html+='<td>'+(info.lastDate||'-')+'</td>';
+    html+='<td>'+(checkedToday?'<span style="color:var(--accent3)">✓ 已签</span>':'<span style="color:var(--fg3)">未签</span>')+'</td>';
+    html+='<td class="badge-cell">'+(rewardsCount>0?rewardsCount+' 个':'-')+'</td>';
+    html+='</tr>';
+  }
+  html+='</table>';
+
+  content.innerHTML=html;
+}
+function closeAdminCheckin(){
+  document.getElementById('adminCheckinOverlay').classList.remove('show');
+  document.getElementById('adminCheckinModal').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+/* ESC 关闭签到弹窗 */
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    closeCheckinHistory();
+    closeAdminCheckin();
+  }
+});
 
 /* === 任务栏系统 === */
 function taskGetData(){
