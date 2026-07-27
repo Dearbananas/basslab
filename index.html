@@ -2566,17 +2566,56 @@ function base64ToUtf8(b64){
   }).join(''));
 }
 
-/* GitHub API 读取签到数据 */
+/* 带超时的 fetch */
+function fetchWithTimeout(url,options,timeoutMs){
+  var ctrl=new AbortController();
+  var timer=setTimeout(function(){ctrl.abort();},timeoutMs||15000);
+  return fetch(url,Object.assign({},options,{signal:ctrl.signal})).then(function(resp){
+    clearTimeout(timer);
+    return resp;
+  }).catch(function(e){
+    clearTimeout(timer);
+    throw e;
+  });
+}
+
+/* 本地缓存（网络失败时兜底） */
+function saveCheckinCache(data){
+  try{localStorage.setItem('basslab_checkin_cache',JSON.stringify({data:data,ts:Date.now()}));}catch(e){}
+}
+function loadCheckinCache(){
+  try{
+    var s=localStorage.getItem('basslab_checkin_cache');
+    if(!s)return null;
+    return JSON.parse(s);
+  }catch(e){return null;}
+}
+
+/* GitHub API 读取签到数据（带重试 + 缓存兜底） */
 async function githubReadCheckins(){
   var url='https://api.github.com/repos/'+GITHUB_CONFIG.owner+'/'+GITHUB_CONFIG.repo+'/contents/'+GITHUB_CONFIG.path;
-  var resp=await fetch(url,{
-    headers:{'Authorization':'token '+GITHUB_CONFIG.token,'Accept':'application/vnd.github+json'}
-  });
-  if(resp.status===404)return{data:{},sha:null};
-  if(!resp.ok)throw new Error('GitHub read error: '+resp.status);
-  var json=await resp.json();
-  var content=base64ToUtf8(json.content.replace(/\n/g,''));
-  return{data:JSON.parse(content),sha:json.sha};
+  var lastErr=null;
+  for(var attempt=0;attempt<3;attempt++){
+    try{
+      var resp=await fetchWithTimeout(url,{
+        headers:{'Authorization':'token '+GITHUB_CONFIG.token,'Accept':'application/vnd.github+json'}
+      },12000);
+      if(resp.status===404){saveCheckinCache({});return{data:{},sha:null};}
+      if(!resp.ok)throw new Error('GitHub '+resp.status);
+      var json=await resp.json();
+      var content=base64ToUtf8(json.content.replace(/\n/g,''));
+      var data=JSON.parse(content);
+      saveCheckinCache(data);
+      return{data:data,sha:json.sha};
+    }catch(e){
+      lastErr=e;
+      if(attempt<2)await new Promise(function(r){setTimeout(r,1000);});
+    }
+  }
+  /* 3 次全部失败，尝试本地缓存 */
+  var cache=loadCheckinCache();
+  if(cache){return{data:cache.data,sha:null,cached:true};}
+  throw lastErr;
 }
 
 /* GitHub API 写入签到数据（含冲突重试） */
@@ -2585,13 +2624,12 @@ async function githubWriteCheckins(data,sha){
   var content=utf8ToBase64(JSON.stringify(data,null,2));
   var body={message:'checkin: '+getLocalDate(),content:content};
   if(sha)body.sha=sha;
-  var resp=await fetch(url,{
+  var resp=await fetchWithTimeout(url,{
     method:'PUT',
     headers:{'Authorization':'token '+GITHUB_CONFIG.token,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
     body:JSON.stringify(body)
-  });
+  },15000);
   if(resp.status===409){
-    /* 冲突：文件已被其他人修改，读取最新版本合并后重试 */
     var retry=await githubReadCheckins();
     var merged=retry.data;
     for(var u in data){merged[u]=data[u];}
@@ -2599,6 +2637,7 @@ async function githubWriteCheckins(data,sha){
   }
   if(!resp.ok)throw new Error('GitHub write error: '+resp.status);
   var json=await resp.json();
+  saveCheckinCache(data);
   return json.content.sha;
 }
 
@@ -2620,8 +2659,11 @@ async function checkinInit(){
   btn.textContent='\u23F3 加载中...';
   btn.disabled=true;
   btn.style.display='block';
+  btn.classList.remove('done');
+  btn.setAttribute('onclick','doCheckin()');
   infoEl.style.display='inline-flex';
   streakEl.textContent='-';
+  infoEl.title='';
 
   try{
     var result=await githubReadCheckins();
@@ -2639,9 +2681,20 @@ async function checkinInit(){
       btn.disabled=false;
     }
     streakEl.textContent=info.streak;
+    if(result.cached){
+      infoEl.title='⚠ 网络异常，当前显示本地缓存数据';
+      infoEl.style.opacity='0.6';
+    }else{
+      infoEl.style.opacity='';
+    }
   }catch(e){
-    btn.textContent='\u274C 加载失败';
     console.error('Checkin init error:',e);
+    btn.textContent='\uD83D\uDD04 点击重试';
+    btn.disabled=false;
+    btn.setAttribute('onclick','checkinInit()');
+    btn.title='加载失败: '+e.message;
+    infoEl.title='加载失败，点击左侧按钮重试';
+    infoEl.style.opacity='0.5';
   }
 }
 
@@ -2716,7 +2769,8 @@ async function doCheckin(){
   }catch(e){
     btn.textContent='\uD83D\uDCC5 签到打卡';
     btn.disabled=false;
-    alert('签到失败，请重试: '+e.message);
+    btn.setAttribute('onclick','doCheckin()');
+    alert('签到失败，可能是网络问题，请稍后重试\n错误: '+e.message);
     console.error('Checkin error:',e);
   }
 }
@@ -2780,16 +2834,17 @@ async function openAdminCheckin(){
     var result=await githubReadCheckins();
     checkinCloudData=result.data;
     checkinCloudSha=result.sha;
-    renderAdminCheckin(checkinCloudData);
+    renderAdminCheckin(checkinCloudData,result.cached);
   }catch(e){
-    content.innerHTML='<div class="checkin-empty">❌ 加载失败: '+e.message+'</div>';
+    content.innerHTML='<div class="checkin-empty">❌ 加载失败: '+e.message+'<br><button class="checkin-btn" style="margin-top:12px" onclick="openAdminCheckin()">🔄 点击重试</button></div>';
   }
 }
-function renderAdminCheckin(data){
+function renderAdminCheckin(data,isCached){
   var content=document.getElementById('adminCheckinContent');
   var users=Object.keys(data);
+  var prefix=isCached?'<div class="checkin-empty" style="color:#f0ad4e">⚠ 网络异常，当前显示本地缓存数据</div>':'';
   if(users.length===0){
-    content.innerHTML='<div class="checkin-empty">暂无签到数据</div>';
+    content.innerHTML=prefix+'<div class="checkin-empty">暂无签到数据</div>';
     return;
   }
 
@@ -2814,7 +2869,7 @@ function renderAdminCheckin(data){
   }
   html+='</table>';
 
-  content.innerHTML=html;
+  content.innerHTML=(isCached?'<div class="checkin-empty" style="color:#f0ad4e">⚠ 网络异常，当前显示本地缓存数据</div>':'')+html;
 }
 function closeAdminCheckin(){
   document.getElementById('adminCheckinOverlay').classList.remove('show');
