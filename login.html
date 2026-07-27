@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BassLab — 登录</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0f0f1a;--bg2:#16162a;--bg3:#1e1e38;--bg4:#252544;--fg:#e8e8f0;--fg2:#a0a0b8;--fg3:#6a6a85;--accent:#f5a623;--accent2:#e94560;--accent3:#00d4aa;--purple:#9b5de5;--blue:#3a86ff;--radius:12px;--font:'Segoe UI',-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif}
@@ -53,8 +56,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--fg);display:flex;a
 @keyframes shimmerLine{0%{background-position:0% 0}100%{background-position:200% 0}}
 
 .logo-area{text-align:center;margin-bottom:36px}
-.logo-icon{font-size:56px;display:inline-block;animation:bounce 2.5s ease-in-out infinite}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.logo-icon{display:inline-block;animation:bounce 2.5s ease-in-out infinite}
+.logo-bass-img{
+  height:110px;width:auto;
+  filter:drop-shadow(0 0 18px rgba(245,166,35,.5)) drop-shadow(0 0 36px rgba(245,166,35,.3)) drop-shadow(0 0 60px rgba(255,215,0,.15));
+  animation:bassWobble 2s ease-in-out infinite;
+}
+@keyframes bassWobble{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .logo-area h1{
   font-size:32px;font-weight:900;letter-spacing:1px;margin-top:8px;
   background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);
@@ -126,44 +135,47 @@ body{font-family:var(--font);background:var(--bg);color:var(--fg);display:flex;a
 .welcome-emoji{font-size:80px;display:inline-block;animation:wobble .8s ease-in-out infinite}
 @keyframes wobble{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
 
-/* 贝斯 SVG 图标 */
-.bass-icon-svg{
-  width:100px;height:250px;display:inline-block;
+/* 贝斯图标 */
+.bass-icon-img{
+  height:180px;width:auto;display:inline-block;
   animation:bassWobble .8s ease-in-out infinite;
-  filter:drop-shadow(0 0 12px rgba(255,255,255,.3));
-}
-@keyframes bassWobble{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
-
-/* 鲨老师高亮 */
-.bass-highlight{
-  font-size:54px;
-  background:linear-gradient(90deg,#ffd700,#ff6b35,#ffd700,#ff4500,#ffd700);
-  background-size:200% 100%;
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  animation:goldSlide 1s linear infinite,goldGlow 1s ease-in-out infinite alternate;
-  padding:0 4px;
-  display:inline-block;
-  transform:scale(1.15);
-}
-@keyframes goldSlide{0%{background-position:0% 0}100%{background-position:200% 0}}
-@keyframes goldGlow{
-  from{filter:drop-shadow(0 0 8px rgba(255,215,0,.6)) drop-shadow(0 0 16px rgba(255,140,0,.4))}
-  to{filter:drop-shadow(0 0 20px rgba(255,215,0,.9)) drop-shadow(0 0 40px rgba(255,69,0,.6))}
+  filter:drop-shadow(0 0 40px rgba(245,166,35,.55)) drop-shadow(0 0 80px rgba(245,166,35,.35)) drop-shadow(0 0 120px rgba(255,215,0,.2));
 }
 
+/* 三行欢迎文字 */
 .welcome-text{
-  font-size:42px;font-weight:900;line-height:1.4;
+  font-family:'ZCOOL XiaoWei','Comfortaa',sans-serif;
+  font-size:36px;letter-spacing:8px;line-height:1.9;
+  padding:0 20px;text-align:center;max-width:800px;
+}
+.welcome-line{
+  display:block;
+  margin:8px 0;
   background:linear-gradient(90deg,#f5a623,#e94560,#9b5de5,#00d4aa,#f5a623);
   background-size:300% 100%;
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
   animation:rainbowSlide 2s linear infinite,textGlow 1.5s ease-in-out infinite alternate;
-  text-shadow:0 0 40px rgba(245,166,35,.3);
-  padding:0 20px;max-width:700px;
+  filter:drop-shadow(0 0 20px rgba(245,166,35,.3));
+}
+.welcome-line.last{
+  font-size:52px;letter-spacing:10px;margin-top:18px;
+  background:linear-gradient(90deg,#ffd700,#ff6b35,#ffd700,#ff4500,#ffd700);
+  background-size:200% 100%;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:goldSlide 1s linear infinite,goldGlow 1s ease-in-out infinite alternate;
+  transform:scale(1.08);
+  display:inline-block;
+  padding:0 8px;
 }
 @keyframes rainbowSlide{0%{background-position:0% 0}100%{background-position:300% 0}}
 @keyframes textGlow{
   from{filter:drop-shadow(0 0 10px rgba(245,166,35,.4)) drop-shadow(0 0 20px rgba(233,69,96,.3))}
   to{filter:drop-shadow(0 0 25px rgba(245,166,35,.7)) drop-shadow(0 0 50px rgba(155,93,229,.4))}
+}
+@keyframes goldSlide{0%{background-position:0% 0}100%{background-position:200% 0}}
+@keyframes goldGlow{
+  from{filter:drop-shadow(0 0 8px rgba(255,215,0,.6)) drop-shadow(0 0 16px rgba(255,140,0,.4))}
+  to{filter:drop-shadow(0 0 20px rgba(255,215,0,.9)) drop-shadow(0 0 40px rgba(255,69,0,.6))}
 }
 
 /* 弹层中的爆炸粒子 */
@@ -203,9 +215,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--fg);display:flex;a
 /* 响应式 */
 @media(max-width:480px){
   .login-card{padding:36px 24px 32px}
-  .welcome-text{font-size:28px}
-  .bass-highlight{font-size:36px}
-  .bass-icon-svg{width:70px;height:175px}
+  .welcome-text{font-size:26px;letter-spacing:4px}
+  .welcome-line.last{font-size:38px;letter-spacing:6px}
+  .bass-icon-img{width:80px;height:auto}
 }
 </style>
 </head>
@@ -225,7 +237,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--fg);display:flex;a
 <div class="login-wrap">
   <div class="login-card">
     <div class="logo-area">
-      <div class="logo-icon">🎸</div>
+      <div class="logo-icon">
+        <img src="assets/bass-icon.png" class="logo-bass-img" alt="bass">
+      </div>
       <h1>BassLab</h1>
       <div class="sub">贝 斯 学 习 实 验 室</div>
     </div>
@@ -256,50 +270,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--fg);display:flex;a
 <!-- 闪亮欢迎弹层 -->
 <div class="welcome-overlay" id="welcomeOverlay">
   <div class="welcome-box" id="welcomeBox">
-    <svg class="bass-icon-svg" viewBox="0 0 80 200" xmlns="http://www.w3.org/2000/svg">
-      <!-- Headstock -->
-      <path d="M30 5 Q22 5 22 16 L22 30 L58 30 L58 16 Q58 5 50 5 Z" fill="#1a1a1a"/>
-      <!-- 4 tuning pegs -->
-      <circle cx="28" cy="13" r="2.2" fill="#999"/>
-      <circle cx="28" cy="23" r="2.2" fill="#999"/>
-      <circle cx="52" cy="13" r="2.2" fill="#999"/>
-      <circle cx="52" cy="23" r="2.2" fill="#999"/>
-      <!-- Nut -->
-      <rect x="24" y="30" width="32" height="2.5" fill="#e0e0e0"/>
-      <!-- Neck (rosewood) -->
-      <rect x="34" y="32.5" width="12" height="73" fill="#5a3d1e" rx="1"/>
-      <!-- Frets -->
-      <line x1="34" y1="42" x2="46" y2="42" stroke="#c0c0c0" stroke-width="0.8"/>
-      <line x1="34" y1="52" x2="46" y2="52" stroke="#c0c0c0" stroke-width="0.8"/>
-      <line x1="34" y1="62" x2="46" y2="62" stroke="#c0c0c0" stroke-width="0.8"/>
-      <line x1="34" y1="72" x2="46" y2="72" stroke="#c0c0c0" stroke-width="0.8"/>
-      <line x1="34" y1="82" x2="46" y2="82" stroke="#c0c0c0" stroke-width="0.8"/>
-      <line x1="34" y1="92" x2="46" y2="92" stroke="#c0c0c0" stroke-width="0.8"/>
-      <line x1="34" y1="102" x2="46" y2="102" stroke="#c0c0c0" stroke-width="0.8"/>
-      <!-- 4 Strings on neck -->
-      <line x1="36" y1="32" x2="36" y2="105" stroke="#ddd" stroke-width="0.5"/>
-      <line x1="39" y1="32" x2="39" y2="105" stroke="#ddd" stroke-width="0.7"/>
-      <line x1="41" y1="32" x2="41" y2="105" stroke="#ddd" stroke-width="0.9"/>
-      <line x1="44" y1="32" x2="44" y2="105" stroke="#ddd" stroke-width="1.1"/>
-      <!-- Body (white) -->
-      <path d="M40 105 Q16 105 12 132 Q8 158 15 183 Q22 196 40 199 Q58 196 65 183 Q72 158 68 132 Q64 105 40 105 Z" fill="#f8f8f3" stroke="#bbb" stroke-width="0.5"/>
-      <!-- Pickguard (black backplate) -->
-      <path d="M40 116 Q24 116 20 136 Q17 156 21 176 Q25 190 40 194 Q55 190 59 176 Q63 156 60 136 Q56 116 40 116 Z" fill="#0a0a0a"/>
-      <!-- Pickups -->
-      <rect x="34" y="136" width="12" height="4" fill="#333" rx="0.5"/>
-      <rect x="34" y="156" width="12" height="4" fill="#333" rx="0.5"/>
-      <!-- Control knobs -->
-      <circle cx="51" cy="174" r="3" fill="#1a1a1a"/>
-      <circle cx="56" cy="166" r="3" fill="#1a1a1a"/>
-      <!-- Bridge -->
-      <rect x="33" y="182" width="14" height="5" fill="#333" rx="0.5"/>
-      <!-- Strings on body -->
-      <line x1="36" y1="105" x2="36" y2="132" stroke="#ccc" stroke-width="0.5"/>
-      <line x1="39" y1="105" x2="39" y2="132" stroke="#ccc" stroke-width="0.7"/>
-      <line x1="41" y1="105" x2="41" y2="132" stroke="#ccc" stroke-width="0.9"/>
-      <line x1="44" y1="105" x2="44" y2="132" stroke="#ccc" stroke-width="1.1"/>
-    </svg>
-    <div class="welcome-text" id="welcomeText"></div>
+    <img src="assets/bass-icon.png" class="bass-icon-img" alt="bass">
+    <div class="welcome-text" id="welcomeText">
+      <span class="welcome-line" id="line1"></span>
+      <span class="welcome-line" id="line2"></span>
+      <span class="welcome-line last" id="line3"></span>
+    </div>
   </div>
 </div>
 
@@ -395,46 +371,32 @@ function doLogin(){
 }
 
 function showWelcome(){
-  // 欢迎语分段：普通段 + 高亮段("鲨老师")
-  var segments=[
-    {text:'欢迎未来的bass新星',hl:false},
-    {text:'鲨老师',hl:true},
-    {text:'登录~！！！',hl:false}
+  // 三行欢迎语
+  var lines=[
+    {el:'line1',text:'欢迎登录'},
+    {el:'line2',text:'未来的Bass新星'},
+    {el:'line3',text:'鲨鱼辣椒老师'}
   ];
-  // 展开成字符数组，带高亮标记
-  var chars=[];
-  for(var si=0;si<segments.length;si++){
-    for(var ci=0;ci<segments[si].text.length;ci++){
-      chars.push({ch:segments[si].text[ci],hl:segments[si].hl});
-    }
-  }
 
-  welcomeText.innerHTML='';
+  document.getElementById('line1').textContent='';
+  document.getElementById('line2').textContent='';
+  document.getElementById('line3').textContent='';
   overlay.classList.add('show');
   spawnFireworkRing();
 
-  // 用于追踪高亮span
-  var hlSpan=null;
-  var inHl=false;
-  var i=0;
+  var lineIndex=0;
+  var charIndex=0;
   var typing=setInterval(function(){
-    if(i<chars.length){
-      var c=chars[i];
-      if(c.hl){
-        if(!inHl){
-          // 关闭之前的文本节点（不需要显式操作）
-          hlSpan=document.createElement('span');
-          hlSpan.className='bass-highlight';
-          welcomeText.appendChild(hlSpan);
-          inHl=true;
-        }
-        hlSpan.textContent+=c.ch;
+    if(lineIndex<lines.length){
+      var line=lines[lineIndex];
+      if(charIndex<line.text.length){
+        document.getElementById(line.el).textContent+=line.text[charIndex];
+        charIndex++;
+        spawnSparks(welcomeBox);
       }else{
-        inHl=false;
-        welcomeText.appendChild(document.createTextNode(c.ch));
+        lineIndex++;
+        charIndex=0;
       }
-      i++;
-      spawnSparks(welcomeBox);
     }else{
       clearInterval(typing);
       burstFireworks();

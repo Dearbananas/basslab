@@ -29,6 +29,17 @@ a:hover{color:var(--accent2)}
 .nav-item:hover{color:var(--fg);background:var(--bg3)}
 .nav-item.active{color:var(--accent);border-left-color:var(--accent);background:var(--bg3)}
 .nav-sub{padding-left:40px;font-size:13px}
+.nav-group-title{cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:space-between}
+.nav-group-title .chevron{font-size:10px;color:var(--fg3);transition:transform .3s ease;margin-right:24px}
+.nav-group.collapsed .nav-group-title .chevron{transform:rotate(-90deg)}
+.nav-children{overflow:hidden;transition:max-height .4s ease,opacity .25s ease;max-height:800px;opacity:1}
+.nav-group.collapsed .nav-children{max-height:0;opacity:0}
+.nav-parent{display:flex;align-items:center;justify-content:space-between}
+.nav-parent .sub-chev{font-size:9px;color:var(--fg3);margin-right:8px;transition:transform .2s}
+.nav-sub-wrap{overflow:hidden;transition:max-height .3s ease;max-height:300px}
+.nav-sub-wrap.collapsed{max-height:0}
+.nav-sub-wrap.collapsed + .nav-parent .sub-chev,
+.nav-parent.collapsed .sub-chev{transform:rotate(-90deg)}
 .main{margin-left:280px;flex:1;min-width:0}
 .hero{position:relative;padding:80px 60px 60px;background:linear-gradient(135deg,var(--bg2) 0%,var(--bg) 100%);border-bottom:1px solid var(--bg4);overflow:hidden}
 .hero::before{content:'';position:absolute;top:-50%;right:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(245,166,35,.08) 0%,transparent 70%);pointer-events:none}
@@ -133,6 +144,83 @@ a:hover{color:var(--accent2)}
 .beat-dot{width:16px;height:16px;border-radius:50%;background:var(--bg4);transition:all .1s}
 .beat-dot.active{background:var(--accent2);box-shadow:0 0 12px var(--accent2)}
 .beat-dots{display:flex;gap:8px}
+/* === 增强节拍器 === */
+.metro-wrap{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:32px;margin:20px 0}
+.metro-row{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:20px}
+.metro-bpm-box{text-align:center;min-width:120px}
+.metro-bpm-num{font-size:56px;font-weight:800;color:var(--accent);font-family:var(--mono);line-height:1;cursor:text;outline:none;border:1px solid transparent;border-radius:8px;padding:2px 8px;transition:border-color .2s}
+.metro-bpm-num:focus{border-color:var(--accent)}
+.metro-bpm-label{font-size:13px;color:var(--fg3);margin-top:4px}
+.metro-slider{width:200px;-webkit-appearance:none;height:6px;border-radius:3px;background:var(--bg4);outline:none}
+.metro-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 0 8px rgba(245,166,35,.4)}
+.metro-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:none}
+.metro-btns{display:flex;gap:6px}
+.metro-btn{background:var(--bg4);color:var(--fg);border:none;width:38px;height:38px;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;transition:all .15s}
+.metro-btn:hover{background:var(--accent);color:var(--bg)}
+.metro-tap{background:var(--bg3);color:var(--accent3);border:1px solid var(--accent3);padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.metro-tap:hover{background:var(--accent3);color:var(--bg)}
+.metro-tap:active{transform:scale(.95)}
+.metro-selects{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.metro-field{display:flex;flex-direction:column;gap:4px}
+.metro-field label{font-size:11px;color:var(--fg3);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.metro-field select{background:var(--bg4);color:var(--fg);border:1px solid var(--bg4);border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer;outline:none;font-family:var(--font);min-width:130px}
+.metro-field select:focus{border-color:var(--accent)}
+.metro-field input[type=range]{width:120px}
+.metro-vol{display:flex;align-items:center;gap:8px}
+.metro-beats{display:flex;gap:12px;justify-content:center;margin:20px 0}
+.metro-beat{width:28px;height:28px;border-radius:50%;background:var(--bg4);border:2px solid var(--bg4);transition:all .1s;position:relative}
+.metro-beat.accent{border-color:var(--accent2)}
+.metro-beat.lit{background:var(--accent2);box-shadow:0 0 16px var(--accent2);transform:scale(1.15)}
+.metro-beat.lit.normal{background:var(--accent);box-shadow:0 0 12px var(--accent)}
+.metro-beat.lit.sub{background:var(--accent3);box-shadow:0 0 8px var(--accent3);transform:scale(1.05)}
+.metro-start-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:14px 40px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:1px}
+.metro-start-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(245,166,35,.3)}
+.metro-start-btn.running{background:linear-gradient(135deg,var(--accent2),#c0392b)}
+.metro-sub-label{font-size:11px;color:var(--fg3);text-align:center;margin-top:-8px;margin-bottom:12px}
+
+/* === 灵感记录工具 === */
+.insp-wrap{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:28px;margin:20px 0}
+.insp-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--bg4)}
+.insp-tab{padding:10px 24px;font-size:14px;color:var(--fg3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-weight:600}
+.insp-tab:hover{color:var(--fg)}
+.insp-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.insp-panel{display:none}
+.insp-panel.active{display:block}
+.insp-record-area{display:flex;flex-direction:column;align-items:center;gap:16px;padding:20px}
+.insp-rec-btn{width:80px;height:80px;border-radius:50%;background:var(--bg3);border:3px solid var(--accent2);color:var(--accent2);font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.insp-rec-btn:hover{background:rgba(233,69,96,.15)}
+.insp-rec-btn.recording{background:var(--accent2);color:#fff;animation:recPulse 1s ease-in-out infinite}
+@keyframes recPulse{0%,100%{box-shadow:0 0 0 0 rgba(233,69,96,.4)}50%{box-shadow:0 0 0 16px rgba(233,69,96,0)}}
+.insp-rec-time{font-size:24px;font-family:var(--mono);color:var(--accent);font-weight:700}
+.insp-rec-hint{font-size:13px;color:var(--fg3)}
+.insp-rec-player{display:none;width:100%;margin-top:12px}
+.insp-rec-player audio{width:100%;margin-bottom:8px}
+.insp-tab-area{background:var(--bg);border:1px solid var(--bg4);border-radius:8px;padding:16px;font-family:var(--mono);font-size:13px;color:var(--fg2);width:100%;min-height:200px;resize:vertical;line-height:1.6;outline:none;transition:border-color .2s}
+.insp-tab-area:focus{border-color:var(--accent)}
+.insp-tab-toolbar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.insp-tab-btn{background:var(--bg4);color:var(--fg2);border:1px solid var(--bg4);padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .15s;font-family:var(--mono)}
+.insp-tab-btn:hover{border-color:var(--accent);color:var(--accent)}
+.insp-save-row{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.insp-title-input{flex:1;min-width:200px;padding:10px 14px;background:var(--bg);border:1px solid var(--bg4);border-radius:8px;color:var(--fg);font-size:14px;outline:none;transition:border-color .2s;font-family:var(--font)}
+.insp-title-input:focus{border-color:var(--accent)}
+.insp-save-btn{padding:10px 28px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-size:14px;transition:transform .15s;font-family:var(--font)}
+.insp-save-btn:hover{transform:translateY(-1px)}
+.insp-list{margin-top:24px}
+.insp-list-title{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:12px}
+.insp-item{background:var(--bg3);border:1px solid var(--bg4);border-radius:10px;padding:16px;margin-bottom:10px;transition:border-color .2s}
+.insp-item:hover{border-color:var(--accent)}
+.insp-item-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.insp-item-title{font-weight:700;font-size:14px;color:var(--fg)}
+.insp-item-meta{font-size:11px;color:var(--fg3)}
+.insp-item-type{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.insp-type-audio{background:rgba(233,69,96,.15);color:var(--accent2)}
+.insp-type-tab{background:rgba(0,212,170,.15);color:var(--accent3)}
+.insp-item-body{font-size:13px;color:var(--fg2);margin-top:8px}
+.insp-item-body pre{font-family:var(--mono);font-size:12px;white-space:pre-wrap;color:var(--fg2);background:var(--bg);padding:12px;border-radius:6px;margin-top:8px;overflow-x:auto}
+.insp-item-audio{width:100%;margin-top:8px}
+.insp-del-btn{font-size:11px;padding:3px 10px;border-radius:6px;border:1px solid var(--accent2);background:transparent;color:var(--accent2);cursor:pointer;transition:all .2s;font-family:var(--font)}
+.insp-del-btn:hover{background:var(--accent2);color:#fff}
+.insp-empty{text-align:center;color:var(--fg3);font-size:14px;padding:30px}
 .c-rock{border-top:3px solid #e94560}
 .c-punk{border-top:3px solid #f5a623}
 .c-metal{border-top:3px solid #6a0dad}
@@ -188,6 +276,189 @@ a:hover{color:var(--accent2)}
 .form-msg{font-size:12px;margin-top:8px;min-height:16px}
 .form-msg.ok{color:var(--accent3)}
 .form-msg.err{color:var(--accent2)}
+
+/* === 签到打卡 === */
+.checkin-btn{font-size:13px;padding:6px 14px;border-radius:20px;border:1px solid var(--accent3);background:rgba(0,212,170,.1);color:var(--accent3);cursor:pointer;transition:all .2s;font-family:var(--font);font-weight:600;white-space:nowrap}
+.checkin-btn:hover{background:var(--accent3);color:var(--bg)}
+.checkin-btn:disabled{opacity:.5;cursor:default;border-color:var(--fg3);color:var(--fg3);background:var(--bg3)}
+.checkin-btn.done{border-color:var(--accent3);background:rgba(0,212,170,.2);color:var(--accent3);cursor:default}
+.checkin-info{font-size:12px;color:var(--fg3);background:var(--bg3);border:1px solid var(--bg4);padding:4px 12px;border-radius:20px;white-space:nowrap}
+.checkin-info b{color:var(--accent);font-size:14px}
+.streak-flame{font-size:14px;margin-right:2px}
+.reward-overlay{position:fixed;inset:0;z-index:9999;background:rgba(15,15,26,.8);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;opacity:0;transition:opacity .3s}
+.reward-overlay.show{display:flex;opacity:1}
+.reward-modal{width:400px;max-width:90vw;background:var(--bg2);border:2px solid var(--accent);border-radius:20px;padding:40px;text-align:center;position:relative;box-shadow:0 0 60px rgba(245,166,35,.3);animation:rewardPop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes rewardPop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.reward-icon{font-size:64px;margin-bottom:16px;animation:rewardBounce 1s ease-in-out infinite}
+@keyframes rewardBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.reward-title{font-size:24px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.reward-desc{font-size:15px;color:var(--fg2);margin-bottom:20px}
+.reward-badge{display:inline-block;padding:8px 20px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:20px;font-weight:700;font-size:14px;letter-spacing:1px}
+.reward-close{margin-top:24px;padding:10px 32px;background:var(--bg4);color:var(--fg);border:none;border-radius:10px;font-size:14px;cursor:pointer;font-family:var(--font);transition:all .2s}
+.reward-close:hover{background:var(--accent);color:var(--bg)}
+
+/* === 鼓机 === */
+.drum-wrap{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:32px;margin:20px 0}
+.drum-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.drum-header h4{font-size:20px;font-weight:800;color:var(--accent)}
+.drum-patterns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.drum-pat{padding:8px 16px;border-radius:8px;border:1.5px solid var(--bg4);background:var(--bg3);color:var(--fg2);font-size:13px;cursor:pointer;transition:all .15s;font-family:var(--font);font-weight:600}
+.drum-pat:hover{border-color:var(--accent)}
+.drum-pat.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.drum-grid-wrap{overflow-x:auto;margin-bottom:16px}
+.drum-grid{display:inline-block;min-width:100%}
+.drum-track{display:flex;align-items:center;gap:2px;margin-bottom:4px}
+.drum-track-label{width:80px;font-size:13px;font-weight:600;color:var(--fg2);flex-shrink:0;text-align:right;padding-right:10px}
+.drum-cell{width:32px;height:32px;border-radius:6px;flex-shrink:0;cursor:pointer;transition:all .1s;border:1px solid var(--bg4);background:var(--bg3);position:relative}
+.drum-cell:hover{border-color:var(--accent)}
+.drum-cell.on{background:var(--accent);border-color:var(--accent)}
+.drum-cell.on.kick{background:var(--accent2);border-color:var(--accent2)}
+.drum-cell.on.snare{background:#fff;border-color:#fff}
+.drum-cell.on.hat{background:var(--accent3);border-color:var(--accent3)}
+.drum-cell.beat-start{margin-left:6px;border-left:2px solid var(--fg3)}
+.drum-cell.playing{box-shadow:0 0 12px currentColor;transform:scale(1.15)}
+.drum-step-row{display:flex;align-items:center;gap:2px;margin-bottom:6px;margin-left:82px}
+.drum-step-num{width:32px;text-align:center;font-size:10px;color:var(--fg3);flex-shrink:0}
+.drum-step-num.accent{color:var(--accent2);font-weight:700}
+.drum-controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:16px}
+.drum-bpm-row{display:flex;align-items:center;gap:8px}
+.drum-bpm-row label{font-size:12px;color:var(--fg3);font-weight:600}
+.drum-bpm-row input{width:80px}
+.drum-start-btn{background:linear-gradient(135deg,var(--accent3),#009970);color:#fff;border:none;padding:12px 32px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s}
+.drum-start-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,212,170,.3)}
+.drum-start-btn.running{background:linear-gradient(135deg,var(--accent2),#c0392b)}
+
+/* === 任务栏 === */
+.task-wrap{max-width:900px;margin:0}
+.task-cards{display:grid;gap:16px}
+.task-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--radius);padding:24px;transition:all .2s;position:relative;overflow:hidden}
+.task-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.task-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px}
+.task-card.status-open::before{background:var(--accent3)}
+.task-card.status-claimed::before{background:var(--accent)}
+.task-card.status-done::before{background:var(--fg3)}
+.task-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.task-card-title{font-size:17px;font-weight:700;color:var(--fg)}
+.task-card-status{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600;white-space:nowrap}
+.task-card-status.open{background:rgba(0,212,170,.15);color:var(--accent3)}
+.task-card-status.claimed{background:rgba(245,166,35,.15);color:var(--accent)}
+.task-card-status.done{background:rgba(106,106,133,.2);color:var(--fg3)}
+.task-card-desc{font-size:14px;color:var(--fg2);line-height:1.8;margin-bottom:10px}
+.task-card-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--fg3)}
+.task-card-reward{color:var(--accent);font-weight:600}
+.task-card-claim{color:var(--accent3);font-weight:600}
+.task-card-actions{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+.task-btn{font-size:13px;padding:8px 18px;border-radius:8px;border:none;cursor:pointer;font-family:var(--font);font-weight:600;transition:all .15s}
+.task-btn-claim{background:var(--accent3);color:var(--bg)}
+.task-btn-claim:hover{background:#00b88a}
+.task-btn-complete{background:var(--accent);color:var(--bg)}
+.task-btn-complete:hover{background:#e89200}
+.task-btn-delete{background:transparent;border:1px solid var(--accent2);color:var(--accent2)}
+.task-btn-delete:hover{background:var(--accent2);color:#fff}
+.task-admin-panel{background:var(--bg3);border:1px dashed var(--bg4);border-radius:var(--radius);padding:24px;margin-bottom:24px}
+.task-admin-panel h4{font-size:16px;color:var(--accent);margin-bottom:16px}
+.task-admin-form{display:flex;flex-direction:column;gap:12px}
+.task-admin-form input,.task-admin-form textarea{padding:10px 14px;background:var(--bg);border:1.5px solid var(--bg4);border-radius:8px;color:var(--fg);font-size:14px;font-family:var(--font);outline:none;transition:border-color .2s}
+.task-admin-form input:focus,.task-admin-form textarea:focus{border-color:var(--accent)}
+.task-admin-form textarea{resize:vertical;min-height:60px}
+.task-admin-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.task-admin-row input{flex:1;min-width:150px}
+.task-submit-btn{padding:10px 24px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer;font-family:var(--font);font-size:14px;transition:transform .15s;white-space:nowrap}
+.task-submit-btn:hover{transform:translateY(-1px)}
+.task-empty{text-align:center;padding:40px;color:var(--fg3);font-size:15px}
+
+/* === 任务栏滑动弹窗 === */
+.task-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(2px);z-index:9000;opacity:0;pointer-events:none;transition:opacity .3s}
+.task-overlay.show{opacity:1;pointer-events:auto}
+.task-panel{position:fixed;top:0;right:-440px;width:420px;max-width:90vw;height:100vh;background:var(--bg2);border-left:1px solid var(--bg4);box-shadow:-8px 0 32px rgba(0,0,0,.4);z-index:9001;transition:right .35s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;overflow:hidden}
+.task-panel.show{right:0}
+.task-panel-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:var(--bg3);border-bottom:1px solid var(--bg4);flex-shrink:0}
+.task-panel-header h3{font-size:20px;font-weight:800;color:var(--fg);margin:0}
+.task-panel-close{background:none;border:none;font-size:28px;color:var(--fg3);cursor:pointer;padding:0;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all .15s;line-height:1}
+.task-panel-close:hover{color:var(--accent2);background:rgba(255,255,255,.05)}
+.task-panel-body{flex:1;overflow-y:auto;padding:20px 24px}
+.task-panel-intro{font-size:13px;color:var(--fg3);line-height:1.7;margin-bottom:20px;padding:12px 16px;background:var(--bg3);border-radius:10px;border-left:3px solid var(--accent3)}
+.task-panel .task-admin-panel{margin-bottom:20px}
+.task-panel .task-cards{margin-bottom:0}
+@media(max-width:768px){
+  .task-panel{width:100vw;right:-100vw}
+  .task-panel.show{right:0}
+}
+
+/* === 推荐曲目（网易云嵌入） === */
+.song-item{cursor:pointer;transition:all .15s}
+.song-item:hover{background:var(--bg4);transform:translateX(4px)}
+.song-item .play-icon{color:var(--accent3);font-size:14px;margin-right:6px}
+.netease-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);z-index:9100;opacity:0;pointer-events:none;transition:opacity .3s}
+.netease-overlay.show{opacity:1;pointer-events:auto}
+.netease-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);width:90%;max-width:680px;background:var(--bg2);border:1px solid var(--bg4);border-radius:16px;z-index:9101;opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.22,1,.36,1);overflow:hidden}
+.netease-modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.nm-header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;background:var(--bg3);border-bottom:1px solid var(--bg4)}
+.nm-header h3{font-size:17px;font-weight:800;color:var(--fg);margin:0}
+.nm-header .nm-artist{font-size:12px;color:var(--fg3);margin-top:2px}
+.nm-close{background:none;border:none;font-size:24px;color:var(--fg3);cursor:pointer;padding:4px 8px;border-radius:8px;transition:all .15s;line-height:1}
+.nm-close:hover{color:var(--accent2);background:rgba(255,255,255,.05)}
+.nm-body{padding:20px}
+.nm-body iframe{width:100%;height:380px;border:none;border-radius:10px}
+.nm-hint{text-align:center;font-size:12px;color:var(--fg3);margin-top:12px}
+@media(max-width:768px){
+  .netease-modal{width:95%}
+}
+
+/* === Bass Aerobics 乐句练习 === */
+.aerobics-intro{background:var(--bg3);border:1px solid var(--bg4);border-radius:12px;padding:24px;margin-bottom:24px}
+.aerobics-intro h4{font-size:16px;font-weight:800;color:var(--fg);margin:0 0 8px}
+.aerobics-intro p{font-size:14px;color:var(--fg2);line-height:1.7;margin:4px 0}
+.aerobics-intro .book-info{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap}
+.aerobics-intro .book-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.aerobics-chapter{margin-bottom:32px}
+.aerobics-chapter-title{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800;color:var(--fg);margin-bottom:4px;padding-bottom:12px;border-bottom:2px solid var(--bg4)}
+.aerobics-chapter-title .ch-num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;font-size:14px;font-weight:800;flex-shrink:0}
+.aerobics-chapter-desc{font-size:13px;color:var(--fg3);margin-bottom:16px;padding-left:42px}
+.aerobics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.aerobics-card{background:var(--bg3);border:1px solid var(--bg4);border-radius:12px;overflow:hidden;transition:all .2s}
+.aerobics-card:hover{border-color:var(--accent3);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.aerobics-card-header{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--bg4)}
+.aerobics-card-num{font-size:12px;font-weight:800;color:var(--bg);background:var(--accent3);padding:2px 10px;border-radius:6px;flex-shrink:0}
+.aerobics-card-title{flex:1;font-size:13px;font-weight:700;color:var(--fg)}
+.aerobics-card-style{font-size:11px;color:var(--fg3);padding:2px 8px;border-radius:4px;background:var(--bg2);white-space:nowrap}
+.aerobics-card-body{padding:12px 16px;font-size:12px;color:var(--fg2);line-height:1.6}
+.aerobics-bpm{display:inline-block;font-family:var(--mono);font-size:11px;color:var(--accent3);font-weight:700;margin-left:8px}
+
+/* === 练习操作按钮 === */
+.aerobics-actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.aerobics-action-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:1px solid var(--bg4);background:var(--bg2);color:var(--fg2);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.aerobics-action-btn:hover{background:var(--bg4);color:var(--fg)}
+.aerobics-action-btn.sheet-btn:hover{border-color:var(--accent3);color:var(--accent3)}
+.aerobics-action-btn.video-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+
+/* === 谱子放大弹窗 === */
+.sheet-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:9200;opacity:0;pointer-events:none;transition:opacity .3s}
+.sheet-modal-overlay.show{opacity:1;pointer-events:auto}
+.sheet-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.95);width:92vw;height:92vh;background:var(--bg2);border:1px solid var(--bg4);border-radius:16px;z-index:9201;opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
+.sheet-modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.sheet-modal-img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.sheet-modal-close{position:absolute;top:12px;right:16px;width:36px;height:36px;border-radius:50%;border:none;background:var(--bg4);color:var(--fg2);font-size:22px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;z-index:9202}
+.sheet-modal-close:hover{background:var(--accent2);color:#fff}
+
+/* === 视频弹窗 === */
+.video-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);z-index:9300;opacity:0;pointer-events:none;transition:opacity .3s}
+.video-modal-overlay.show{opacity:1;pointer-events:auto}
+.video-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.95);width:min(960px,92vw);z-index:9301;opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.22,1,.36,1);background:var(--bg2);border:1px solid var(--bg4);border-radius:16px;overflow:hidden}
+.video-modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.video-modal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--bg3);border-bottom:1px solid var(--bg4)}
+.video-modal-title{font-size:15px;font-weight:700;color:var(--fg);display:flex;align-items:center;gap:8px}
+.video-modal-close{width:32px;height:32px;border-radius:50%;border:none;background:var(--bg4);color:var(--fg2);font-size:20px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.video-modal-close:hover{background:var(--accent2);color:#fff}
+.video-modal-body{position:relative;width:100%;aspect-ratio:16/9;background:#000}
+.video-modal-body iframe{width:100%;height:100%;border:none;display:block}
+.video-modal-footer{display:flex;gap:12px;padding:10px 20px;background:var(--bg3);border-top:1px solid var(--bg4);justify-content:flex-end}
+.video-modal-footer a{font-size:12px;color:var(--accent3);text-decoration:none;font-weight:600}
+.video-modal-footer a:hover{text-decoration:underline}
+@media(max-width:768px){
+  .sheet-modal{width:96vw;height:96vh;padding:12px}
+  .sheet-modal-close{top:8px;right:10px}
+}
 </style>
 </head>
 <body>
@@ -199,6 +470,9 @@ a:hover{color:var(--accent2)}
     <span class="dot"></span>
     <span id="userBadgeText">游客</span>
   </div>
+  <span class="checkin-info" id="checkinInfo" style="display:none"><span class="streak-flame">🔥</span>连续 <b id="streakDays">0</b> 天</span>
+  <button class="checkin-btn" id="checkinBtn" style="display:none" onclick="doCheckin()">📅 签到打卡</button>
+  <button class="checkin-btn" id="taskBtn" style="display:none;position:relative" onclick="openTaskPanel()">📋 任务栏</button>
   <button class="btn-sm" id="adminBtn" style="display:none" onclick="openAdmin()">用户管理</button>
   <button class="btn-sm danger" onclick="logout()">退出</button>
 </div>
@@ -226,56 +500,125 @@ a:hover{color:var(--accent2)}
   </div>
 </div>
 
-<div class="app">
+<!-- 签到奖励弹窗 -->
+<div class="reward-overlay" id="rewardOverlay" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="reward-modal">
+    <div class="reward-icon" id="rewardIcon">🎉</div>
+    <div class="reward-title" id="rewardTitle">签到成功！</div>
+    <div class="reward-desc" id="rewardDesc">你已连续签到 1 天！</div>
+    <div class="reward-badge" id="rewardBadge" style="display:none"></div>
+    <button class="reward-close" onclick="document.getElementById('rewardOverlay').classList.remove('show')">继续练习 🎸</button>
+  </div>
+</div>
+
+<!-- 任务栏滑动弹窗 -->
+<div class="task-overlay" id="taskOverlay" onclick="if(event.target===this)closeTaskPanel()"></div>
+<div class="task-panel" id="taskPanel">
+  <div class="task-panel-header">
+    <h3>📋 任务栏</h3>
+    <button class="task-panel-close" onclick="closeTaskPanel()">&times;</button>
+  </div>
+  <div class="task-panel-body">
+    <div class="task-panel-intro">管理员 Watermelon 发布练习任务，用户认领完成后可获得奖励。保持每日练习动力！</div>
+    <div class="task-admin-panel" id="taskAdminPanel" style="display:none">
+      <h4>📌 发布新任务</h4>
+      <div class="task-admin-form">
+        <input type="text" id="taskTitle" placeholder="任务标题（如：练习 A 小调五声音阶）" maxlength="60">
+        <textarea id="taskDesc" placeholder="任务描述（练习内容、目标、注意事项…）" maxlength="500"></textarea>
+        <div class="task-admin-row">
+          <input type="text" id="taskReward" placeholder="奖励（如：🎵 弹奏达人徽章）" maxlength="40">
+          <button class="task-submit-btn" onclick="taskPublish()">发布任务</button>
+        </div>
+      </div>
+    </div>
+    <div class="task-cards" id="taskCards"></div>
+  </div>
+</div>
+
+<!-- 网易云音乐播放弹窗 -->
+<div class="netease-overlay" id="nmOverlay" onclick="if(event.target===this)closeNetease()"></div>
+<div class="netease-modal" id="nmModal">
+  <div class="nm-header">
+    <div class="nm-header-info">
+      <h3 id="nmTitle">曲目标题</h3>
+      <div class="nm-artist" id="nmArtist">艺术家</div>
+    </div>
+    <button class="nm-close" onclick="closeNetease()">&times;</button>
+  </div>
+  <div class="nm-body">
+    <iframe id="nmFrame" src="" allow="autoplay; encrypted-media"></iframe>
+    <div class="nm-hint" id="nmHint"></div>
+  </div>
+</div>
 
 <!-- SIDEBAR -->
 <nav class="sidebar" id="sidebar">
   <div class="sidebar-brand"><span class="logo">🎸</span><div><h1>BassLab</h1><span>贝斯学习实验室</span></div></div>
   <div class="nav-group">
-    <div class="nav-group-title">起点</div>
-    <a class="nav-item" href="#hero">首页</a>
-    <a class="nav-item" href="#overview">贝斯是什么</a>
+    <div class="nav-group-title" onclick="toggleNavGroup(this)">起点 <span class="chevron">▼</span></div>
+    <div class="nav-children">
+      <a class="nav-item" href="#hero">首页</a>
+      <a class="nav-item" href="#overview">贝斯是什么</a>
+    </div>
   </div>
   <div class="nav-group">
-    <div class="nav-group-title">乐理知识</div>
-    <a class="nav-item" href="#basics">一、贝斯基础</a>
-    <a class="nav-item nav-sub" href="#basics-tuning">调弦与持琴</a>
-    <a class="nav-item nav-sub" href="#basics-fingerboard">指板音位</a>
-    <a class="nav-item" href="#scales">二、音阶系统</a>
-    <a class="nav-item nav-sub" href="#scales-major">大调音阶</a>
-    <a class="nav-item nav-sub" href="#scales-minor">小调音阶</a>
-    <a class="nav-item nav-sub" href="#scales-penta">五声与蓝调</a>
-    <a class="nav-item nav-sub" href="#scales-modes">调式音阶</a>
-    <a class="nav-item" href="#chords">三、音程与和弦</a>
-    <a class="nav-item nav-sub" href="#chords-interval">音程关系</a>
-    <a class="nav-item nav-sub" href="#chords-triad">三和弦与七和弦</a>
-    <a class="nav-item nav-sub" href="#chords-progression">和弦走向</a>
-    <a class="nav-item" href="#rhythm">四、节奏训练</a>
-    <a class="nav-item nav-sub" href="#rhythm-basics">基础节拍</a>
-    <a class="nav-item nav-sub" href="#rhythm-groove">Groove与Pocket</a>
-    <a class="nav-item" href="#technique">五、技巧大全</a>
-    <a class="nav-item nav-sub" href="#tech-finger">指弹</a>
-    <a class="nav-item nav-sub" href="#tech-slap">Slap & Pop</a>
-    <a class="nav-item nav-sub" href="#tech-pick">拨片</a>
-    <a class="nav-item" href="#bassline">六、贝斯线条构建</a>
+    <div class="nav-group-title" onclick="toggleNavGroup(this)">乐理知识 <span class="chevron">▼</span></div>
+    <div class="nav-children">
+      <a class="nav-item nav-parent" href="#basics" onclick="navParentClick(event,this)">一、贝斯基础 <span class="sub-chev">▼</span></a>
+      <div class="nav-sub-wrap">
+        <a class="nav-item nav-sub" href="#basics-tuning">调弦与持琴</a>
+        <a class="nav-item nav-sub" href="#basics-fingerboard">指板音位</a>
+      </div>
+      <a class="nav-item nav-parent" href="#scales" onclick="navParentClick(event,this)">二、音阶系统 <span class="sub-chev">▼</span></a>
+      <div class="nav-sub-wrap">
+        <a class="nav-item nav-sub" href="#scales-major">大调音阶</a>
+        <a class="nav-item nav-sub" href="#scales-minor">小调音阶</a>
+        <a class="nav-item nav-sub" href="#scales-penta">五声与蓝调</a>
+        <a class="nav-item nav-sub" href="#scales-modes">调式音阶</a>
+      </div>
+      <a class="nav-item nav-parent" href="#chords" onclick="navParentClick(event,this)">三、音程与和弦 <span class="sub-chev">▼</span></a>
+      <div class="nav-sub-wrap">
+        <a class="nav-item nav-sub" href="#chords-interval">音程关系</a>
+        <a class="nav-item nav-sub" href="#chords-triad">三和弦与七和弦</a>
+        <a class="nav-item nav-sub" href="#chords-progression">和弦走向</a>
+      </div>
+      <a class="nav-item nav-parent" href="#rhythm" onclick="navParentClick(event,this)">四、节奏训练 <span class="sub-chev">▼</span></a>
+      <div class="nav-sub-wrap">
+        <a class="nav-item nav-sub" href="#rhythm-basics">基础节拍</a>
+        <a class="nav-item nav-sub" href="#rhythm-groove">Groove与Pocket</a>
+      </div>
+      <a class="nav-item nav-parent" href="#technique" onclick="navParentClick(event,this)">五、技巧大全 <span class="sub-chev">▼</span></a>
+      <div class="nav-sub-wrap">
+        <a class="nav-item nav-sub" href="#tech-finger">指弹</a>
+        <a class="nav-item nav-sub" href="#tech-slap">Slap & Pop</a>
+        <a class="nav-item nav-sub" href="#tech-pick">拨片</a>
+      </div>
+      <a class="nav-item" href="#bassline">六、贝斯线条构建</a>
+    </div>
   </div>
   <div class="nav-group">
-    <div class="nav-group-title">风格化练习</div>
-    <a class="nav-item" href="#style-rock">摇滚 Rock</a>
-    <a class="nav-item" href="#style-punk">朋克 Punk</a>
-    <a class="nav-item" href="#style-metal">金属 Metal</a>
-    <a class="nav-item" href="#style-jazz">爵士 Jazz</a>
-    <a class="nav-item" href="#style-funk">放克 Funk</a>
-    <a class="nav-item" href="#style-disco">迪斯科 Disco</a>
-    <a class="nav-item" href="#style-reggae">雷鬼 Reggae</a>
-    <a class="nav-item" href="#style-blues">蓝调 Blues</a>
-    <a class="nav-item" href="#style-rnb">R&B / Soul</a>
-    <a class="nav-item" href="#style-latin">拉丁 Latin</a>
+    <div class="nav-group-title" onclick="toggleNavGroup(this)">风格化练习 <span class="chevron">▼</span></div>
+    <div class="nav-children">
+      <a class="nav-item" href="#style-rock">摇滚 Rock</a>
+      <a class="nav-item" href="#style-punk">朋克 Punk</a>
+      <a class="nav-item" href="#style-metal">金属 Metal</a>
+      <a class="nav-item" href="#style-jazz">爵士 Jazz</a>
+      <a class="nav-item" href="#style-funk">放克 Funk</a>
+      <a class="nav-item" href="#style-disco">迪斯科 Disco</a>
+      <a class="nav-item" href="#style-reggae">雷鬼 Reggae</a>
+      <a class="nav-item" href="#style-blues">蓝调 Blues</a>
+      <a class="nav-item" href="#style-rnb">R&B / Soul</a>
+      <a class="nav-item" href="#style-latin">拉丁 Latin</a>
+      <a class="nav-item" href="#bass-aerobics" style="margin-top:8px;border-top:1px solid var(--bg4);padding-top:8px">🎯 Bass Aerobics 乐句练习</a>
+    </div>
   </div>
   <div class="nav-group">
-    <div class="nav-group-title">工具</div>
-    <a class="nav-item" href="#fretboard-tool">交互指板</a>
-    <a class="nav-item" href="#metronome-tool">节拍器</a>
+    <div class="nav-group-title" onclick="toggleNavGroup(this)">工具 <span class="chevron">▼</span></div>
+    <div class="nav-children">
+      <a class="nav-item" href="#fretboard-tool">交互指板</a>
+      <a class="nav-item" href="#metronome-tool">节拍器与鼓机</a>
+      <a class="nav-item" href="#inspiration-tool">灵感记录</a>
+    </div>
   </div>
 </nav>
 
@@ -290,7 +633,7 @@ a:hover{color:var(--accent2)}
     <div class="hero-stat"><div class="num">6</div><div class="label">乐理板块</div></div>
     <div class="hero-stat"><div class="num">10</div><div class="label">音乐风格</div></div>
     <div class="hero-stat"><div class="num">80+</div><div class="label">推荐曲目</div></div>
-    <div class="hero-stat"><div class="num">1</div><div class="label">交互式指板</div></div>
+    <div class="hero-stat"><div class="num">52</div><div class="label">Aerobics练习</div></div>
   </div>
 </section>
 
@@ -1213,6 +1556,27 @@ a:hover{color:var(--accent2)}
   </div>
 </div>
 
+<!-- ====== BASS AEROBICS 乐句练习 ====== -->
+<section class="section" id="bass-aerobics">
+  <div class="section-header">
+    <span class="section-tag">WORKOUT</span>
+    <h3>Bass Aerobics 乐句练习</h3>
+    <p>参考 Jon Liebman 的《Bass Aerobics》教材，52 周循序渐进的贝斯有氧练习。每周一条练习，涵盖半音、音阶琶音、跨弦、Slap 等技巧。点击「查看谱子」可浏览教材原谱，点击卡片观看 B 站演示视频（UP主：<a href="https://space.bilibili.com/8759032/lists/2116003?type=season" target="_blank" style="color:var(--accent3)">一只麦扣的日常</a> 的 52 条合集，视频后半段附无贝斯伴奏+谱）。</p>
+  </div>
+  <div class="aerobics-intro">
+    <h4>📚 教材介绍</h4>
+    <p>《Bass Aerobics》是世界著名贝斯教育家 Jon Liebman 编写的 52 周贝斯训练计划。每周一条练习（Workout），涵盖摇滚、放克、R&B、蓝调、爵士、迪斯科、雷鬼等多种风格。配套音频包含示范和伴奏，可以循环播放跟练。</p>
+    <p>本书分为 <strong>4 个章节</strong>：第 1-20 周聚焦<strong>半音阶与音阶琶音</strong>，第 21-30 周聚焦<strong>跨弦与高级模式</strong>，第 31-40 周聚焦<strong>Slap & Pop 技巧</strong>，第 41-52 周为<strong>综合复习</strong>。</p>
+    <div class="book-info">
+      <span class="book-tag" style="background:rgba(0,212,170,.15);color:var(--accent3)">📖 52 条练习</span>
+      <span class="book-tag" style="background:rgba(255,170,0,.15);color:var(--accent2)">🗓️ 每周一条</span>
+      <span class="book-tag" style="background:rgba(136,136,255,.15);color:#8888ff">🎸 多种风格</span>
+      <span class="book-tag" style="background:rgba(255,100,100,.15);color:var(--accent)">🎵 配套音频</span>
+    </div>
+  </div>
+  <div id="aerobicsContent"></div>
+</section>
+
 <!-- ====== FRETBOARD TOOL ====== -->
 <section class="section" id="fretboard-tool">
   <div class="section-header">
@@ -1260,32 +1624,159 @@ a:hover{color:var(--accent2)}
 <section class="section" id="metronome-tool">
   <div class="section-header">
     <span class="section-tag">TOOL</span>
-    <h3>节拍器</h3>
-    <p>贝斯手最好的朋友。点击开始，设置 BPM，跟着弹。</p>
+    <h3>节拍器与鼓机</h3>
+    <p>贝斯手最好的朋友。自由调节 BPM、拍号与每拍节奏型，跟着练 groove。下方还内置鼓机，提供多种风格节奏型伴奏。</p>
   </div>
-  <div class="metronome">
-    <div>
-      <div class="bpm-display" id="bpm-value">80</div>
-      <div style="font-size:13px;color:var(--fg3);text-align:center">BPM</div>
+  <div class="metro-wrap">
+    <!-- BPM 控制区 -->
+    <div class="metro-row">
+      <div class="metro-bpm-box">
+        <div class="metro-bpm-num" id="metro-bpm" contenteditable="true" spellcheck="false">80</div>
+        <div class="metro-bpm-label">BPM</div>
+      </div>
+      <div class="metro-btns">
+        <button class="metro-btn" onclick="metroAdjust(-10)">-10</button>
+        <button class="metro-btn" onclick="metroAdjust(-1)">-1</button>
+        <button class="metro-btn" onclick="metroAdjust(1)">+1</button>
+        <button class="metro-btn" onclick="metroAdjust(10)">+10</button>
+      </div>
+      <input type="range" class="metro-slider" id="metro-slider" min="40" max="250" value="80" oninput="metroSetBPM(this.value)">
+      <button class="metro-tap" id="metro-tap" onclick="metroTap()">TAP</button>
     </div>
-    <div class="bpm-controls">
-      <button class="bpm-btn" onclick="adjustBPM(-10)">-10</button>
-      <button class="bpm-btn" onclick="adjustBPM(-1)">-1</button>
-      <button class="bpm-btn" onclick="adjustBPM(1)">+1</button>
-      <button class="bpm-btn" onclick="adjustBPM(10)">+10</button>
+
+    <!-- 拍号 & 节奏型 & 音量 -->
+    <div class="metro-selects">
+      <div class="metro-field">
+        <label>拍号</label>
+        <select id="metro-timesig" onchange="metroUpdateBeats()">
+          <option value="2/4">2/4</option>
+          <option value="3/4">3/4</option>
+          <option value="4/4" selected>4/4</option>
+          <option value="5/4">5/4</option>
+          <option value="6/8">6/8</option>
+          <option value="7/8">7/8</option>
+          <option value="12/8">12/8</option>
+        </select>
+      </div>
+      <div class="metro-field">
+        <label>每拍节奏型</label>
+        <select id="metro-subdiv" onchange="metroUpdateBeats()">
+          <option value="quarter">♩ 四分音符</option>
+          <option value="eighth">♫ 八分音符</option>
+          <option value="triplet">♪♪♪ 三连音</option>
+          <option value="sixteenth">♬♬ 16分音符</option>
+          <option value="d8-16">♪♬ 前八后十六</option>
+          <option value="d16-8">♬♪ 前十六后八</option>
+        </select>
+      </div>
+      <div class="metro-field">
+        <label>音量</label>
+        <div class="metro-vol">
+          <input type="range" id="metro-vol" min="0" max="100" value="60" oninput="metroVol=this.value/100">
+          <span id="metro-vol-label" style="font-size:12px;color:var(--fg3);min-width:30px">60</span>
+        </div>
+      </div>
     </div>
-    <button class="bpm-start" id="metro-start" onclick="toggleMetronome()">开始</button>
-    <div class="beat-dots" id="beat-dots">
-      <div class="beat-dot"></div>
-      <div class="beat-dot"></div>
-      <div class="beat-dot"></div>
-      <div class="beat-dot"></div>
+
+    <!-- 拍点显示 -->
+    <div class="metro-beats" id="metro-beats"></div>
+    <div class="metro-sub-label" id="metro-sub-label">每拍 1 次点击 · 四分音符</div>
+
+    <!-- 开始/停止 -->
+    <div style="text-align:center;margin-top:16px">
+      <button class="metro-start-btn" id="metro-start" onclick="metroToggle()">▶ 开始</button>
     </div>
-    <div style="font-size:13px;color:var(--fg3)">4/4 拍</div>
   </div>
   <div class="callout tip">
     <div class="callout-title">节拍器练习法</div>
-    <p><strong>基础</strong>：每个四分音符弹一个根音。 <strong>进阶</strong>：每拍弹两个八分音符。 <strong>高级</strong>：把节拍器声音关掉只在 2、4 拍响（模拟踩镲），练 swing feel。 <strong>大师</strong>：关掉只在 1 拍响，弹整首歌。</p>
+    <p><strong>基础</strong>：每个四分音符弹一个根音。 <strong>进阶</strong>：每拍弹两个八分音符。 <strong>高级</strong>：把节拍器声音关掉只在 2、4 拍响（模拟踩镲），练 swing feel。 <strong>大师</strong>：关掉只在 1 拍响，弹整首歌。试试切换<strong>三连音</strong>和<strong>前八后十六</strong>来练不同风格的节奏感。</p>
+  </div>
+
+  <!-- ====== 鼓机 Drum Machine ====== -->
+  <div id="drum-tool" style="scroll-margin-top:80px">
+  <div style="height:1px;background:var(--bg4);margin:36px 0 24px"></div>
+  <div style="margin-bottom:16px">
+    <span class="section-tag" style="display:inline-block;font-size:11px;font-weight:700;color:var(--accent3);background:rgba(0,212,170,.12);padding:3px 12px;border-radius:20px;margin-bottom:8px">DRUM</span>
+    <h3 style="font-size:22px;font-weight:800;color:var(--fg)">鼓机 Drum Machine</h3>
+    <p style="color:var(--fg2);font-size:14px;margin-top:4px">内置多种风格鼓机节奏型，可切换底鼓/军鼓/踩镲，配合 BPM 一起练 groove。也可以自定义点击网格修改节奏。</p>
+  </div>
+  <div class="drum-wrap">
+    <div class="drum-header">
+      <h4>选择节奏型</h4>
+      <div class="drum-controls">
+        <div class="drum-bpm-row">
+          <label>BPM</label>
+          <input type="number" id="drum-bpm" value="90" min="40" max="250" style="background:var(--bg4);color:var(--fg);border:1px solid var(--bg4);border-radius:8px;padding:6px 10px;font-size:14px;font-family:var(--mono);width:70px;text-align:center">
+        </div>
+        <button class="drum-start-btn" id="drum-start" onclick="drumToggle()">▶ 开始</button>
+      </div>
+    </div>
+    <div class="drum-patterns" id="drum-patterns"></div>
+    <div class="drum-grid-wrap">
+      <div class="drum-grid" id="drum-grid"></div>
+    </div>
+    <div class="callout tip">
+      <div class="callout-title">鼓机使用提示</div>
+      <p>选择一个节奏型，设好 BPM，点开始。网格上亮起的格子代表当前播放位置。你可以直接点击格子开关某个音——自己编辑节奏！三个轨道分别是<strong>底鼓 Kick</strong>（红）、<strong>军鼓 Snare</strong>（白）、<strong>踩镲 Hi-Hat</strong>（青）。</p>
+    </div>
+  </div>
+  </div>
+</section>
+<section class="section" id="inspiration-tool">
+  <div class="section-header">
+    <span class="section-tag">TOOL</span>
+    <h3>灵感记录</h3>
+    <p>随时录音或编写 TAB 谱，把一闪而过的灵感保存下来。数据存在本地浏览器中，下次打开依然在。</p>
+  </div>
+  <div class="insp-wrap">
+    <div class="insp-tabs">
+      <div class="insp-tab active" onclick="inspSwitchTab('audio')">录音</div>
+      <div class="insp-tab" onclick="inspSwitchTab('tab')">编谱记谱</div>
+    </div>
+
+    <!-- 录音面板 -->
+    <div class="insp-panel active" id="insp-panel-audio">
+      <div class="insp-record-area">
+        <button class="insp-rec-btn" id="insp-rec-btn" onclick="inspToggleRecord()">●</button>
+        <div class="insp-rec-time" id="insp-rec-time">00:00</div>
+        <div class="insp-rec-hint" id="insp-rec-hint">点击按钮开始录音（需要麦克风权限）</div>
+        <div class="insp-rec-player" id="insp-rec-player">
+          <audio id="insp-audio-preview" controls></audio>
+        </div>
+        <div class="insp-save-row" style="width:100%">
+          <input type="text" class="insp-title-input" id="insp-audio-title" placeholder="给这段录音起个名字…" maxlength="50">
+          <button class="insp-save-btn" onclick="inspSaveAudio()">保存录音</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 编谱面板 -->
+    <div class="insp-panel" id="insp-panel-tab">
+      <div class="insp-tab-toolbar">
+        <button class="insp-tab-btn" onclick="inspInsertTabTemplate('basic')">插入空白 TAB</button>
+        <button class="insp-tab-btn" onclick="inspInsertTabTemplate('scale')">插入音阶模板</button>
+        <button class="insp-tab-btn" onclick="inspInsertTabTemplate('riff')">插入 Riff 模板</button>
+        <button class="insp-tab-btn" onclick="inspInsertText('\n')">换行</button>
+        <button class="insp-tab-btn" onclick="inspInsertText('|')">|</button>
+        <button class="insp-tab-btn" onclick="inspInsertText('--')">--</button>
+        <button class="insp-tab-btn" onclick="inspInsertText('~')">~</button>
+      </div>
+      <textarea class="insp-tab-area" id="insp-tab-input" placeholder="在这里编写你的贝斯 TAB 谱或练习笔记…&#10;&#10;示例格式：&#10;G|----------------|&#10;D|-----5--7-------|&#10;A|--5-7-----5--7--|&#10;E|----------------|"></textarea>
+      <div class="insp-save-row">
+        <input type="text" class="insp-title-input" id="insp-tab-title" placeholder="给这段谱子起个名字…" maxlength="50">
+        <button class="insp-save-btn" onclick="inspSaveTab()">保存谱子</button>
+      </div>
+    </div>
+
+    <!-- 已保存列表 -->
+    <div class="insp-list" id="insp-list">
+      <div class="insp-list-title">已保存的灵感</div>
+      <div id="insp-items"></div>
+    </div>
+  </div>
+  <div class="callout tip">
+    <div class="callout-title">使用提示</div>
+    <p><strong>录音</strong>：弹完一段 riff 马上录下来，别等"弹完美了再录"——灵感比完美更重要。<strong>编谱</strong>：用 TAB 格式快速记下指法，不需要写五线谱。保存的数据存在本浏览器中，清除浏览器数据会丢失。</p>
   </div>
 </section>
 
@@ -1355,13 +1846,37 @@ document.getElementById('root-select').addEventListener('change',function(){
 });
 renderFretboard('interactive-fretboard','notes',7);
 
+/* === 折叠导航 === */
+function toggleNavGroup(el){
+  el.parentElement.classList.toggle('collapsed');
+}
+function navParentClick(e,el){
+  // 左键单击：跳转 + 切换子菜单
+  var wrap=el.nextElementSibling;
+  if(wrap&&wrap.classList.contains('nav-sub-wrap')){
+    wrap.classList.toggle('collapsed');
+  }
+  // 不阻止默认跳转行为
+  if(window.innerWidth<=768)document.querySelector('.sidebar').classList.remove('open');
+}
+
 const navItems=document.querySelectorAll('.nav-item');
 function updateActiveNav(){
   let cur='';const sy=window.scrollY+120;
   document.querySelectorAll('section[id],div.section[id]').forEach(s=>{
     if(sy>=s.offsetTop)cur=s.id;
   });
-  navItems.forEach(n=>n.classList.toggle('active',n.getAttribute('href')==='#'+cur));
+  navItems.forEach(n=>{
+    var isActive=n.getAttribute('href')==='#'+cur;
+    n.classList.toggle('active',isActive);
+    // 如果激活的项在折叠组里，展开该组
+    if(isActive){
+      var grp=n.closest('.nav-group');
+      var sgrp=n.closest('.nav-sub-wrap');
+      if(grp&&grp.classList.contains('collapsed'))grp.classList.remove('collapsed');
+      if(sgrp&&sgrp.classList.contains('collapsed'))sgrp.classList.remove('collapsed');
+    }
+  });
 }
 window.addEventListener('scroll',updateActiveNav);
 updateActiveNav();
@@ -1371,31 +1886,459 @@ document.querySelectorAll('.nav-item').forEach(i=>{
 const bt=document.getElementById('back-top');
 window.addEventListener('scroll',()=>bt.classList.toggle('show',window.scrollY>600));
 
-let bpm=80,running=false,timer=null,beat=0,ac=null;
-function adjustBPM(d){bpm=Math.max(40,Math.min(250,bpm+d));document.getElementById('bpm-value').textContent=bpm;if(running){stopM();startM();}}
-function playBeat(b){
-  if(!ac)return;
-  const o=ac.createOscillator(),g=ac.createGain();
-  o.connect(g);g.connect(ac.destination);
-  o.frequency.value=b===0?880:440;
-  g.gain.setValueAtTime(0.5,ac.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.01,ac.currentTime+0.05);
-  o.start(ac.currentTime);o.stop(ac.currentTime+0.05);
-  document.querySelectorAll('.beat-dot').forEach((d,i)=>d.classList.toggle('active',i===b));
+/* === 增强节拍器 === */
+let mBPM=80,mRunning=false,mAC=null,mVol=0.6;
+let mBeatsPerBar=4,mSubdiv='quarter',mNextNoteTime=0,mCurrentBeat=0,mScheduler=null;
+const mSubdivPatterns={
+  quarter:  {clicks:[0],label:'每拍 1 次点击 · 四分音符 ♩'},
+  eighth:   {clicks:[0,0.5],label:'每拍 2 次点击 · 八分音符 ♫'},
+  triplet:  {clicks:[0,1/3,2/3],label:'每拍 3 次点击 · 三连音 ♪♪♪'},
+  sixteenth:{clicks:[0,0.25,0.5,0.75],label:'每拍 4 次点击 · 16分音符 ♬♬'},
+  'd8-16':  {clicks:[0,0.5,0.75],label:'每拍 3 次点击 · 前八后十六 ♪♬'},
+  'd16-8':  {clicks:[0,0.25,0.5],label:'每拍 3 次点击 · 前十六后八 ♬♪'}
+};
+function metroUpdateBeats(){
+  var ts=document.getElementById('metro-timesig').value;
+  mBeatsPerBar=parseInt(ts.split('/')[0]);
+  mSubdiv=document.getElementById('metro-subdiv').value;
+  var pat=mSubdivPatterns[mSubdiv];
+  var html='';
+  for(var i=0;i<mBeatsPerBar;i++){
+    html+='<div class="metro-beat'+(i===0?' accent':'')+'" data-beat="'+i+'"></div>';
+  }
+  document.getElementById('metro-beats').innerHTML=html;
+  document.getElementById('metro-sub-label').textContent=pat.label;
 }
-function startM(){
-  if(!ac)ac=new(window.AudioContext||window.webkitAudioContext)();
-  running=true;document.getElementById('metro-start').textContent='停止';
-  beat=0;playBeat(0);beat=1;
-  const interval=60000/bpm;
-  timer=setInterval(()=>{playBeat(beat);beat=(beat+1)%4;},interval);
+function metroAdjust(d){metroSetBPM(mBPM+d)}
+function metroSetBPM(v){
+  mBPM=Math.max(40,Math.min(250,parseInt(v)||80));
+  document.getElementById('metro-bpm').textContent=mBPM;
+  document.getElementById('metro-slider').value=mBPM;
 }
-function stopM(){
-  running=false;document.getElementById('metro-start').textContent='开始';
-  clearInterval(timer);
-  document.querySelectorAll('.beat-dot').forEach(d=>d.classList.remove('active'));
+document.getElementById('metro-bpm').addEventListener('blur',function(){
+  metroSetBPM(parseInt(this.textContent.replace(/\D/g,''))||80);
+});
+document.getElementById('metro-bpm').addEventListener('keydown',function(e){
+  if(e.key==='Enter'){e.preventDefault();this.blur();}
+});
+document.getElementById('metro-vol').addEventListener('input',function(){
+  document.getElementById('metro-vol-label').textContent=this.value;
+  mVol=this.value/100;
+});
+var tapTimes=[];
+function metroTap(){
+  var now=performance.now();
+  if(tapTimes.length>0&&now-tapTimes[tapTimes.length-1]>2000)tapTimes=[];
+  tapTimes.push(now);
+  if(tapTimes.length>5)tapTimes.shift();
+  if(tapTimes.length>=2){
+    var total=0;
+    for(var i=1;i<tapTimes.length;i++)total+=tapTimes[i]-tapTimes[i-1];
+    var avg=total/(tapTimes.length-1);
+    var newBPM=Math.round(60000/avg);
+    if(newBPM>=40&&newBPM<=250)metroSetBPM(newBPM);
+  }
 }
-function toggleMetronome(){if(running)stopM();else startM();}
+function metroClick(freq,duration,time){
+  if(!mAC)return;
+  var osc=mAC.createOscillator(),gain=mAC.createGain();
+  osc.connect(gain);gain.connect(mAC.destination);
+  osc.frequency.value=freq;
+  gain.gain.setValueAtTime(0,time);
+  gain.gain.linearRampToValueAtTime(mVol,time+0.001);
+  gain.gain.exponentialRampToValueAtTime(0.001,time+duration);
+  osc.start(time);osc.stop(time+duration);
+}
+function metroScheduler(){
+  while(mNextNoteTime<mAC.currentTime+0.1){
+    var beatDur=60/mBPM;
+    var pat=mSubdivPatterns[mSubdiv];
+    for(var c=0;c<pat.clicks.length;c++){
+      var ct=mNextNoteTime+pat.clicks[c]*beatDur;
+      var isDown=(mCurrentBeat===0&&c===0);
+      var isMain=(c===0);
+      metroClick(isDown?1000:(isMain?600:450),isMain?0.05:0.03,ct);
+    }
+    (function(b,t){
+      var delay=(t-mAC.currentTime)*1000;
+      setTimeout(function(){
+        var dots=document.querySelectorAll('.metro-beat');
+        dots.forEach(function(d){d.classList.remove('lit','normal','sub')});
+        if(dots[b]){
+          dots[b].classList.add('lit');
+          if(b!==0)dots[b].classList.add('normal');
+        }
+      },Math.max(0,delay));
+    })(mCurrentBeat,mNextNoteTime);
+    mNextNoteTime+=beatDur;
+    mCurrentBeat=(mCurrentBeat+1)%mBeatsPerBar;
+  }
+}
+function metroStart(){
+  if(!mAC)mAC=new(window.AudioContext||window.webkitAudioContext)();
+  if(mAC.state==='suspended')mAC.resume();
+  mRunning=true;mCurrentBeat=0;
+  mNextNoteTime=mAC.currentTime+0.1;
+  metroScheduler();
+  mScheduler=setInterval(metroScheduler,25);
+  var btn=document.getElementById('metro-start');
+  btn.textContent='■ 停止';btn.classList.add('running');
+}
+function metroStop(){
+  mRunning=false;clearInterval(mScheduler);
+  document.querySelectorAll('.metro-beat').forEach(function(d){d.classList.remove('lit','normal','sub')});
+  var btn=document.getElementById('metro-start');
+  btn.textContent='▶ 开始';btn.classList.remove('running');
+}
+function metroToggle(){if(mRunning)metroStop();else metroStart();}
+metroUpdateBeats();
+
+/* === 灵感记录工具 === */
+var inspMediaRec=null,inspChunks=[],inspRecStart=0,inspRecTimer=null,inspCurBlob=null;
+var inspCurTab='audio';
+
+function inspSwitchTab(tab){
+  inspCurTab=tab;
+  document.querySelectorAll('.insp-tab').forEach(function(t){t.classList.remove('active')});
+  document.querySelectorAll('.insp-panel').forEach(function(p){p.classList.remove('active')});
+  document.querySelector('.insp-tab:nth-child('+(tab==='audio'?1:2)+')').classList.add('active');
+  document.getElementById('insp-panel-'+tab).classList.add('active');
+}
+
+function inspToggleRecord(){
+  if(inspMediaRec&&inspMediaRec.state==='recording'){
+    inspMediaRec.stop();
+    return;
+  }
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    document.getElementById('insp-rec-hint').textContent='当前浏览器不支持录音功能';
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+    inspChunks=[];
+    inspMediaRec=new MediaRecorder(stream);
+    inspMediaRec.ondataavailable=function(e){if(e.data.size>0)inspChunks.push(e.data)};
+    inspMediaRec.onstop=function(){
+      stream.getTracks().forEach(function(t){t.stop()});
+      inspCurBlob=new Blob(inspChunks,{type:'audio/webm'});
+      var url=URL.createObjectURL(inspCurBlob);
+      var player=document.getElementById('insp-rec-player');
+      var audio=document.getElementById('insp-audio-preview');
+      audio.src=url;
+      player.style.display='block';
+      var btn=document.getElementById('insp-rec-btn');
+      btn.classList.remove('recording');
+      btn.textContent='●';
+      document.getElementById('insp-rec-hint').textContent='录音完成，可保存或重新录制';
+      clearInterval(inspRecTimer);
+    };
+    inspMediaRec.start();
+    inspRecStart=Date.now();
+    var btn=document.getElementById('insp-rec-btn');
+    btn.classList.add('recording');
+    btn.textContent='■';
+    document.getElementById('insp-rec-hint').textContent='正在录音…点击按钮停止';
+    inspRecTimer=setInterval(function(){
+      var s=Math.floor((Date.now()-inspRecStart)/1000);
+      document.getElementById('insp-rec-time').textContent=
+        String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+    },200);
+  }).catch(function(err){
+    document.getElementById('insp-rec-hint').textContent='无法访问麦克风：'+err.message;
+  });
+}
+
+function inspGetData(){
+  var s=localStorage.getItem('basslab_inspirations');
+  return s?JSON.parse(s):[];
+}
+function inspSaveData(arr){
+  localStorage.setItem('basslab_inspirations',JSON.stringify(arr));
+}
+
+function inspSaveAudio(){
+  if(!inspCurBlob){
+    alert('请先录制一段音频');
+    return;
+  }
+  var title=document.getElementById('insp-audio-title').value.trim()||('录音 '+new Date().toLocaleString('zh-CN'));
+  var reader=new FileReader();
+  reader.onload=function(){
+    var data={
+      id:Date.now(),
+      type:'audio',
+      title:title,
+      data:reader.result,
+      date:new Date().toLocaleString('zh-CN')
+    };
+    var arr=inspGetData();
+    arr.unshift(data);
+    inspSaveData(arr);
+    document.getElementById('insp-audio-title').value='';
+    document.getElementById('insp-rec-player').style.display='none';
+    document.getElementById('insp-rec-time').textContent='00:00';
+    inspCurBlob=null;
+    inspRenderList();
+  };
+  reader.readAsDataURL(inspCurBlob);
+}
+
+function inspSaveTab(){
+  var content=document.getElementById('insp-tab-input').value.trim();
+  if(!content){
+    alert('请输入谱子内容');
+    return;
+  }
+  var title=document.getElementById('insp-tab-title').value.trim()||('谱子 '+new Date().toLocaleString('zh-CN'));
+  var data={
+    id:Date.now(),
+    type:'tab',
+    title:title,
+    content:content,
+    date:new Date().toLocaleString('zh-CN')
+  };
+  var arr=inspGetData();
+  arr.unshift(data);
+  inspSaveData(arr);
+  document.getElementById('insp-tab-input').value='';
+  document.getElementById('insp-tab-title').value='';
+  inspRenderList();
+}
+
+function inspDelete(id){
+  if(!confirm('确认删除这条记录吗？'))return;
+  var arr=inspGetData().filter(function(d){return d.id!==id});
+  inspSaveData(arr);
+  inspRenderList();
+}
+
+function inspRenderList(){
+  var arr=inspGetData();
+  var c=document.getElementById('insp-items');
+  if(arr.length===0){
+    c.innerHTML='<div class="insp-empty">还没有保存的灵感，录一段或写一段谱子试试吧～</div>';
+    return;
+  }
+  var html='';
+  arr.forEach(function(d){
+    if(d.type==='audio'){
+      html+='<div class="insp-item">'+
+        '<div class="insp-item-head">'+
+          '<div><span class="insp-item-title">'+inspEsc(d.title)+'</span> <span class="insp-item-type insp-type-audio">录音</span></div>'+
+          '<div><span class="insp-item-meta">'+d.date+'</span> <button class="insp-del-btn" onclick="inspDelete('+d.id+')">删除</button></div>'+
+        '</div>'+
+        '<audio class="insp-item-audio" src="'+d.data+'" controls></audio>'+
+      '</div>';
+    }else{
+      html+='<div class="insp-item">'+
+        '<div class="insp-item-head">'+
+          '<div><span class="insp-item-title">'+inspEsc(d.title)+'</span> <span class="insp-item-type insp-type-tab">谱子</span></div>'+
+          '<div><span class="insp-item-meta">'+d.date+'</span> <button class="insp-del-btn" onclick="inspDelete('+d.id+')">删除</button></div>'+
+        '</div>'+
+        '<div class="insp-item-body"><pre>'+inspEsc(d.content)+'</pre></div>'+
+      '</div>';
+    }
+  });
+  c.innerHTML=html;
+}
+
+function inspEsc(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function inspInsertText(text){
+  var ta=document.getElementById('insp-tab-input');
+  var start=ta.selectionStart,end=ta.selectionEnd;
+  ta.value=ta.value.substring(0,start)+text+ta.value.substring(end);
+  ta.focus();
+  ta.selectionStart=ta.selectionEnd=start+text.length;
+}
+
+function inspInsertTabTemplate(type){
+  var templates={
+    basic:'G|----------------|\nD|----------------|\nA|----------------|\nE|----------------|\n',
+    scale:'G|--------4--5--7--|\nD|-----4--5--7-----|\nA|--5--7-----------|\nE|-----------------|\n',
+    riff:'G|-----------------------|\nD|-----------------------|\nA|--5--7--5-----5--7--5--|\nE|-----------7-----------|\n'
+  };
+  inspInsertText(templates[type]||templates.basic);
+}
+
+inspRenderList();
+
+/* === 鼓机 === */
+var drumAC=null,drumRunning=false,drumTimer=null;
+var drumBPM=90,drumStep=0,drumNextTime=0;
+var drumSteps=16;
+var drumTracks=['kick','snare','hat'];
+var drumPatterns={
+  rock:       {name:'摇滚 Rock',    bpm:120, data:[[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0]]},
+  funk:       {name:'放克 Funk',    bpm:100, data:[[1,0,0,1,0,0,1,0,0,1,0,0,1,0,0,0],[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],[1,0,1,0,1,0,1,1,1,0,1,0,1,1,1,0]]},
+  blues:      {name:'蓝调 Blues',   bpm:80,  data:[[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0]]},
+  jazz:       {name:'爵士 Jazz',    bpm:120, data:[[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]},
+  latin:      {name:'拉丁 Latin',   bpm:100, data:[[1,0,0,1,0,0,1,0,0,0,1,0,1,0,0,0],[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],[1,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1]]},
+  hiphop:     {name:'Hip-Hop',     bpm:90,  data:[[1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0],[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0]]},
+  punk:       {name:'朋克 Punk',    bpm:160, data:[[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]},
+  disco:      {name:'迪斯科 Disco', bpm:120, data:[[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]},
+  reggae:     {name:'雷鬼 Reggae',  bpm:80,  data:[[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],[1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0]]}
+};
+var drumCurPattern='rock';
+var drumCustomPattern=null;
+
+function drumInitPatterns(){
+  var html='';
+  for(var k in drumPatterns){
+    html+='<div class="drum-pat'+(k===drumCurPattern?' active':'')+'" onclick="drumSelectPattern(\''+k+'\')">'+drumPatterns[k].name+'</div>';
+  }
+  document.getElementById('drum-patterns').innerHTML=html;
+  drumRenderGrid();
+}
+
+function drumGetCurrentData(){
+  if(drumCustomPattern)return drumCustomPattern;
+  return drumPatterns[drumCurPattern].data;
+}
+
+function drumSelectPattern(key){
+  drumCurPattern=key;
+  drumCustomPattern=null;
+  drumBPM=drumPatterns[key].bpm;
+  document.getElementById('drum-bpm').value=drumBPM;
+  document.querySelectorAll('.drum-pat').forEach(function(p){p.classList.remove('active')});
+  event.target.classList.add('active');
+  drumRenderGrid();
+}
+
+function drumRenderGrid(){
+  var data=drumGetCurrentData();
+  var html='';
+  for(var t=0;t<drumTracks.length;t++){
+    html+='<div class="drum-track">';
+    html+='<div class="drum-track-label">'+({kick:'Kick 底鼓',snare:'Snare 军鼓',hat:'Hat 踩镲'}[drumTracks[t]])+'</div>';
+    for(var s=0;s<drumSteps;s++){
+      var on=data[t][s];
+      var cls='drum-cell'+(on?' on':'')+' '+drumTracks[t];
+      if(s%4===0&&s>0)cls+=' beat-start';
+      html+='<div class="'+cls+'" data-track="'+t+'" data-step="'+s+'" onclick="drumToggleCell('+t+','+s+')"></div>';
+    }
+    html+='</div>';
+  }
+  // Step numbers
+  html+='<div class="drum-step-row">';
+  for(var s=0;s<drumSteps;s++){
+    html+='<div class="drum-step-num'+(s%4===0?' accent':'')+'">'+(s+1)+'</div>';
+  }
+  html+='</div>';
+  document.getElementById('drum-grid').innerHTML=html;
+}
+
+function drumToggleCell(track,step){
+  if(!drumCustomPattern){
+    var orig=drumPatterns[drumCurPattern].data;
+    drumCustomPattern=orig.map(function(row){return row.slice()});
+  }
+  drumCustomPattern[track][step]=drumCustomPattern[track][step]?0:1;
+  drumRenderGrid();
+}
+
+function drumKick(time){
+  if(!drumAC)return;
+  var osc=drumAC.createOscillator(),gain=drumAC.createGain();
+  osc.connect(gain);gain.connect(drumAC.destination);
+  osc.frequency.setValueAtTime(150,time);
+  osc.frequency.exponentialRampToValueAtTime(0.01,time+0.15);
+  gain.gain.setValueAtTime(0.8,time);
+  gain.gain.exponentialRampToValueAtTime(0.001,time+0.15);
+  osc.start(time);osc.stop(time+0.15);
+}
+function drumSnare(time){
+  if(!drumAC)return;
+  var bufferSize=drumAC.sampleRate*0.1;
+  var buffer=drumAC.createBuffer(1,bufferSize,drumAC.sampleRate);
+  var output=buffer.getChannelData(0);
+  for(var i=0;i<bufferSize;i++)output[i]=Math.random()*2-1;
+  var noise=drumAC.createBufferSource();
+  noise.buffer=buffer;
+  var filter=drumAC.createBiquadFilter();
+  filter.type='highpass';filter.frequency.value=1000;
+  var gain=drumAC.createGain();
+  gain.gain.setValueAtTime(0.5,time);
+  gain.gain.exponentialRampToValueAtTime(0.001,time+0.1);
+  noise.connect(filter);filter.connect(gain);gain.connect(drumAC.destination);
+  noise.start(time);noise.stop(time+0.1);
+  // Tone component
+  var osc=drumAC.createOscillator(),oscGain=drumAC.createGain();
+  osc.connect(oscGain);oscGain.connect(drumAC.destination);
+  osc.frequency.value=200;
+  oscGain.gain.setValueAtTime(0.3,time);
+  oscGain.gain.exponentialRampToValueAtTime(0.001,time+0.08);
+  osc.start(time);osc.stop(time+0.08);
+}
+function drumHat(time){
+  if(!drumAC)return;
+  var bufferSize=drumAC.sampleRate*0.05;
+  var buffer=drumAC.createBuffer(1,bufferSize,drumAC.sampleRate);
+  var output=buffer.getChannelData(0);
+  for(var i=0;i<bufferSize;i++)output[i]=Math.random()*2-1;
+  var noise=drumAC.createBufferSource();
+  noise.buffer=buffer;
+  var filter=drumAC.createBiquadFilter();
+  filter.type='highpass';filter.frequency.value=7000;
+  var gain=drumAC.createGain();
+  gain.gain.setValueAtTime(0.15,time);
+  gain.gain.exponentialRampToValueAtTime(0.001,time+0.05);
+  noise.connect(filter);filter.connect(gain);gain.connect(drumAC.destination);
+  noise.start(time);noise.stop(time+0.05);
+}
+
+function drumScheduler(){
+  while(drumNextTime<drumAC.currentTime+0.1){
+    var stepDur=60/drumBPM/4; // 16th note
+    var data=drumGetCurrentData();
+    for(var t=0;t<drumTracks.length;t++){
+      if(data[t][drumStep]){
+        if(t===0)drumKick(drumNextTime);
+        else if(t===1)drumSnare(drumNextTime);
+        else drumHat(drumNextTime);
+      }
+    }
+    (function(s,t){
+      var delay=(t-drumAC.currentTime)*1000;
+      setTimeout(function(){
+        var cells=document.querySelectorAll('.drum-cell');
+        cells.forEach(function(c){c.classList.remove('playing')});
+        var idx=s;
+        for(var tr=0;tr<drumTracks.length;tr++){
+          var cell=document.querySelector('.drum-cell[data-track="'+tr+'"][data-step="'+s+'"]');
+          if(cell)cell.classList.add('playing');
+        }
+      },Math.max(0,delay));
+    })(drumStep,drumNextTime);
+    drumNextTime+=stepDur;
+    drumStep=(drumStep+1)%drumSteps;
+  }
+}
+
+function drumStart(){
+  if(!drumAC)drumAC=new(window.AudioContext||window.webkitAudioContext)();
+  if(drumAC.state==='suspended')drumAC.resume();
+  drumRunning=true;drumStep=0;
+  drumNextTime=drumAC.currentTime+0.1;
+  drumScheduler();
+  drumTimer=setInterval(drumScheduler,25);
+  var btn=document.getElementById('drum-start');
+  btn.textContent='■ 停止';btn.classList.add('running');
+}
+function drumStop(){
+  drumRunning=false;clearInterval(drumTimer);
+  document.querySelectorAll('.drum-cell').forEach(function(c){c.classList.remove('playing')});
+  var btn=document.getElementById('drum-start');
+  btn.textContent='▶ 开始';btn.classList.remove('running');
+}
+function drumToggle(){if(drumRunning)drumStop();else drumStart();}
+document.getElementById('drum-bpm').addEventListener('input',function(){
+  drumBPM=Math.max(40,Math.min(250,parseInt(this.value)||90));
+});
+drumInitPatterns();
 </script>
 
 <!-- === 用户系统脚本 === -->
@@ -1420,16 +2363,23 @@ function saveUsers(arr){localStorage.setItem('basslab_users',JSON.stringify(arr)
   var badge=document.getElementById('userBadge');
   var badgeText=document.getElementById('userBadgeText');
   var adminBtn=document.getElementById('adminBtn');
+  var taskBtn=document.getElementById('taskBtn');
   bar.style.display='flex';
   if(role==='admin'){
     badge.classList.add('admin');
     badgeText.textContent=user+' (管理员)';
     adminBtn.style.display='block';
+    taskBtn.style.display='block';
   }else if(role==='user'){
     badgeText.textContent=user+' (用户)';
+    taskBtn.style.display='block';
   }else{
     badgeText.textContent=user||'未知用户';
   }
+  // 签到按钮初始化
+  checkinInit();
+  // 任务栏初始化
+  taskInit();
 })();
 
 // === 退出登录 ===
@@ -1515,6 +2465,532 @@ function deleteUser(idx){
 function escapeHtml(s){
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
+/* === 签到打卡系统 === */
+var CHECKIN_REWARDS=[
+  {days:1,  icon:'🎵', title:'初心不灭', badge:'🎵 练习初心', desc:'迈出了第一步！'},
+  {days:3,  icon:'🔥', title:'渐入佳境', badge:'🔥 连续3天徽章', desc:'连续签到 3 天，保持势头！'},
+  {days:7,  icon:'⚡', title:'一周战士', badge:'⚡ 一周练习徽章', desc:'连续签到 7 天！你正在养成习惯。'},
+  {days:14, icon:'🎸', title:'双周达人', badge:'🎸 双周达人徽章', desc:'连续签到 14 天！贝斯已经融入你的生活。'},
+  {days:30, icon:'🏆', title:'月度冠军', badge:'🏆 月度练习冠军', desc:'连续签到 30 天！你是真正的 BassLab 战士。'},
+  {days:50,  icon:'💎', title:'坚持不懈', badge:'💎 50天坚持徽章', desc:'连续签到 50 天！难以置信的毅力。'},
+  {days:100, icon:'👑', title:'百炼成钢', badge:'👑 百日大师', desc:'连续签到 100 天！你就是传说中的贝斯大师。'}
+];
+
+function checkinGetData(){
+  var user=sessionStorage.getItem('basslab_user');
+  var s=localStorage.getItem('basslab_checkin');
+  var data=s?JSON.parse(s):{};
+  if(!data[user])data[user]={streak:0,total:0,lastDate:'',rewards:[]};
+  return data;
+}
+function checkinSaveData(data){
+  localStorage.setItem('basslab_checkin',JSON.stringify(data));
+}
+
+function checkinInit(){
+  var data=checkinGetData();
+  var user=sessionStorage.getItem('basslab_user');
+  var info=data[user];
+  var today=new Date().toISOString().slice(0,10);
+  var btn=document.getElementById('checkinBtn');
+  var infoEl=document.getElementById('checkinInfo');
+  var streakEl=document.getElementById('streakDays');
+
+  // Check if already checked in today
+  if(info.lastDate===today){
+    btn.textContent='✓ 已签到';
+    btn.classList.add('done');
+    btn.disabled=true;
+  }
+  btn.style.display='block';
+  infoEl.style.display='inline-flex';
+  streakEl.textContent=info.streak;
+}
+
+function doCheckin(){
+  var data=checkinGetData();
+  var user=sessionStorage.getItem('basslab_user');
+  var info=data[user];
+  var today=new Date().toISOString().slice(0,10);
+
+  if(info.lastDate===today)return; // Already checked in
+
+  // Check streak continuity
+  var yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
+  if(info.lastDate===yesterday){
+    info.streak++;
+  }else{
+    info.streak=1; // Reset streak
+  }
+  info.total++;
+  info.lastDate=today;
+  data[user]=info;
+  checkinSaveData(data);
+
+  // Update UI
+  var btn=document.getElementById('checkinBtn');
+  btn.textContent='✓ 已签到';
+  btn.classList.add('done');
+  btn.disabled=true;
+  document.getElementById('streakDays').textContent=info.streak;
+
+  // Check for reward
+  var reward=null;
+  for(var i=CHECKIN_REWARDS.length-1;i>=0;i--){
+    if(info.streak===CHECKIN_REWARDS[i].days && info.rewards.indexOf(CHECKIN_REWARDS[i].days)===-1){
+      reward=CHECKIN_REWARDS[i];
+      break;
+    }
+  }
+
+  if(reward){
+    info.rewards.push(reward.days);
+    data[user]=info;
+    checkinSaveData(data);
+    document.getElementById('rewardIcon').textContent=reward.icon;
+    document.getElementById('rewardTitle').textContent=reward.title;
+    document.getElementById('rewardDesc').textContent='连续签到 '+reward.days+' 天！'+reward.desc;
+    var badgeEl=document.getElementById('rewardBadge');
+    badgeEl.textContent='🏅 '+reward.badge;
+    badgeEl.style.display='inline-block';
+    document.getElementById('rewardOverlay').classList.add('show');
+  }else{
+    document.getElementById('rewardIcon').textContent='✅';
+    document.getElementById('rewardTitle').textContent='签到成功！';
+    document.getElementById('rewardDesc').textContent='你已连续签到 '+info.streak+' 天，累计签到 '+info.total+' 次。继续加油！';
+    document.getElementById('rewardBadge').style.display='none';
+    document.getElementById('rewardOverlay').classList.add('show');
+  }
+}
+
+/* === 任务栏系统 === */
+function taskGetData(){
+  var s=localStorage.getItem('basslab_tasks');
+  return s?JSON.parse(s):[];
+}
+function taskSaveData(arr){
+  localStorage.setItem('basslab_tasks',JSON.stringify(arr));
+}
+
+function taskInit(){
+  var role=sessionStorage.getItem('basslab_role');
+  var user=sessionStorage.getItem('basslab_user');
+  // Admin can see publish panel
+  if(role==='admin'){
+    document.getElementById('taskAdminPanel').style.display='block';
+  }
+  taskRender();
+}
+
+function openTaskPanel(){
+  document.getElementById('taskOverlay').classList.add('show');
+  document.getElementById('taskPanel').classList.add('show');
+}
+function closeTaskPanel(){
+  document.getElementById('taskOverlay').classList.remove('show');
+  document.getElementById('taskPanel').classList.remove('show');
+}
+
+function taskPublish(){
+  var title=document.getElementById('taskTitle').value.trim();
+  var desc=document.getElementById('taskDesc').value.trim();
+  var reward=document.getElementById('taskReward').value.trim()||'🎵 完成奖励';
+  if(!title){alert('请输入任务标题');return}
+  var tasks=taskGetData();
+  tasks.push({
+    id:Date.now(),
+    title:title,
+    desc:desc,
+    reward:reward,
+    status:'open',          // open / claimed / done
+    claimedBy:'',
+    claimedDate:'',
+    doneDate:'',
+    publishDate:new Date().toLocaleString('zh-CN')
+  });
+  taskSaveData(tasks);
+  document.getElementById('taskTitle').value='';
+  document.getElementById('taskDesc').value='';
+  document.getElementById('taskReward').value='';
+  taskRender();
+}
+
+function taskClaim(id){
+  var user=sessionStorage.getItem('basslab_user');
+  var role=sessionStorage.getItem('basslab_role');
+  if(role!=='user'){
+    alert('管理员无需认领任务');
+    return;
+  }
+  var tasks=taskGetData();
+  for(var i=0;i<tasks.length;i++){
+    if(tasks[i].id===id){
+      if(tasks[i].status!=='open'){alert('该任务已被认领');return}
+      tasks[i].status='claimed';
+      tasks[i].claimedBy=user;
+      tasks[i].claimedDate=new Date().toLocaleString('zh-CN');
+      break;
+    }
+  }
+  taskSaveData(tasks);
+  taskRender();
+}
+
+function taskComplete(id){
+  var tasks=taskGetData();
+  var task=null;
+  for(var i=0;i<tasks.length;i++){
+    if(tasks[i].id===id){task=tasks[i];break}
+  }
+  if(!task)return;
+  if(task.status!=='claimed'){alert('请先认领任务再完成');return}
+  if(!confirm('确认完成任务「'+task.title+'」吗？\n奖励：'+task.reward))return;
+  task.status='done';
+  task.doneDate=new Date().toLocaleString('zh-CN');
+  taskSaveData(tasks);
+  taskRender();
+  // Show reward
+  document.getElementById('rewardIcon').textContent='🎯';
+  document.getElementById('rewardTitle').textContent='任务完成！';
+  document.getElementById('rewardDesc').textContent='恭喜完成「'+task.title+'」！\n奖励：'+task.reward;
+  var badgeEl=document.getElementById('rewardBadge');
+  badgeEl.textContent='🏅 '+task.reward;
+  badgeEl.style.display='inline-block';
+  document.getElementById('rewardOverlay').classList.add('show');
+}
+
+function taskDelete(id){
+  if(!confirm('确认删除这个任务吗？'))return;
+  var tasks=taskGetData().filter(function(t){return t.id!==id});
+  taskSaveData(tasks);
+  taskRender();
+}
+
+function taskRender(){
+  var tasks=taskGetData();
+  var role=sessionStorage.getItem('basslab_role');
+  var user=sessionStorage.getItem('basslab_user');
+  var c=document.getElementById('taskCards');
+  if(tasks.length===0){
+    c.innerHTML='<div class="task-empty">还没有任务。'+(role==='admin'?'在上方发布第一个任务吧！':'等待管理员发布任务～')+'</div>';
+    return;
+  }
+  var html='';
+  // Sort: open first, then claimed, then done
+  tasks.sort(function(a,b){
+    var order={open:0,claimed:1,done:2};
+    return order[a.status]-order[b.status];
+  });
+  tasks.forEach(function(t){
+    var statusLabel={open:'待认领',claimed:'进行中',done:'已完成'}[t.status];
+    var actions='';
+    if(role==='user'){
+      if(t.status==='open'){
+        actions='<button class="task-btn task-btn-claim" onclick="taskClaim('+t.id+')">认领任务</button>';
+      }else if(t.status==='claimed'&&t.claimedBy===user){
+        actions='<button class="task-btn task-btn-complete" onclick="taskComplete('+t.id+')">完成任务</button>';
+      }
+    }
+    if(role==='admin'){
+      actions='<button class="task-btn task-btn-delete" onclick="taskDelete('+t.id+')">删除</button>';
+      if(t.status==='claimed'&&t.claimedBy){
+        actions+='<button class="task-btn task-btn-complete" onclick="taskComplete('+t.id+')">标记完成</button>';
+      }
+    }
+    var claimInfo=t.claimedBy?'<span class="task-card-claim">认领人：'+escapeHtml(t.claimedBy)+'</span>':'';
+    var doneInfo=t.doneDate?'<span>完成时间：'+t.doneDate+'</span>':'';
+    html+='<div class="task-card status-'+t.status+'">'+
+      '<div class="task-card-head">'+
+        '<div class="task-card-title">'+escapeHtml(t.title)+'</div>'+
+        '<span class="task-card-status '+t.status+'">'+statusLabel+'</span>'+
+      '</div>'+
+      (t.desc?'<div class="task-card-desc">'+escapeHtml(t.desc)+'</div>':'')+
+      '<div class="task-card-meta">'+
+        '<span class="task-card-reward">🎁 '+escapeHtml(t.reward)+'</span>'+
+        '<span>发布：'+t.publishDate+'</span>'+
+        claimInfo+doneInfo+
+      '</div>'+
+      (actions?'<div class="task-card-actions">'+actions+'</div>':'')+
+    '</div>';
+  });
+  c.innerHTML=html;
+}
+</script>
+
+<!-- === Bass Aerobics 数据 + 网易云歌曲数据 + 渲染引擎 === -->
+<script>
+/* ===== Bass Aerobics 52周练习数据 ===== */
+var BASS_AEROBICS=[
+  {ch:1,title:"半音阶与音阶琶音",desc:"聚焦指板上的流畅移动——半音阶、音阶、琶音，让练习听起来像音乐而非机械练习。涵盖摇滚、放克、R&B、蓝调等多种风格。",color:"var(--accent3)",
+   workouts:[
+    {n:1,t:"摇滚半音阶律动",style:"Rock",bpm:110,bv:"BV1Z94y1u7Kt",desc:"简单的摇滚节拍，大量半音阶跑动。注意每个音符清晰均匀地发音。"},
+    {n:2,t:"全指板走句",style:"Jazz/Rock",bpm:110,bv:"BV1Ki4y1r7mr",desc:"覆盖乐器大部分音域，走句类型常见于爵士、摇滚的 walking bass 线条中。"},
+    {n:3,t:"半音阶与和弦音混合",style:"Funk",bpm:110,bv:"BV1294y1g7wD",desc:"将半音阶跑动融入放克律动，练习手指在指板上的快速移动。"},
+    {n:4,t:"R&B 八度音阶练习",style:"R&B",bpm:80,bv:"BV1m5411i7Ba",desc:"带 R&B 感觉的练习，确保演奏八度音阶时干净利落，每个音符表达清楚。"},
+    {n:5,t:"放克/R&B 复杂律动",style:"Funk/R&B",bpm:80,bv:"BV1ZQ4y1w7Xb",desc:"手指很忙的复杂练习，融合放克与 R&B 元素。建议先慢速再逐步加快。"},
+    {n:6,t:"蓝调半音走句",style:"Blues",bpm:90,bv:"BV15K411h7dH",desc:"蓝调风格的半音阶走句，注意 shuffle 感和音符的连贯性。"},
+    {n:7,t:"先现音练习",style:"Jazz",bpm:100,bv:"BV1X4421w7gc",desc:"练习先现音（anticipation）技巧，在拍前抢拍制造爵士的 forward motion 感。"},
+    {n:8,t:"音阶上下行模式",style:"Rock",bpm:100,bv:"BV1Cj421X7yF",desc:"大调音阶上下行模式，练习均匀的指法转换。"},
+    {n:9,t:"琶音跨弦练习",style:"Jazz",bpm:100,bv:"BV1vt42187hZ",desc:"和弦琶音的跨弦练习，提升右手跨弦准确度。"},
+    {n:10,t:"综合半音阶走句",style:"Fusion",bpm:110,bv:"BV1um411f75S",desc:"综合半音阶与音阶的走句，坚持了10周的里程碑练习！"},
+    {n:11,t:"小调五声音阶扩展",style:"Rock/Blues",bpm:100,bv:"BV1mW421w7yR",desc:"小调五声音阶在指板上的扩展运用，练习不同把位间的切换。"},
+    {n:12,t:"放克十六分音符律动",style:"Funk",bpm:95,bv:"BV1mD42177DH",desc:"十六分音符放克律动，加入幽灵音增加节奏感。"},
+    {n:13,t:"雷鬼节奏练习",style:"Reggae",bpm:85,bv:"BV1p6421w7jj",desc:"雷鬼风格的贝斯线条，练习 staccato 弹法和 one-drop 节奏。"},
+    {n:14,t:"Walking Bass 入门",style:"Jazz",bpm:120,bv:"BV1Lr421h7AG",desc:"爵士 walking bass 入门，练习 ii-V-I 走向中的半音经过音。"},
+    {n:15,t:"跨把位音阶跑动",style:"Rock",bpm:110,bv:"BV1o1421S7LD",desc:"跨越多个把位的音阶跑动，练习把位切换的流畅性。"},
+    {n:16,t:"R&B 律动变奏",style:"R&B",bpm:90,bv:"BV1Xz421k7Wd",desc:"R&B 风格的律动变奏，注重 groove 和音符的时值控制。"},
+    {n:17,t:"和弦琶音扩展",style:"Jazz",bpm:100,bv:"BV1TA4m1c7Xu",desc:"扩展和弦的琶音练习（maj7、m7、dom7），覆盖更多指板区域。"},
+    {n:18,t:"半音经过音 walking",style:"Jazz",bpm:120,bv:"BV1tz421k7EU",desc:"walking bass 中使用半音经过音连接和弦，制造更流畅的线条。"},
+    {n:19,t:"放克切分律动",style:"Funk",bpm:100,bv:"BV1FD421K77q",desc:"十六分音符切分放克律动，练习准确的节奏感和 ghost note 技巧。"},
+    {n:20,t:"第一章综合复习",style:"Mixed",bpm:110,bv:"BV1Tw4m1y7RM",desc:"第一章综合复习练习，融合半音阶、音阶、琶音等多种技巧。"}
+   ]
+  },
+  {ch:2,title:"跨弦与高级模式",desc:"进入新章节——跨弦练习与高级指法模式。提升右手跨弦准确度和左手灵活度。",color:"var(--accent2)",
+   workouts:[
+    {n:21,t:"跨弦基础模式",style:"Rock",bpm:100,bv:"BV1Cs421A7Xh",desc:"新章节开始！基础的跨弦练习模式，专注于右手的跨弦准确度。"},
+    {n:22,t:"大跨度跨弦",style:"Fusion",bpm:100,bv:"BV17D421A75i",desc:"大跨度跨弦练习（E弦到G弦），提升右手控制力。"},
+    {n:23,t:"琶音跨弦扩展",style:"Jazz",bpm:110,bv:"BV1Y7421Z7yY",desc:"琶音的跨弦扩展练习，在多个弦上演奏和弦音。"},
+    {n:24,t:"八度跳跃模式",style:"Funk",bpm:100,bv:"BV1uM4m167c3",desc:"八度跳跃的跨弦模式，放克风格中常用的技巧。"},
+    {n:25,t:"弦跳走句",style:"Rock/Funk",bpm:105,bv:"BV11x4y1b7ur",desc:"弦跳走句练习，在非相邻弦之间快速切换。"},
+    {n:26,t:"三连音跨弦",style:"Jazz",bpm:100,bv:"BV16x4y1J71R",desc:"三连音节奏的跨弦练习，swing feel 下的弦间跳跃。"},
+    {n:27,t:"十六分跨弦模式",style:"Funk",bpm:95,bv:"BV1QZ421M7zN",desc:"十六分音符的跨弦模式，挑战右手的速度和准确度。"},
+    {n:28,t:"综合跨弦律动",style:"Fusion",bpm:100,bv:"BV1n6421Z7Ng",desc:"综合跨弦律动练习，融合多种跨弦技巧到一条音乐性练习中。"},
+    {n:29,t:"跨弦琶音走句",style:"Jazz",bpm:110,bv:"BV1MFbaeNE6i",desc:"跨弦琶音走句，在和弦走向中使用跨弦技巧。"},
+    {n:30,t:"第二章综合复习",style:"Mixed",bpm:105,bv:"BV12r8PexEbM",desc:"第二章综合复习，整合所有跨弦和高级模式技巧。"}
+   ]
+  },
+  {ch:3,title:"Slap & Pop 技巧",desc:"进入 Slap & Pop 世界！拇指击弦（Slap）和食指勾弦（Pop）是放克贝斯的标志技巧。",color:"var(--accent)",
+   workouts:[
+    {n:31,t:"Slap 基础——拇指击弦",style:"Funk",bpm:90,bv:"BV1sBvgenE74",desc:"Slap 基础入门，练习拇指击弦的力度和音色控制。先慢速，确保每个音清晰。"},
+    {n:32,t:"Pop 基础——勾弦",style:"Funk",bpm:90,bv:"BV1ZsiVeSEbR",desc:"Pop（勾弦）基础练习，食指勾弦产生明亮的高音。与 Slap 交替使用。"},
+    {n:33,t:"Slap/Pop 交替模式",style:"Funk",bpm:95,bv:"BV1raYGeLEXe",desc:"Slap 和 Pop 交替的基本模式，经典的放克贝斯技巧组合。"},
+    {n:34,t:"八度 Slap/Pop 律动",style:"Funk/R&B",bpm:90,bv:"BV173eLenEij",desc:"用 Slap 弹根音、Pop 弹八度的经典放克律动。Larry Graham 风格。"},
+    {n:35,t:"Slap 十六分音符",style:"Funk",bpm:95,bv:"BV16iWRegEHK",desc:"十六分音符的 Slap 律动，加入幽灵音增加节奏密度。"},
+    {n:36,t:"Slap 跨弦模式",style:"Funk",bpm:100,bv:"BV16Mn9efEEo",desc:"Slap 跨弦模式，在多根弦之间交替 Slap 和 Pop。"},
+    {n:37,t:"Slap 双音技巧",style:"Funk",bpm:95,bv:"BV19iHoecEeM",desc:"Slap 中的双音（double thumb）技巧，拇指下击和上击都发音。"},
+    {n:38,t:"Slap 律动变奏",style:"Funk/R&B",bpm:100,bv:"BV18qtAepENQ",desc:"Slap 律动的变奏练习，加入更多装饰音和节奏变化。"},
+    {n:39,t:"Slap Walking Bass",style:"Jazz/Funk",bpm:110,bv:"BV1hBtzetE92",desc:"用 Slap 技巧演奏 walking bass 线条，融合爵士和放克。"},
+    {n:40,t:"第三章综合复习",style:"Funk",bpm:100,bv:"BV17ax6eeEvo",desc:"第三章综合复习，整合所有 Slap 和 Pop 技巧。"}
+   ]
+  },
+  {ch:4,title:"综合复习与进阶",desc:"最后一章——综合复习前三个章节的所有技巧，并加入更高级的音乐性练习。",color:"#8888ff",
+   workouts:[
+    {n:41,t:"半音阶+跨弦综合",style:"Fusion",bpm:110,bv:"BV1iS1QY8Eh4",desc:"半音阶与跨弦技巧的综合练习，融合第一章和第二章内容。"},
+    {n:42,t:"Slap+半音阶混合",style:"Funk",bpm:100,bv:"BV15t2RYKEAL",desc:"Slap 技巧与半音阶走句的混合练习。"},
+    {n:43,t:"多风格律动切换",style:"Mixed",bpm:100,bv:"BV1WYCDYvEoF",desc:"在一条练习中切换摇滚、放克、爵士等多种风格律动。"},
+    {n:44,t:"高速半音阶跑动",style:"Rock/Metal",bpm:130,bv:"BV1NF1WYcEPq",desc:"高速半音阶跑动，挑战手指速度和准确性。"},
+    {n:45,t:"Slap+Walking Bass",style:"Jazz/Funk",bpm:120,bv:"BV1B5DFYcEum",desc:"Slap 风格的 walking bass，融合爵士和放克元素。"},
+    {n:46,t:"跨弦+琶音进阶",style:"Jazz",bpm:110,bv:"BV1QXDqYfE7d",desc:"跨弦琶音的进阶练习，使用更复杂的和弦走向。"},
+    {n:47,t:"综合律动变奏",style:"R&B/Funk",bpm:95,bv:"BV1tQmdYaEGW",desc:"R&B/放克综合律动变奏，注重 groove 和音乐性。"},
+    {n:48,t:"高速 Slap 模式",style:"Funk",bpm:110,bv:"BV1gaBvYpE5d",desc:"高速 Slap 模式，挑战 Slap 技巧的速度极限。"},
+    {n:49,t:"全指板综合走句",style:"Fusion",bpm:115,bv:"BV1wCzzYsEQ1",desc:"覆盖全指板的综合走句，融合所有学过的技巧。"},
+    {n:50,t:"风格模仿练习",style:"Mixed",bpm:100,bv:"BV1Gcq5YFEig",desc:"模仿不同风格大师的演奏方式，提升音乐表现力。"},
+    {n:51,t:"即兴走句基础",style:"Jazz/Fusion",bpm:110,bv:"BV1DtBGYdEo4",desc:"即兴走句基础练习，在给定和弦走向上自由发挥。"},
+    {n:52,t:"最终考核——毕业练习",style:"Mixed",bpm:110,bv:"BV1o8k1YMEDE",desc:"52周毕业练习！综合所有技巧和风格，检验一年的练习成果。🎉"}
+   ]
+  }
+];
+
+/* ===== 网易云音乐歌曲ID映射 ===== */
+var NETEASE_SONGS={
+"Smoke on the Water":1365607962,"Another One Bites the Dust":1318816009,"Come Together":4336298,
+"Money":4238119,"Longview":18127008,"YYZ":21535536,"Roundabout":865438555,"Schism":20464491,
+"Blitzkrieg Bop":429465986,"London Calling":19578239,"Basket Case":18127014,"Brain Stew":18127489,
+"Anarchy in the U.K.":20457902,"Jesse Girl":1404615564,"Maxwell Murder":18707791,"Journey to the End":19796812,
+"For Whom The Bell Tolls":21162442,"Iron Man":16835836,"Master of Puppets":21162407,
+"Fear of the Dark":18353758,"Lateralus":20464495,"The Dance of Eternity":2417846,"Bleed":21251143,
+"Autumn Leaves":1479950962,"Blue Bossa":1296454814,"So What":21335863,
+"All The Things You Are":1399824297,"A Night in Tunisia":506842165,"Donna Lee":496728193,
+"The Chicken":2718149452,"Teen Town":1514048,
+"Good Times":2333069,"Get Lucky":26349642,"Thank You":3414598,"Come On Come Over":18616559,
+"What Is Hip?":21935827,"Thank You Falettinme":3414598,"Power of Soul":18647744,
+"I Will Survive":1431908755,"Le Freak":5120340,"Stayin Alive":3952752,"Forget Me Nots":3243293,
+"Rappers Delight":2631276195,"Boogie Wonderland":27231844,
+"Three Little Birds":27278280,"Stir It Up":1406248742,"Redemption Song":22113331,
+"Could You Be Loved":22113364,"Israelites":17279703,"54-46 Was My Number":21817210,
+"Welcome to Jamrock":17163312,"Sun Is Shining":1078064,
+"Sweet Home Chicago":1301998421,"Pride and Joy":21598546,"The Thrill Is Gone":1079753,
+"Red House":20363333,"Got My Mojo Working":1379584131,"Crossroads":17131385,
+"Voodoo Child":20363362,"Cold Shot":1939933,
+"Stand By Me":565603262,"Lets Stay Together":1301766827,"Whats Going On":565620094,
+"I Heard It Through the Grapevine":20544868,"Superstition":21613034,
+"For Once In My Life":21611969,"Sir Duke":1937057,
+"The Girl from Ipanema":483146037,"Desafinado":990981,"Oye Como Va":1937084,
+"Black Orpheus":502715858,"Smooth Operator":19171546,"Oye Como Va (原版)":1937084,
+"Pedro Navaja":1942273072,"Watermelon Man":18208068
+};
+
+/* ===== 渲染 Bass Aerobics 练习卡片 ===== */
+function renderAerobics(){
+  var container=document.getElementById('aerobicsContent');
+  if(!container)return;
+  var html='';
+  for(var ci=0;ci<BASS_AEROBICS.length;ci++){
+    var ch=BASS_AEROBICS[ci];
+    html+='<div class="aerobics-chapter">';
+    html+='<div class="aerobics-chapter-title">'+
+      '<span class="ch-num" style="background:'+ch.color+';color:var(--bg)">Ch'+ch.ch+'</span>'+
+      ch.title+'</div>';
+    html+='<div class="aerobics-chapter-desc">'+ch.desc+'</div>';
+    html+='<div class="aerobics-grid">';
+    for(var wi=0;wi<ch.workouts.length;wi++){
+      var w=ch.workouts[wi];
+      html+='<div class="aerobics-card">';
+      html+='<div class="aerobics-card-header">'+
+        '<span class="aerobics-card-num">W'+w.n+'</span>'+
+        '<span class="aerobics-card-title">'+w.t+'</span>'+
+        '<span class="aerobics-card-style">'+w.style+'</span>'+
+        '</div>';
+      html+='<div class="aerobics-card-body">'+
+        '<p>'+w.desc+'</p>';
+      if(w.bpm)html+='<span class="aerobics-bpm">♩='+w.bpm+'</span>';
+      html+='<div class="aerobics-actions">'+
+        '<button class="aerobics-action-btn sheet-btn" onclick="openSheetModal('+w.n+')">🎼 查看谱子</button>';
+      if(w.bv){
+        html+='<button class="aerobics-action-btn video-btn" onclick="openVideoModal(\''+w.bv+'\','+w.n+')">🎬 查看视频</button>';
+      }
+      html+='</div>';
+      html+='</div></div>';
+    }
+    html+='</div></div>';
+  }
+  container.innerHTML=html;
+}
+
+/* ===== 练习谱子放大弹窗 ===== */
+var sheetModal=null,sheetOverlay=null;
+function initSheetModal(){
+  if(sheetModal)return;
+  sheetModal=document.createElement('div');
+  sheetModal.className='sheet-modal';
+  sheetModal.innerHTML='<button class="sheet-modal-close" onclick="closeSheetModal()">&times;</button>'+
+    '<img class="sheet-modal-img" id="sheetModalImg" src="" alt="谱子放大">';
+  sheetOverlay=document.createElement('div');
+  sheetOverlay.className='sheet-modal-overlay';
+  sheetOverlay.onclick=closeSheetModal;
+  document.body.appendChild(sheetOverlay);
+  document.body.appendChild(sheetModal);
+}
+function openSheetModal(n){
+  initSheetModal();
+  var path='assets/aerobics/w'+(n<10?'0':'')+n+'.jpg';
+  var img=document.getElementById('sheetModalImg');
+  img.src=path;
+  sheetModal.classList.add('show');
+  sheetOverlay.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeSheetModal(){
+  if(sheetModal)sheetModal.classList.remove('show');
+  if(sheetOverlay)sheetOverlay.classList.remove('show');
+  document.body.style.overflow='';
+}
+
+/* ===== 练习视频弹窗 ===== */
+var videoModal=null,videoOverlay=null;
+function initVideoModal(){
+  if(videoModal)return;
+  videoOverlay=document.createElement('div');
+  videoOverlay.className='video-modal-overlay';
+  videoOverlay.onclick=closeVideoModal;
+  videoModal=document.createElement('div');
+  videoModal.className='video-modal';
+  videoModal.innerHTML=
+    '<div class="video-modal-header">'+
+      '<span class="video-modal-title" id="videoModalTitle">🎬 演示视频</span>'+
+      '<button class="video-modal-close" onclick="closeVideoModal()">&times;</button>'+
+    '</div>'+
+    '<div class="video-modal-body" id="videoModalBody"></div>'+
+    '<div class="video-modal-footer" id="videoModalFooter"></div>';
+  document.body.appendChild(videoOverlay);
+  document.body.appendChild(videoModal);
+}
+function openVideoModal(bv,n){
+  initVideoModal();
+  var titleEl=document.getElementById('videoModalTitle');
+  titleEl.textContent='🎬 Workout #'+n+' 演示视频';
+  var body=document.getElementById('videoModalBody');
+  body.innerHTML='<iframe src="//player.bilibili.com/player.html?bvid='+bv+'&autoplay=1&high_quality=1" '+
+    'scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>';
+  var footer=document.getElementById('videoModalFooter');
+  footer.innerHTML='<a href="https://www.bilibili.com/video/'+bv+'/" target="_blank">🔗 在B站打开</a>';
+  videoModal.classList.add('show');
+  videoOverlay.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeVideoModal(){
+  if(videoModal){
+    videoModal.classList.remove('show');
+    var body=document.getElementById('videoModalBody');
+    if(body)body.innerHTML=''; // stop video playback
+  }
+  if(videoOverlay)videoOverlay.classList.remove('show');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    if(videoModal&&videoModal.classList.contains('show'))closeVideoModal();
+    if(sheetModal&&sheetModal.classList.contains('show'))closeSheetModal();
+  }
+});
+
+/* ===== 网易云音乐弹窗 ===== */
+function openNetease(title,artist,diff){
+  var sid=NETEASE_SONGS[title];
+  var modal=document.getElementById('nmModal');
+  var overlay=document.getElementById('nmOverlay');
+  document.getElementById('nmTitle').textContent=title;
+  document.getElementById('nmArtist').textContent=artist+(diff?(' · '+diff):'');
+  var frame=document.getElementById('nmFrame');
+  var hint=document.getElementById('nmHint');
+  if(sid&&sid>0){
+    frame.src='https://music.163.com/outchain/player?type=2&id='+sid+'&auto=1&height=380';
+    frame.style.display='block';
+    hint.textContent='🎵 网易云音乐 · 完整原曲播放';
+  }else{
+    frame.src='';
+    frame.style.display='none';
+    hint.innerHTML='暂未找到此曲目 · '+
+      '<a href="https://music.163.com/#/search/m/?s='+encodeURIComponent(title+' '+artist)+'&type=1" target="_blank" style="color:var(--accent3);font-weight:600">在网易云音乐搜索</a>';
+  }
+  modal.classList.add('show');
+  overlay.classList.add('show');
+}
+function closeNetease(){
+  var frame=document.getElementById('nmFrame');
+  frame.src='';
+  document.getElementById('nmModal').classList.remove('show');
+  document.getElementById('nmOverlay').classList.remove('show');
+}
+
+/* ===== 绑定歌曲点击事件 ===== */
+function bindSongClicks(){
+  document.querySelectorAll('.song-item').forEach(function(item){
+    item.style.cursor='pointer';
+    var titleEl=item.querySelector('.title');
+    var artistEl=item.querySelector('.artist');
+    var diffEl=item.querySelector('.diff');
+    if(!titleEl)return;
+    var title=titleEl.textContent.trim();
+    var artist=artistEl?artistEl.textContent.trim():'';
+    var diff=diffEl?diffEl.textContent.trim():'';
+    if(!item.querySelector('.play-icon')){
+      var icon=document.createElement('span');
+      icon.className='play-icon';icon.textContent='🎵';
+      titleEl.parentNode.insertBefore(icon,titleEl);
+    }
+    item.addEventListener('click',function(){
+      openNetease(title,artist,diff);
+    });
+  });
+}
+
+/* ===== 初始化 ===== */
+setTimeout(function(){
+  renderAerobics();
+  bindSongClicks();
+},100);
 </script>
 </body>
 </html>

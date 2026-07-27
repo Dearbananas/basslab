@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 460" aria-labelledby="title desc">
+  <title>electric bass guitar emoji icon</title>
+  <desc>cartoon emoji style 4-string electric bass with white body, black pickguard and transparent background</desc>
+
+  <!-- 统一描边：纯黑粗线，圆角连接 -->
+  <g stroke="#111" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- 琴头：参考图不对称 Fender 风格，右侧圆头凸起 -->
+    <path d="M75 70
+             C90 70 100 60 102 45
+             C104 32 100 20 92 12
+             C86 6 76 3 68 5
+             C58 7 50 14 48 24
+             C46 34 47 44 50 52
+             C52 60 55 66 58 70
+             Z" fill="#f5d5a8" stroke-width="4"/>
+
+    <!-- 弦钮：左侧 4 个灰色圆点 -->
+    <g fill="#c0c0c0" stroke-width="3">
+      <circle cx="26" cy="22" r="6"/>
+      <circle cx="26" cy="36" r="6"/>
+      <circle cx="26" cy="50" r="6"/>
+      <circle cx="26" cy="64" r="6"/>
+    </g>
+    <!-- 弦钮连接柱 -->
+    <g fill="#111" stroke="none">
+      <rect x="30" y="19" width="14" height="6" rx="2"/>
+      <rect x="30" y="33" width="14" height="6" rx="2"/>
+      <rect x="30" y="47" width="14" height="6" rx="2"/>
+      <rect x="30" y="61" width="14" height="6" rx="2"/>
+    </g>
+
+    <!-- 琴头安装孔（小圆点） -->
+    <g fill="#c9a67a" stroke="none">
+      <circle cx="74" cy="22" r="2.5"/>
+      <circle cx="80" cy="34" r="2.5"/>
+      <circle cx="84" cy="46" r="2.5"/>
+      <circle cx="86" cy="58" r="2.5"/>
+    </g>
+
+    <!-- 弦枕 -->
+    <rect x="58" y="70" width="24" height="5" fill="#e8c8a8" stroke-width="3" rx="2"/>
+
+    <!-- 琴颈 -->
+    <rect x="58" y="75" width="24" height="170" fill="#f5d5a8" stroke-width="4" rx="2"/>
+    <!-- 指板 -->
+    <rect x="61" y="78" width="18" height="164" fill="#f0e0c0" stroke="none" rx="1"/>
+
+    <!-- 品丝 -->
+    <g stroke="#111" stroke-width="2">
+      <line x1="61" y1="88" x2="79" y2="88"/>
+      <line x1="61" y1="98" x2="79" y2="98"/>
+      <line x1="61" y1="108" x2="79" y2="108"/>
+      <line x1="61" y1="117" x2="79" y2="117"/>
+      <line x1="61" y1="126" x2="79" y2="126"/>
+      <line x1="61" y1="134" x2="79" y2="134"/>
+      <line x1="61" y1="142" x2="79" y2="142"/>
+      <line x1="61" y1="150" x2="79" y2="150"/>
+      <line x1="61" y1="157" x2="79" y2="157"/>
+      <line x1="61" y1="164" x2="79" y2="164"/>
+      <line x1="61" y1="171" x2="79" y2="171"/>
+      <line x1="61" y1="177" x2="79" y2="177"/>
+      <line x1="61" y1="183" x2="79" y2="183"/>
+      <line x1="61" y1="189" x2="79" y2="189"/>
+      <line x1="61" y1="194" x2="79" y2="194"/>
+      <line x1="61" y1="199" x2="79" y2="199"/>
+      <line x1="61" y1="204" x2="79" y2="204"/>
+      <line x1="61" y1="209" x2="79" y2="209"/>
+      <line x1="61" y1="213" x2="79" y2="213"/>
+      <line x1="61" y1="217" x2="79" y2="217"/>
+    </g>
+
+    <!-- 品记 -->
+    <g fill="#c9a67a" stroke="none">
+      <circle cx="70" cy="95" r="2"/>
+      <circle cx="70" cy="112" r="2"/>
+      <circle cx="70" cy="128" r="2"/>
+      <circle cx="70" cy="143" r="2"/>
+      <circle cx="66" cy="157" r="1.8"/>
+      <circle cx="74" cy="157" r="1.8"/>
+      <circle cx="70" cy="170" r="2"/>
+      <circle cx="70" cy="182" r="2"/>
+      <circle cx="70" cy="194" r="2"/>
+      <circle cx="70" cy="205" r="2"/>
+    </g>
+
+    <!-- 琴体（白色） -->
+    <path d="M70 245
+             C52 245 40 253 34 268
+             C28 283 32 298 38 308
+             C30 328 28 354 32 378
+             C36 402 48 422 64 432
+             C72 437 82 437 92 432
+             C108 422 120 402 124 378
+             C128 354 126 328 118 308
+             C124 298 128 283 122 268
+             C116 253 104 245 86 245
+             C80 245 75 245 70 245 Z" fill="#ffffff" stroke-width="4"/>
+
+    <!-- 输出插孔（左上） -->
+    <circle cx="40" cy="285" r="5" fill="#111" stroke-width="3"/>
+
+    <!-- 护板（黑色） -->
+    <path d="M70 252
+             C56 252 46 260 44 274
+             C42 288 44 308 50 328
+             C54 346 56 366 56 384
+             C56 402 62 418 74 426
+             C86 433 98 428 104 414
+             C110 400 106 382 100 366
+             C94 350 90 332 92 314
+             C94 296 86 278 76 268
+             C74 256 72 252 70 252 Z" fill="#1a1a1a" stroke-width="3"/>
+
+    <!-- 拾音器（横向黑色长条） -->
+    <g fill="#111" stroke="none">
+      <rect x="58" y="318" width="18" height="7" rx="3.5"/>
+      <rect x="58" y="336" width="18" height="7" rx="3.5"/>
+    </g>
+    <!-- 拾音器白色磁点 -->
+    <g fill="#fff" stroke="none">
+      <circle cx="62" cy="321.5" r="1.3"/>
+      <circle cx="67" cy="321.5" r="1.3"/>
+      <circle cx="72" cy="321.5" r="1.3"/>
+      <circle cx="62" cy="339.5" r="1.3"/>
+      <circle cx="67" cy="339.5" r="1.3"/>
+      <circle cx="72" cy="339.5" r="1.3"/>
+    </g>
+
+    <!-- 旋钮（2个白点） -->
+    <g fill="#ffffff" stroke-width="3">
+      <circle cx="102" cy="368" r="6"/>
+      <circle cx="102" cy="392" r="6"/>
+    </g>
+    <!-- 旋钮中心 -->
+    <g fill="#111" stroke="none">
+      <circle cx="102" cy="368" r="2"/>
+      <circle cx="102" cy="392" r="2"/>
+    </g>
+
+    <!-- 琴桥（银灰） -->
+    <rect x="58" y="410" width="24" height="10" fill="#d0d0d0" stroke-width="3" rx="2"/>
+    <!-- 弦鞍 -->
+    <g fill="#fff" stroke-width="2">
+      <rect x="61" y="412" width="3.5" height="5" rx="1"/>
+      <rect x="66" y="412" width="3.5" height="5" rx="1"/>
+      <rect x="71" y="412" width="3.5" height="5" rx="1"/>
+      <rect x="76" y="412" width="3.5" height="5" rx="1"/>
+    </g>
+
+    <!-- 4根弦（从弦钮到琴桥） -->
+    <g stroke="#888" stroke-linecap="round">
+      <line x1="26" y1="22" x2="63" y2="75" stroke-width="1.5"/>
+      <line x1="26" y1="36" x2="67" y2="75" stroke-width="1.8"/>
+      <line x1="26" y1="50" x2="71" y2="75" stroke-width="2.1"/>
+      <line x1="26" y1="64" x2="75" y2="75" stroke-width="2.4"/>
+
+      <line x1="63" y1="75" x2="62" y2="410" stroke-width="1.5"/>
+      <line x1="67" y1="75" x2="66" y2="410" stroke-width="1.8"/>
+      <line x1="71" y1="75" x2="70" y2="410" stroke-width="2.1"/>
+      <line x1="75" y1="75" x2="74" y2="410" stroke-width="2.4"/>
+    </g>
+
+  </g>
+</svg>

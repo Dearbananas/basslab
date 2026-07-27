@@ -1,0 +1,11 @@
+# Development scripts
+clean_icon*.py
+trace_bass.py
+
+# Preview/development HTML files
+font-preview.html
+welcome-preview.html
+
+# Development assets
+assets/bass-traced.svg
+assets/Clean_vector_*.png
