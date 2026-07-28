@@ -14,7 +14,9 @@
     "streak": 1,
     "total": 1,
     "lastDate": "2026-07-28",
-    "rewards": [],
+    "rewards": [
+      1
+    ],
     "history": [
       "2026-07-28"
     ]
