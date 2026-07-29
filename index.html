@@ -2556,8 +2556,21 @@ var DEFAULT_USERS=[
 
 function getUsers(){
   var s=localStorage.getItem('basslab_users');
-  if(!s){localStorage.setItem('basslab_users',JSON.stringify(DEFAULT_USERS));return DEFAULT_USERS.slice()}
-  try{return JSON.parse(s)}catch(e){localStorage.setItem('basslab_users',JSON.stringify(DEFAULT_USERS));return DEFAULT_USERS.slice()}
+  var list=[];
+  if(s){try{list=JSON.parse(s)}catch(e){list=[]}}
+  if(!list||!list.length){
+    localStorage.setItem('basslab_users',JSON.stringify(DEFAULT_USERS));
+    return DEFAULT_USERS.slice();
+  }
+  // 保证内置账号角色始终正确（防止早期旧 localStorage 结构导致管理员功能失效）
+  var byName={};
+  list.forEach(function(u){byName[u.username]=u});
+  DEFAULT_USERS.forEach(function(d){
+    if(byName[d.username]){byName[d.username].role=d.role;}
+    else list.push(d);
+  });
+  localStorage.setItem('basslab_users',JSON.stringify(list));
+  return list;
 }
 function saveUsers(arr){localStorage.setItem('basslab_users',JSON.stringify(arr))}
 
@@ -2586,12 +2599,10 @@ function saveUsers(arr){localStorage.setItem('basslab_users',JSON.stringify(arr)
   }else{
     badgeText.textContent=user||'未知用户';
   }
-  // 签到按钮初始化
-  checkinInit();
-  // 灵感记录初始化
-  inspInit();
-  // 任务栏初始化
-  taskInit();
+  // 初始化各模块（各自独立 try，避免一个失败连累其他）
+  try{checkinInit();}catch(e){console.error('checkinInit error:',e);}
+  try{inspInit();}catch(e){console.error('inspInit error:',e);}
+  try{taskInit();}catch(e){console.error('taskInit error:',e);}
 })();
 
 // === 退出登录 ===
@@ -3118,6 +3129,9 @@ function taskInit(){
 function openTaskPanel(){
   document.getElementById('taskOverlay').classList.add('show');
   document.getElementById('taskPanel').classList.add('show');
+  // 每次打开都重新判定 admin 身份，确保发布面板可见（防止页面加载初始化异常导致按钮缺失）
+  var role=sessionStorage.getItem('basslab_role');
+  document.getElementById('taskAdminPanel').style.display=(role==='admin')?'block':'none';
   taskRender();
 }
 function closeTaskPanel(){
