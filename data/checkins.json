@@ -1,13 +1,14 @@
 {
   "Watermelon": {
-    "streak": 1,
-    "total": 1,
-    "lastDate": "2026-07-28",
+    "streak": 2,
+    "total": 2,
+    "lastDate": "2026-07-29",
     "rewards": [
       1
     ],
     "history": [
-      "2026-07-28"
+      "2026-07-28",
+      "2026-07-29"
     ]
   },
   "SharkChili": {
