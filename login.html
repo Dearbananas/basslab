@@ -302,14 +302,21 @@ var DEFAULT_USERS=[
 
 function getUsers(){
   var stored=localStorage.getItem('basslab_users');
-  if(!stored){
+  var list=[];
+  if(stored){try{list=JSON.parse(stored)}catch(e){list=[]}}
+  if(!list||!list.length){
     localStorage.setItem('basslab_users',JSON.stringify(DEFAULT_USERS));
     return DEFAULT_USERS.slice();
   }
-  try{return JSON.parse(stored)}catch(e){
-    localStorage.setItem('basslab_users',JSON.stringify(DEFAULT_USERS));
-    return DEFAULT_USERS.slice();
-  }
+  // 保证内置账号角色始终正确（防止早期旧 localStorage 结构导致管理员功能失效）
+  var byName={};
+  list.forEach(function(u){byName[u.username]=u});
+  DEFAULT_USERS.forEach(function(d){
+    if(byName[d.username]){byName[d.username].role=d.role;}
+    else list.push(d);
+  });
+  localStorage.setItem('basslab_users',JSON.stringify(list));
+  return list;
 }
 
 // === DOM ===
