@@ -417,6 +417,35 @@ a:hover{color:var(--accent2)}
   .task-panel.show{right:0}
 }
 
+/* 灵感记录：管理员用户切换 + 隐私 */
+.insp-list-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.insp-list-title{font-size:14px;font-weight:700;color:var(--accent);margin:0}
+.insp-view-user{font-size:12px;color:var(--fg3);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.insp-view-user select{background:var(--bg);color:var(--fg);border:1.5px solid var(--bg4);border-radius:8px;padding:5px 10px;font-family:var(--font);font-size:12px;outline:none;cursor:pointer}
+.insp-view-user select:focus{border-color:var(--accent)}
+
+/* 任务状态扩展 */
+.task-card-status.submitted{background:rgba(120,120,255,.15);color:#9aa0ff}
+.task-card-status.approved{background:rgba(0,212,170,.2);color:var(--accent3)}
+.task-card-submit{font-size:13px;color:var(--fg2);line-height:1.7;margin:10px 0;padding:10px 14px;background:rgba(120,120,255,.08);border-radius:8px;border-left:3px solid #9aa0ff}
+.task-card-review{font-size:13px;color:var(--fg2);line-height:1.7;margin:10px 0;padding:10px 14px;background:rgba(245,166,35,.08);border-radius:8px;border-left:3px solid var(--accent)}
+
+/* 任务提交 / 审核弹窗 */
+.task-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);z-index:9200;opacity:0;pointer-events:none;transition:opacity .3s}
+.task-modal-overlay.show{opacity:1;pointer-events:auto}
+.task-modal-box{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);width:90%;max-width:520px;background:var(--bg2);border:1px solid var(--bg4);border-radius:16px;z-index:9201;opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.22,1,.36,1);padding:28px;max-height:88vh;overflow-y:auto}
+.task-modal-overlay.show .task-modal-box{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.task-modal-box h3{font-size:19px;font-weight:800;color:var(--fg);margin:0 0 6px}
+.task-modal-close{position:absolute;top:14px;right:18px;background:none;border:none;font-size:26px;color:var(--fg3);cursor:pointer;padding:0;width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all .15s;line-height:1}
+.task-modal-close:hover{color:var(--accent2);background:rgba(255,255,255,.05)}
+.task-modal-label{display:block;font-size:13px;color:var(--fg3);margin:16px 0 8px;font-weight:600}
+.task-modal-box textarea{width:100%;min-height:120px;padding:12px 14px;background:var(--bg);border:1.5px solid var(--bg4);border-radius:10px;color:var(--fg);font-size:14px;font-family:var(--font);outline:none;resize:vertical;transition:border-color .2s;box-sizing:border-box}
+.task-modal-box textarea:focus{border-color:var(--accent)}
+.task-modal-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:20px}
+.review-row{font-size:14px;color:var(--fg2);line-height:1.8;margin-bottom:6px}
+.review-note{background:var(--bg3);border-radius:8px;padding:10px 14px;margin-top:4px;white-space:pre-wrap;word-break:break-word;color:var(--fg)}
+.modal-sub{font-size:13px;color:var(--accent);font-weight:600;margin-bottom:4px}
+
 /* === 推荐曲目（网易云嵌入） === */
 .song-item{cursor:pointer;transition:all .15s}
 .song-item:hover{background:var(--bg4);transform:translateX(4px)}
@@ -573,7 +602,7 @@ a:hover{color:var(--accent2)}
     <button class="task-panel-close" onclick="closeTaskPanel()">&times;</button>
   </div>
   <div class="task-panel-body">
-    <div class="task-panel-intro">管理员 Watermelon 发布练习任务，用户认领完成后可获得奖励。保持每日练习动力！</div>
+    <div class="task-panel-intro">管理员 Watermelon 发布练习任务，用户认领后完成并提交「完成报告」，经管理员审核通过后颁发奖励。保持每日练习动力！</div>
     <div class="task-admin-panel" id="taskAdminPanel" style="display:none">
       <h4>📌 发布新任务</h4>
       <div class="task-admin-form">
@@ -589,7 +618,35 @@ a:hover{color:var(--accent2)}
   </div>
 </div>
 
-<!-- 网易云音乐播放弹窗 -->
+<!-- 任务提交弹窗 -->
+<div class="task-modal-overlay" id="taskSubmitOverlay" onclick="if(event.target===this)closeTaskSubmit()">
+  <div class="task-modal-box">
+    <button class="task-modal-close" onclick="closeTaskSubmit()">&times;</button>
+    <h3>提交任务完成</h3>
+    <div class="modal-sub" id="taskSubmitTitle"></div>
+    <label class="task-modal-label">完成报告（练习了多久、哪些进步、遇到什么困难…）</label>
+    <textarea id="taskSubmitNote" placeholder="例如：本周每天练习 30 分钟，已能流畅弹奏 A 小调五声音阶，跨把位切换还需加强。" maxlength="1000"></textarea>
+    <div class="task-modal-actions">
+      <button class="btn-sm" onclick="closeTaskSubmit()">取消</button>
+      <button class="task-submit-btn" onclick="taskDoSubmit()">提交审核</button>
+    </div>
+  </div>
+</div>
+
+<!-- 任务审核弹窗 -->
+<div class="task-modal-overlay" id="taskReviewOverlay" onclick="if(event.target===this)closeTaskReview()">
+  <div class="task-modal-box">
+    <button class="task-modal-close" onclick="closeTaskReview()">&times;</button>
+    <h3>审核任务完成</h3>
+    <div class="modal-sub" id="taskReviewInfo"></div>
+    <label class="task-modal-label">审核意见（通过或退回时给用户的反馈）</label>
+    <textarea id="taskReviewNote" placeholder="例如：完成得很扎实，跨把位再慢练几遍就更稳了。或：还需加强，请把难点部分多练几次重新提交。" maxlength="1000"></textarea>
+    <div class="task-modal-actions">
+      <button class="btn-sm danger" onclick="taskDoReview('reject')">退回修改</button>
+      <button class="task-submit-btn" onclick="taskDoReview('approve')">通过并颁发奖励</button>
+    </div>
+  </div>
+</div>
 <div class="netease-overlay" id="nmOverlay" onclick="if(event.target===this)closeNetease()"></div>
 <div class="netease-modal" id="nmModal">
   <div class="nm-header">
@@ -1780,7 +1837,7 @@ a:hover{color:var(--accent2)}
   <div class="section-header">
     <span class="section-tag">TOOL</span>
     <h3>灵感记录</h3>
-    <p>随时录音或编写 TAB 谱，把一闪而过的灵感保存下来。数据存在本地浏览器中，下次打开依然在。</p>
+    <p>随时录音或编写 TAB 谱，把一闪而过的灵感保存下来。灵感已同步到云端，<b>换设备登录也能看到自己的记录</b>；普通用户之间互相看不到对方的灵感，只有管理员 Watermelon 可以查看所有人的灵感。</p>
   </div>
   <div class="insp-wrap">
     <div class="insp-tabs">
@@ -1824,13 +1881,16 @@ a:hover{color:var(--accent2)}
 
     <!-- 已保存列表 -->
     <div class="insp-list" id="insp-list">
-      <div class="insp-list-title">已保存的灵感</div>
+      <div class="insp-list-head">
+        <div class="insp-list-title">已保存的灵感</div>
+        <div class="insp-view-user" id="inspViewUserWrap" style="display:none">查看：<select id="inspViewUser" onchange="inspSwitchUser(this.value)"></select></div>
+      </div>
       <div id="insp-items"></div>
     </div>
   </div>
   <div class="callout tip">
     <div class="callout-title">使用提示</div>
-    <p><strong>录音</strong>：弹完一段 riff 马上录下来，别等"弹完美了再录"——灵感比完美更重要。<strong>编谱</strong>：用 TAB 格式快速记下指法，不需要写五线谱。保存的数据存在本浏览器中，清除浏览器数据会丢失。</p>
+    <p><strong>录音</strong>：弹完一段 riff 马上录下来，别等"弹完美了再录"——灵感比完美更重要（单次最长 120 秒）。<strong>编谱</strong>：用 TAB 格式快速记下指法，不需要写五线谱。数据已存到云端，跨设备同步；清除浏览器数据不会影响云端记录。</p>
   </div>
 </section>
 
@@ -2047,9 +2107,49 @@ function metroStop(){
 function metroToggle(){if(mRunning)metroStop();else metroStart();}
 metroUpdateBeats();
 
-/* === 灵感记录工具 === */
+/* === 灵感记录工具（云端存储 + 隐私隔离） === */
 var inspMediaRec=null,inspChunks=[],inspRecStart=0,inspRecTimer=null,inspCurBlob=null;
 var inspCurTab='audio';
+var inspViewUser=null;            // 当前查看的用户（普通用户=自己，管理员可切换）
+var inspCloudCache={};            // { user: {data:[], sha} }
+var inspAudioUrls={};             // { id: objectURL } 会话内缓存
+var INSP_MAX_SECONDS=120;         // 单次录音最长时长（控制文件体积）
+
+function inspUserPath(user){return 'data/inspirations/'+user+'.json';}
+function inspAudioPath(owner,id){return 'data/insp_audio/'+owner+'_'+id+'.webm';}
+
+function base64ToBytes(b64){
+  var bin=atob(b64.replace(/\s/g,''));
+  var len=bin.length;
+  var bytes=new Uint8Array(len);
+  for(var i=0;i<len;i++)bytes[i]=bin.charCodeAt(i);
+  return bytes;
+}
+function bytesToBase64(bytes){
+  var bin='';
+  var chunk=0x8000;
+  for(var i=0;i<bytes.length;i+=chunk){
+    bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+chunk));
+  }
+  return btoa(bin);
+}
+
+async function inspLoadUser(user){
+  var r=await ghRead(inspUserPath(user));
+  inspCloudCache[user]={data:r.data||[],sha:r.sha};
+  return r.data||[];
+}
+async function inspGetAudioUrl(owner,id){
+  if(inspAudioUrls[id])return inspAudioUrls[id];
+  try{
+    var r=await ghRead(inspAudioPath(owner,id));
+    if(!r.data)return '';
+    var blob=new Blob([base64ToBytes(r.data)],{type:'audio/webm'});
+    var url=URL.createObjectURL(blob);
+    inspAudioUrls[id]=url;
+    return url;
+  }catch(e){return '';}
+}
 
 function inspSwitchTab(tab){
   inspCurTab=tab;
@@ -2070,7 +2170,9 @@ function inspToggleRecord(){
   }
   navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
     inspChunks=[];
-    inspMediaRec=new MediaRecorder(stream);
+    var opts={};
+    try{opts={audioBitsPerSecond:32000};}catch(e){}
+    inspMediaRec=new MediaRecorder(stream,opts);
     inspMediaRec.ondataavailable=function(e){if(e.data.size>0)inspChunks.push(e.data)};
     inspMediaRec.onstop=function(){
       stream.getTracks().forEach(function(t){t.stop()});
@@ -2091,9 +2193,14 @@ function inspToggleRecord(){
     var btn=document.getElementById('insp-rec-btn');
     btn.classList.add('recording');
     btn.textContent='■';
-    document.getElementById('insp-rec-hint').textContent='正在录音…点击按钮停止';
+    document.getElementById('insp-rec-hint').textContent='正在录音…点击按钮停止（最长 '+INSP_MAX_SECONDS+' 秒）';
     inspRecTimer=setInterval(function(){
       var s=Math.floor((Date.now()-inspRecStart)/1000);
+      if(s>=INSP_MAX_SECONDS){
+        inspMediaRec.stop();
+        document.getElementById('insp-rec-hint').textContent='已达最长录音时长（'+INSP_MAX_SECONDS+' 秒）';
+        return;
+      }
       document.getElementById('insp-rec-time').textContent=
         String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
     },200);
@@ -2102,102 +2209,147 @@ function inspToggleRecord(){
   });
 }
 
-function inspGetData(){
-  var s=localStorage.getItem('basslab_inspirations');
-  return s?JSON.parse(s):[];
-}
-function inspSaveData(arr){
-  localStorage.setItem('basslab_inspirations',JSON.stringify(arr));
-}
-
-function inspSaveAudio(){
+async function inspSaveAudio(){
   if(!inspCurBlob){
     alert('请先录制一段音频');
     return;
   }
+  var owner=sessionStorage.getItem('basslab_user');
   var title=document.getElementById('insp-audio-title').value.trim()||('录音 '+new Date().toLocaleString('zh-CN'));
-  var reader=new FileReader();
-  reader.onload=function(){
-    var data={
-      id:Date.now(),
-      type:'audio',
-      title:title,
-      data:reader.result,
-      date:new Date().toLocaleString('zh-CN')
-    };
-    var arr=inspGetData();
-    arr.unshift(data);
-    inspSaveData(arr);
-    document.getElementById('insp-audio-title').value='';
-    document.getElementById('insp-rec-player').style.display='none';
-    document.getElementById('insp-rec-time').textContent='00:00';
-    inspCurBlob=null;
-    inspRenderList();
-  };
-  reader.readAsDataURL(inspCurBlob);
+  var id=Date.now();
+  try{
+    var arrBuf=await inspCurBlob.arrayBuffer();
+    var b64=bytesToBase64(new Uint8Array(arrBuf));
+    await ghWriteRaw(inspAudioPath(owner,id),b64,null,'insp audio: '+owner+' '+id);
+  }catch(e){
+    alert('音频上传失败：'+e.message);
+    return;
+  }
+  if(!inspCloudCache[owner])await inspLoadUser(owner);
+  var items=inspCloudCache[owner].data;
+  items.unshift({id:id,type:'audio',title:title,hasAudio:true,date:new Date().toLocaleString('zh-CN'),owner:owner});
+  try{
+    inspCloudCache[owner].sha=await ghWrite(inspUserPath(owner),items,inspCloudCache[owner].sha,'insp save audio: '+owner);
+  }catch(e){
+    alert('保存失败：'+e.message);
+    return;
+  }
+  document.getElementById('insp-audio-title').value='';
+  document.getElementById('insp-rec-player').style.display='none';
+  document.getElementById('insp-rec-time').textContent='00:00';
+  inspCurBlob=null;
+  inspRenderList();
 }
 
-function inspSaveTab(){
+async function inspSaveTab(){
   var content=document.getElementById('insp-tab-input').value.trim();
   if(!content){
     alert('请输入谱子内容');
     return;
   }
+  var owner=sessionStorage.getItem('basslab_user');
   var title=document.getElementById('insp-tab-title').value.trim()||('谱子 '+new Date().toLocaleString('zh-CN'));
-  var data={
-    id:Date.now(),
-    type:'tab',
-    title:title,
-    content:content,
-    date:new Date().toLocaleString('zh-CN')
-  };
-  var arr=inspGetData();
-  arr.unshift(data);
-  inspSaveData(arr);
+  var id=Date.now();
+  if(!inspCloudCache[owner])await inspLoadUser(owner);
+  var items=inspCloudCache[owner].data;
+  items.unshift({id:id,type:'tab',title:title,content:content,date:new Date().toLocaleString('zh-CN'),owner:owner});
+  try{
+    inspCloudCache[owner].sha=await ghWrite(inspUserPath(owner),items,inspCloudCache[owner].sha,'insp save tab: '+owner);
+  }catch(e){
+    alert('保存失败：'+e.message);
+    return;
+  }
   document.getElementById('insp-tab-input').value='';
   document.getElementById('insp-tab-title').value='';
   inspRenderList();
 }
 
-function inspDelete(id){
+async function inspDelete(id){
   if(!confirm('确认删除这条记录吗？'))return;
-  var arr=inspGetData().filter(function(d){return d.id!==id});
-  inspSaveData(arr);
-  inspRenderList();
+  var owner=inspViewUser;
+  if(!inspCloudCache[owner])await inspLoadUser(owner);
+  var cache=inspCloudCache[owner];
+  var item=null;
+  for(var i=0;i<cache.data.length;i++){if(cache.data[i].id===id){item=cache.data[i];break;}}
+  var newData=cache.data.filter(function(d){return d.id!==id});
+  try{
+    if(item&&item.type==='audio'){
+      try{
+        var ar=await ghRead(inspAudioPath(owner,id));
+        if(ar.sha)await ghDelete(inspAudioPath(owner,id),ar.sha,'insp del audio');
+      }catch(e){}
+    }
+    cache.sha=await ghWrite(inspUserPath(owner),newData,cache.sha,'insp del: '+owner);
+    cache.data=newData;
+    inspRenderList();
+  }catch(e){
+    alert('删除失败：'+e.message);
+  }
 }
 
-function inspRenderList(){
-  var arr=inspGetData();
+async function inspRenderList(){
+  var user=inspViewUser;
   var c=document.getElementById('insp-items');
-  if(arr.length===0){
-    c.innerHTML='<div class="insp-empty">还没有保存的灵感，录一段或写一段谱子试试吧～</div>';
-    return;
-  }
-  var html='';
-  arr.forEach(function(d){
-    if(d.type==='audio'){
-      html+='<div class="insp-item">'+
-        '<div class="insp-item-head">'+
-          '<div><span class="insp-item-title">'+inspEsc(d.title)+'</span> <span class="insp-item-type insp-type-audio">录音</span></div>'+
-          '<div><span class="insp-item-meta">'+d.date+'</span> <button class="insp-del-btn" onclick="inspDelete('+d.id+')">删除</button></div>'+
-        '</div>'+
-        '<audio class="insp-item-audio" src="'+d.data+'" controls></audio>'+
-      '</div>';
-    }else{
-      html+='<div class="insp-item">'+
-        '<div class="insp-item-head">'+
-          '<div><span class="insp-item-title">'+inspEsc(d.title)+'</span> <span class="insp-item-type insp-type-tab">谱子</span></div>'+
-          '<div><span class="insp-item-meta">'+d.date+'</span> <button class="insp-del-btn" onclick="inspDelete('+d.id+')">删除</button></div>'+
-        '</div>'+
-        '<div class="insp-item-body"><pre>'+inspEsc(d.content)+'</pre></div>'+
-      '</div>';
+  c.innerHTML='<div class="insp-empty">⏳ 加载中...</div>';
+  try{
+    var items=await inspLoadUser(user);
+    if(items.length===0){
+      c.innerHTML='<div class="insp-empty">还没有保存的灵感，录一段或写一段谱子试试吧～</div>';
+      return;
     }
-  });
-  c.innerHTML=html;
+    var html='';
+    for(var i=0;i<items.length;i++){
+      var d=items[i];
+      if(d.type==='audio'){
+        var url=await inspGetAudioUrl(user,d.id);
+        html+='<div class="insp-item">'+
+          '<div class="insp-item-head">'+
+            '<div><span class="insp-item-title">'+inspEsc(d.title)+'</span> <span class="insp-item-type insp-type-audio">录音</span></div>'+
+            '<div><span class="insp-item-meta">'+d.date+'</span> <button class="insp-del-btn" onclick="inspDelete('+d.id+')">删除</button></div>'+
+          '</div>'+
+          (url?'<audio class="insp-item-audio" src="'+url+'" controls></audio>':'<div class="insp-empty">音频加载失败</div>')+
+        '</div>';
+      }else{
+        html+='<div class="insp-item">'+
+          '<div class="insp-item-head">'+
+            '<div><span class="insp-item-title">'+inspEsc(d.title)+'</span> <span class="insp-item-type insp-type-tab">谱子</span></div>'+
+            '<div><span class="insp-item-meta">'+d.date+'</span> <button class="insp-del-btn" onclick="inspDelete('+d.id+')">删除</button></div>'+
+          '</div>'+
+          '<div class="insp-item-body"><pre>'+inspEsc(d.content)+'</pre></div>'+
+        '</div>';
+      }
+    }
+    c.innerHTML=html;
+  }catch(e){
+    console.error(e);
+    c.innerHTML='<div class="insp-empty">❌ 加载失败：'+e.message+' <button class="insp-del-btn" onclick="inspRenderList()">重试</button></div>';
+  }
 }
 
 function inspEsc(s){
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function inspInit(){
+  var role=sessionStorage.getItem('basslab_role');
+  var user=sessionStorage.getItem('basslab_user');
+  inspViewUser=user;
+  var wrap=document.getElementById('inspViewUserWrap');
+  var sel=document.getElementById('inspViewUser');
+  if(role==='admin'){
+    wrap.style.display='inline-flex';
+    var users=loadUsers();
+    sel.innerHTML=users.map(function(u){
+      return '<option value="'+u.username+'"'+(u.username===user?' selected':'')+'>'+u.username+(u.role==='admin'?'（管理员）':'')+'</option>';
+    }).join('');
+  }else{
+    wrap.style.display='none';
+  }
+  inspRenderList();
+}
+function inspSwitchUser(u){
+  inspViewUser=u;
+  inspRenderList();
 }
 
 function inspInsertText(text){
@@ -2436,6 +2588,8 @@ function saveUsers(arr){localStorage.setItem('basslab_users',JSON.stringify(arr)
   }
   // 签到按钮初始化
   checkinInit();
+  // 灵感记录初始化
+  inspInit();
   // 任务栏初始化
   taskInit();
 })();
@@ -2639,6 +2793,57 @@ async function githubWriteCheckins(data,sha){
   var json=await resp.json();
   saveCheckinCache(data);
   return json.content.sha;
+}
+
+/* === 通用云端读写（灵感 / 任务共用） === */
+async function ghRead(path){
+  var url='https://api.github.com/repos/'+GITHUB_CONFIG.owner+'/'+GITHUB_CONFIG.repo+'/contents/'+path;
+  var lastErr=null;
+  for(var attempt=0;attempt<3;attempt++){
+    try{
+      var resp=await fetchWithTimeout(url,{
+        headers:{'Authorization':'token '+GITHUB_CONFIG.token,'Accept':'application/vnd.github+json'}
+      },12000);
+      if(resp.status===404)return{data:null,sha:null};
+      if(!resp.ok)throw new Error('GitHub '+resp.status);
+      var json=await resp.json();
+      var content=base64ToUtf8(json.content.replace(/\n/g,''));
+      return{data:JSON.parse(content),sha:json.sha};
+    }catch(e){
+      lastErr=e;
+      if(attempt<2)await new Promise(function(r){setTimeout(r,1000)});
+    }
+  }
+  throw lastErr;
+}
+async function ghWriteRaw(path,base64content,sha,msg){
+  var url='https://api.github.com/repos/'+GITHUB_CONFIG.owner+'/'+GITHUB_CONFIG.repo+'/contents/'+path;
+  var body={message:msg,content:base64content};
+  if(sha)body.sha=sha;
+  var resp=await fetchWithTimeout(url,{
+    method:'PUT',
+    headers:{'Authorization':'token '+GITHUB_CONFIG.token,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  },15000);
+  if(resp.status===409){
+    var retry=await ghRead(path);
+    return await ghWriteRaw(path,base64content,retry.sha,msg);
+  }
+  if(!resp.ok)throw new Error('GitHub write error: '+resp.status);
+  var json=await resp.json();
+  return json.content.sha;
+}
+async function ghWrite(path,obj,sha,msg){
+  return await ghWriteRaw(path,utf8ToBase64(JSON.stringify(obj,null,2)),sha,msg);
+}
+async function ghDelete(path,sha,msg){
+  var url='https://api.github.com/repos/'+GITHUB_CONFIG.owner+'/'+GITHUB_CONFIG.repo+'/contents/'+path;
+  var resp=await fetchWithTimeout(url,{
+    method:'DELETE',
+    headers:{'Authorization':'token '+GITHUB_CONFIG.token,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
+    body:JSON.stringify({message:msg,sha:sha})
+  },15000);
+  if(!resp.ok)throw new Error('GitHub delete error: '+resp.status);
 }
 
 function ensureUserData(data,user){
@@ -2886,18 +3091,24 @@ document.addEventListener('keydown',function(e){
 });
 
 /* === 任务栏系统 === */
-function taskGetData(){
-  var s=localStorage.getItem('basslab_tasks');
-  return s?JSON.parse(s):[];
+/* === 任务系统（云端存储 + 提交审核） === */
+var TASK_CLOUD_PATH='data/tasks.json';
+var taskCloud={data:null,sha:null};
+var taskSubmitId=null,taskReviewId=null;
+
+async function taskLoad(){
+  var r=await ghRead(TASK_CLOUD_PATH);
+  taskCloud.data=r.data||{tasks:[]};
+  taskCloud.sha=r.sha;
+  if(!taskCloud.data.tasks)taskCloud.data.tasks=[];
+  return taskCloud.data;
 }
-function taskSaveData(arr){
-  localStorage.setItem('basslab_tasks',JSON.stringify(arr));
+async function taskSave(){
+  taskCloud.sha=await ghWrite(TASK_CLOUD_PATH,taskCloud.data,taskCloud.sha,'task update');
 }
 
 function taskInit(){
   var role=sessionStorage.getItem('basslab_role');
-  var user=sessionStorage.getItem('basslab_user');
-  // Admin can see publish panel
   if(role==='admin'){
     document.getElementById('taskAdminPanel').style.display='block';
   }
@@ -2907,135 +3118,185 @@ function taskInit(){
 function openTaskPanel(){
   document.getElementById('taskOverlay').classList.add('show');
   document.getElementById('taskPanel').classList.add('show');
+  taskRender();
 }
 function closeTaskPanel(){
   document.getElementById('taskOverlay').classList.remove('show');
   document.getElementById('taskPanel').classList.remove('show');
 }
 
-function taskPublish(){
+async function taskPublish(){
   var title=document.getElementById('taskTitle').value.trim();
   var desc=document.getElementById('taskDesc').value.trim();
   var reward=document.getElementById('taskReward').value.trim()||'🎵 完成奖励';
   if(!title){alert('请输入任务标题');return}
-  var tasks=taskGetData();
-  tasks.push({
+  if(!taskCloud.data)await taskLoad();
+  taskCloud.data.tasks.push({
     id:Date.now(),
-    title:title,
-    desc:desc,
-    reward:reward,
-    status:'open',          // open / claimed / done
-    claimedBy:'',
-    claimedDate:'',
-    doneDate:'',
+    title:title,desc:desc,reward:reward,
+    publisher:sessionStorage.getItem('basslab_user'),
+    status:'open',claimedBy:'',claimedDate:'',
+    submitNote:'',submitDate:'',reviewNote:'',reviewDate:'',reviewer:'',
     publishDate:new Date().toLocaleString('zh-CN')
   });
-  taskSaveData(tasks);
-  document.getElementById('taskTitle').value='';
-  document.getElementById('taskDesc').value='';
-  document.getElementById('taskReward').value='';
-  taskRender();
+  try{
+    await taskSave();
+    document.getElementById('taskTitle').value='';
+    document.getElementById('taskDesc').value='';
+    document.getElementById('taskReward').value='';
+    taskRender();
+  }catch(e){alert('发布失败：'+e.message);}
 }
 
 function taskClaim(id){
   var user=sessionStorage.getItem('basslab_user');
   var role=sessionStorage.getItem('basslab_role');
-  if(role!=='user'){
-    alert('管理员无需认领任务');
-    return;
-  }
-  var tasks=taskGetData();
-  for(var i=0;i<tasks.length;i++){
-    if(tasks[i].id===id){
-      if(tasks[i].status!=='open'){alert('该任务已被认领');return}
-      tasks[i].status='claimed';
-      tasks[i].claimedBy=user;
-      tasks[i].claimedDate=new Date().toLocaleString('zh-CN');
+  if(role!=='user'){alert('管理员无需认领任务');return}
+  if(!taskCloud.data)return;
+  for(var i=0;i<taskCloud.data.tasks.length;i++){
+    if(taskCloud.data.tasks[i].id===id){
+      var t=taskCloud.data.tasks[i];
+      if(t.status!=='open'){alert('该任务已被认领');return}
+      t.status='claimed';t.claimedBy=user;t.claimedDate=new Date().toLocaleString('zh-CN');
       break;
     }
   }
-  taskSaveData(tasks);
-  taskRender();
+  taskSave().then(taskRender).catch(function(e){alert('操作失败：'+e.message)});
 }
 
-function taskComplete(id){
-  var tasks=taskGetData();
-  var task=null;
-  for(var i=0;i<tasks.length;i++){
-    if(tasks[i].id===id){task=tasks[i];break}
+function taskOpenSubmit(id){
+  taskSubmitId=id;
+  var t=findTask(id);
+  if(!t)return;
+  document.getElementById('taskSubmitTitle').textContent=t.title;
+  document.getElementById('taskSubmitNote').value='';
+  document.getElementById('taskSubmitOverlay').classList.add('show');
+}
+function closeTaskSubmit(){
+  document.getElementById('taskSubmitOverlay').classList.remove('show');
+}
+async function taskDoSubmit(){
+  var t=findTask(taskSubmitId);
+  if(!t)return;
+  var note=document.getElementById('taskSubmitNote').value.trim();
+  if(!note){alert('请填写你的完成情况');return}
+  t.status='submitted';t.submitNote=note;t.submitDate=new Date().toLocaleString('zh-CN');
+  try{
+    await taskSave();
+    closeTaskSubmit();
+    taskRender();
+  }catch(e){alert('提交失败：'+e.message);}
+}
+
+function taskOpenReview(id){
+  taskReviewId=id;
+  var t=findTask(id);
+  if(!t)return;
+  document.getElementById('taskReviewInfo').innerHTML=
+    '<div class="review-row"><b>任务：</b>'+escapeHtml(t.title)+'</div>'+
+    '<div class="review-row"><b>认领人：</b>'+escapeHtml(t.claimedBy)+'</div>'+
+    '<div class="review-row"><b>完成报告：</b><br><div class="review-note">'+escapeHtml(t.submitNote||'（无）')+'</div></div>';
+  document.getElementById('taskReviewNote').value=t.reviewNote||'';
+  document.getElementById('taskReviewOverlay').classList.add('show');
+}
+function closeTaskReview(){
+  document.getElementById('taskReviewOverlay').classList.remove('show');
+}
+async function taskDoReview(decision){
+  var t=findTask(taskReviewId);
+  if(!t)return;
+  var note=document.getElementById('taskReviewNote').value.trim();
+  if(decision==='approve'){
+    t.status='approved';t.reviewNote=note;t.reviewDate=new Date().toLocaleString('zh-CN');t.reviewer=sessionStorage.getItem('basslab_user');
+    try{
+      await taskSave();
+      closeTaskReview();
+      taskRender();
+      showTaskReward(t);
+    }catch(e){alert('审核失败：'+e.message);}
+  }else{
+    t.status='claimed';t.reviewNote=note;t.submitNote='';
+    try{
+      await taskSave();
+      closeTaskReview();
+      taskRender();
+    }catch(e){alert('操作失败：'+e.message);}
   }
-  if(!task)return;
-  if(task.status!=='claimed'){alert('请先认领任务再完成');return}
-  if(!confirm('确认完成任务「'+task.title+'」吗？\n奖励：'+task.reward))return;
-  task.status='done';
-  task.doneDate=new Date().toLocaleString('zh-CN');
-  taskSaveData(tasks);
-  taskRender();
-  // Show reward
-  document.getElementById('rewardIcon').textContent='🎯';
-  document.getElementById('rewardTitle').textContent='任务完成！';
-  document.getElementById('rewardDesc').textContent='恭喜完成「'+task.title+'」！\n奖励：'+task.reward;
+}
+
+function findTask(id){
+  if(!taskCloud.data)return null;
+  for(var i=0;i<taskCloud.data.tasks.length;i++){if(taskCloud.data.tasks[i].id===id)return taskCloud.data.tasks[i];}
+  return null;
+}
+function showTaskReward(t){
+  document.getElementById('rewardIcon').textContent='🏅';
+  document.getElementById('rewardTitle').textContent='任务通过！';
+  document.getElementById('rewardDesc').textContent='「'+t.title+'」审核通过，奖励已颁发！\n奖励：'+t.reward;
   var badgeEl=document.getElementById('rewardBadge');
-  badgeEl.textContent='🏅 '+task.reward;
+  badgeEl.textContent='🏅 '+t.reward;
   badgeEl.style.display='inline-block';
   document.getElementById('rewardOverlay').classList.add('show');
 }
 
-function taskDelete(id){
-  if(!confirm('确认删除这个任务吗？'))return;
-  var tasks=taskGetData().filter(function(t){return t.id!==id});
-  taskSaveData(tasks);
-  taskRender();
-}
-
-function taskRender(){
-  var tasks=taskGetData();
+async function taskRender(){
+  var c=document.getElementById('taskCards');
+  if(!taskCloud.data)await taskLoad();
+  var tasks=taskCloud.data.tasks;
   var role=sessionStorage.getItem('basslab_role');
   var user=sessionStorage.getItem('basslab_user');
-  var c=document.getElementById('taskCards');
   if(tasks.length===0){
     c.innerHTML='<div class="task-empty">还没有任务。'+(role==='admin'?'在上方发布第一个任务吧！':'等待管理员发布任务～')+'</div>';
     return;
   }
   var html='';
-  // Sort: open first, then claimed, then done
-  tasks.sort(function(a,b){
-    var order={open:0,claimed:1,done:2};
-    return order[a.status]-order[b.status];
-  });
+  var order={open:0,claimed:1,submitted:2,approved:3};
+  tasks.sort(function(a,b){return order[a.status]-order[b.status];});
   tasks.forEach(function(t){
-    var statusLabel={open:'待认领',claimed:'进行中',done:'已完成'}[t.status];
+    var statusLabel={open:'待认领',claimed:'进行中',submitted:'待审核',approved:'已完成'}[t.status];
     var actions='';
     if(role==='user'){
       if(t.status==='open'){
         actions='<button class="task-btn task-btn-claim" onclick="taskClaim('+t.id+')">认领任务</button>';
       }else if(t.status==='claimed'&&t.claimedBy===user){
-        actions='<button class="task-btn task-btn-complete" onclick="taskComplete('+t.id+')">完成任务</button>';
+        actions='<button class="task-btn task-btn-complete" onclick="taskOpenSubmit('+t.id+')">提交完成</button>';
+      }else if(t.status==='submitted'&&t.claimedBy===user){
+        actions='<button class="task-btn" disabled>审核中…</button>';
       }
     }
     if(role==='admin'){
       actions='<button class="task-btn task-btn-delete" onclick="taskDelete('+t.id+')">删除</button>';
-      if(t.status==='claimed'&&t.claimedBy){
-        actions+='<button class="task-btn task-btn-complete" onclick="taskComplete('+t.id+')">标记完成</button>';
+      if(t.status==='submitted'){
+        actions+='<button class="task-btn task-btn-complete" onclick="taskOpenReview('+t.id+')">审核</button>';
       }
     }
     var claimInfo=t.claimedBy?'<span class="task-card-claim">认领人：'+escapeHtml(t.claimedBy)+'</span>':'';
-    var doneInfo=t.doneDate?'<span>完成时间：'+t.doneDate+'</span>':'';
+    var submitInfo=t.submitDate?'<span>提交：'+t.submitDate+'</span>':'';
+    var reviewInfo=t.reviewDate?'<span>审核：'+t.reviewDate+(t.reviewer?(' / '+escapeHtml(t.reviewer)):'')+'</span>':'';
     html+='<div class="task-card status-'+t.status+'">'+
       '<div class="task-card-head">'+
         '<div class="task-card-title">'+escapeHtml(t.title)+'</div>'+
         '<span class="task-card-status '+t.status+'">'+statusLabel+'</span>'+
       '</div>'+
       (t.desc?'<div class="task-card-desc">'+escapeHtml(t.desc)+'</div>':'')+
+      (t.status==='submitted'&&t.submitNote?'<div class="task-card-submit">📝 '+escapeHtml(t.submitNote)+'</div>':'')+
+      (t.reviewNote?'<div class="task-card-review">💬 审核意见：'+escapeHtml(t.reviewNote)+'</div>':'')+
       '<div class="task-card-meta">'+
         '<span class="task-card-reward">🎁 '+escapeHtml(t.reward)+'</span>'+
         '<span>发布：'+t.publishDate+'</span>'+
-        claimInfo+doneInfo+
+        claimInfo+submitInfo+reviewInfo+
       '</div>'+
       (actions?'<div class="task-card-actions">'+actions+'</div>':'')+
     '</div>';
   });
   c.innerHTML=html;
+}
+
+async function taskDelete(id){
+  if(!confirm('确认删除这个任务吗？'))return;
+  if(!taskCloud.data)await taskLoad();
+  taskCloud.data.tasks=taskCloud.data.tasks.filter(function(t){return t.id!==id});
+  try{await taskSave();taskRender();}catch(e){alert('删除失败：'+e.message);}
 }
 </script>
 
