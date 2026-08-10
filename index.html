@@ -409,8 +409,56 @@ a:hover{color:var(--accent2)}
 .task-panel-close{background:none;border:none;font-size:28px;color:var(--fg3);cursor:pointer;padding:0;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all .15s;line-height:1}
 .task-panel-close:hover{color:var(--accent2);background:rgba(255,255,255,.05)}
 .task-panel-body{flex:1;overflow-y:auto;padding:20px 24px}
-.task-panel-intro{font-size:13px;color:var(--fg3);line-height:1.7;margin-bottom:20px;padding:12px 16px;background:var(--bg3);border-radius:10px;border-left:3px solid var(--accent3)}
+.task-panel-intro{font-size:13px;color:var(--fg3);line-height:1.7;margin-bottom:18px;padding:12px 16px;background:var(--bg3);border-radius:10px;border-left:3px solid var(--accent3)}
+.task-panel-banner{
+  display:none;align-items:center;gap:10px;margin:0 0 18px;padding:14px 16px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(233,69,96,.16),rgba(245,166,35,.16));
+  border:1px solid rgba(233,69,96,.5);color:var(--fg);font-size:14px;font-weight:700;line-height:1.5;
+  animation:bannerPulse 2s ease-in-out infinite;
+}
+.task-panel-banner .banner-icon{font-size:22px;flex-shrink:0;animation:bassWobble 1.4s ease-in-out infinite}
+.task-panel-banner b{color:var(--accent2);font-size:15px}
+@keyframes bannerPulse{0%,100%{box-shadow:0 0 0 0 rgba(233,69,96,0)}50%{box-shadow:0 0 18px 2px rgba(233,69,96,.35)}}
 .task-panel .task-admin-panel{margin-bottom:20px}
+
+/* 顶栏任务按钮角标 + 新任务呼吸提示 */
+#taskBtn.has-new{animation:taskBtnPulse 1.6s ease-in-out infinite}
+@keyframes taskBtnPulse{
+  0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(233,69,96,.55)}
+  50%{transform:scale(1.06);box-shadow:0 0 0 9px rgba(233,69,96,0)}
+}
+.task-badge{
+  position:absolute;top:-9px;right:-9px;min-width:20px;height:20px;padding:0 5px;
+  background:var(--accent2);color:#fff;border-radius:11px;font-size:11px;font-weight:800;
+  display:none;align-items:center;justify-content:center;
+  border:2px solid var(--bg);box-shadow:0 2px 10px rgba(233,69,96,.6);line-height:1;
+  animation:badgePop .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes badgePop{from{transform:scale(0)}to{transform:scale(1)}}
+
+/* 新任务 Toast 提示 */
+.task-toast{
+  position:fixed;top:74px;right:20px;z-index:9998;max-width:340px;
+  display:none;align-items:center;gap:12px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;padding:14px 16px;border-radius:14px;
+  box-shadow:0 14px 44px rgba(245,166,35,.45);
+  animation:toastIn .45s cubic-bezier(.34,1.56,.64,1),toastGlow 2.2s ease-in-out infinite;
+}
+@keyframes toastIn{from{transform:translateX(130%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes toastGlow{
+  0%,100%{box-shadow:0 14px 44px rgba(245,166,35,.45)}
+  50%{box-shadow:0 14px 56px rgba(233,69,96,.7)}
+}
+.task-toast-icon{font-size:24px;flex-shrink:0;animation:bassWobble 1.4s ease-in-out infinite}
+.task-toast-text{font-size:14px;font-weight:700;flex:1;line-height:1.5}
+.task-toast-btn{background:rgba(255,255,255,.22);border:none;color:#fff;padding:7px 14px;border-radius:9px;cursor:pointer;font-size:13px;font-weight:800;font-family:var(--font);white-space:nowrap;transition:background .2s}
+.task-toast-btn:hover{background:rgba(255,255,255,.4)}
+.task-toast-close{background:none;border:none;color:#fff;font-size:20px;cursor:pointer;opacity:.85;padding:0 2px;line-height:1;flex-shrink:0}
+.task-toast-close:hover{opacity:1}
+@media(max-width:520px){
+  .task-toast{top:64px;right:12px;left:12px;max-width:none}
+}
 .task-panel .task-cards{margin-bottom:0}
 @media(max-width:768px){
   .task-panel{width:100vw;right:-100vw}
@@ -535,7 +583,7 @@ a:hover{color:var(--accent2)}
   <button class="checkin-btn" id="checkinBtn" style="display:none" onclick="doCheckin()">📅 签到打卡</button>
   <button class="checkin-btn" id="checkinHistoryBtn" style="display:none" onclick="openCheckinHistory()">📊 签到记录</button>
   <button class="checkin-btn" id="adminCheckinBtn" style="display:none" onclick="openAdminCheckin()">👥 全员签到</button>
-  <button class="checkin-btn" id="taskBtn" style="display:none;position:relative" onclick="openTaskPanel()">📋 任务栏</button>
+  <button class="checkin-btn" id="taskBtn" style="display:none;position:relative" onclick="openTaskPanel()">📋 任务栏<span class="task-badge" id="taskBadge" style="display:none"></span></button>
   <button class="btn-sm" id="adminBtn" style="display:none" onclick="openAdmin()">用户管理</button>
   <button class="btn-sm danger" onclick="logout()">退出</button>
 </div>
@@ -603,6 +651,7 @@ a:hover{color:var(--accent2)}
   </div>
   <div class="task-panel-body">
     <div class="task-panel-intro">管理员 Watermelon 发布练习任务，用户认领后完成并提交「完成报告」，经管理员审核通过后颁发奖励。保持每日练习动力！</div>
+    <div class="task-panel-banner" id="taskPanelBanner" style="display:none"></div>
     <div class="task-admin-panel" id="taskAdminPanel" style="display:none">
       <h4>📌 发布新任务</h4>
       <div class="task-admin-form">
@@ -616,6 +665,14 @@ a:hover{color:var(--accent2)}
     </div>
     <div class="task-cards" id="taskCards"></div>
   </div>
+</div>
+
+<!-- 新任务提示 Toast -->
+<div class="task-toast" id="taskToast">
+  <span class="task-toast-icon">🎯</span>
+  <span class="task-toast-text" id="taskToastText"></span>
+  <button class="task-toast-btn" id="taskToastBtn">查看</button>
+  <button class="task-toast-close" id="taskToastClose" aria-label="关闭">&times;</button>
 </div>
 
 <!-- 任务提交弹窗 -->
@@ -3118,12 +3175,13 @@ async function taskSave(){
   taskCloud.sha=await ghWrite(TASK_CLOUD_PATH,taskCloud.data,taskCloud.sha,'task update');
 }
 
-function taskInit(){
+async function taskInit(){
   var role=sessionStorage.getItem('basslab_role');
   if(role==='admin'){
     document.getElementById('taskAdminPanel').style.display='block';
   }
-  taskRender();
+  try{await taskRender();}catch(e){console.error('taskRender error:',e);}
+  maybeShowTaskToast();
 }
 
 function openTaskPanel(){
@@ -3261,6 +3319,8 @@ async function taskRender(){
   var user=sessionStorage.getItem('basslab_user');
   if(tasks.length===0){
     c.innerHTML='<div class="task-empty">还没有任务。'+(role==='admin'?'在上方发布第一个任务吧！':'等待管理员发布任务～')+'</div>';
+    updateTaskBadge();
+    updateTaskBanner(role);
     return;
   }
   var html='';
@@ -3304,7 +3364,71 @@ async function taskRender(){
     '</div>';
   });
   c.innerHTML=html;
+  updateTaskBadge();
+  updateTaskBanner(role);
 }
+
+/* 更新顶栏任务角标：统计当前用户「待认领」的新任务数量 */
+function updateTaskBadge(){
+  var badge=document.getElementById('taskBadge');
+  var btn=document.getElementById('taskBtn');
+  if(!badge||!btn)return;
+  if(!taskCloud.data||!taskCloud.data.tasks){return;}
+  var n=0;
+  taskCloud.data.tasks.forEach(function(t){
+    if(t.status==='open')n++;
+  });
+  if(n>0){
+    badge.textContent=n;
+    badge.style.display='inline-flex';
+    btn.classList.add('has-new');
+  }else{
+    badge.style.display='none';
+    btn.classList.remove('has-new');
+  }
+  return n;
+}
+
+/* 任务面板内「新任务」醒目横幅（仅普通用户、有待认领任务时显示） */
+function updateTaskBanner(role){
+  var banner=document.getElementById('taskPanelBanner');
+  if(!banner)return;
+  if(role==='user'&&taskCloud.data&&taskCloud.data.tasks){
+    var n=taskCloud.data.tasks.filter(function(t){return t.status==='open';}).length;
+    if(n>0){
+      banner.innerHTML='<span class="banner-icon">🎯</span><span>你有 <b>'+n+'</b> 个新任务待认领！认领并完成、提交报告即可获得奖励 🎁</span>';
+      banner.style.display='flex';
+      return;
+    }
+  }
+  banner.style.display='none';
+}
+
+/* 用户登录后若有新任务，弹出醒目 Toast 提示 */
+var taskToastShown=false;
+function maybeShowTaskToast(){
+  if(taskToastShown)return;
+  var role=sessionStorage.getItem('basslab_role');
+  if(role!=='user')return;            // 仅普通用户（SharkChili 等）登录时提示
+  var n=updateTaskBadge();
+  if(n>0){
+    taskToastShown=true;
+    showTaskToast('🎯 你有 '+n+' 个新任务待认领！点击查看并完成可获得奖励～','立即查看');
+  }
+}
+function showTaskToast(text,btnText){
+  var t=document.getElementById('taskToast');
+  if(!t)return;
+  document.getElementById('taskToastText').textContent=text;
+  var b=document.getElementById('taskToastBtn');
+  if(btnText){b.style.display='';b.textContent=btnText;b.onclick=function(){closeTaskToast();openTaskPanel();};}
+  else b.style.display='none';
+  document.getElementById('taskToastClose').onclick=closeTaskToast;
+  t.style.display='flex';
+  clearTimeout(window._taskToastTimer);
+  window._taskToastTimer=setTimeout(closeTaskToast,9000);
+}
+function closeTaskToast(){var t=document.getElementById('taskToast');if(t)t.style.display='none';}
 
 async function taskDelete(id){
   if(!confirm('确认删除这个任务吗？'))return;
