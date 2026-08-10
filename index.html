@@ -2028,7 +2028,7 @@ score-display{width:100%;display:block}
 
   <div class="callout tip">
     <div class="callout-title">使用提示</div>
-    <p><b>播放</b>：渲染完成后，乐谱下方会出现播放控件，点击即可带光标跟随播放（首次播放需从 CDN 加载音色库，约几秒）。<b>隐私</b>：普通用户之间互相看不到对方的乐谱，只有管理员 Watermelon 可以切换查看所有人的乐谱。<b>兼容性</b>：webmscore 对最新版 MuseScore 文件支持有滞后，若 .mscz 无法打开，请用桌面 MuseScore 导出为 .mxl（MusicXML）后再上传。</p>
+    <p><b>播放</b>：渲染完成后，乐谱下方会出现播放控件，点击即可带光标跟随播放（首次播放会从站点本地已托管的音色库加载，约十几 MB，无需联网到任何第三方）。<b>隐私</b>：普通用户之间互相看不到对方的乐谱，只有管理员 Watermelon 可以切换查看所有人的乐谱。<b>兼容性</b>：webmscore 对最新版 MuseScore 文件支持有滞后，若 .mscz 无法打开，请用桌面 MuseScore 导出为 .mxl（MusicXML）后再上传。</p>
   </div>
 </section>
 
@@ -3023,7 +3023,7 @@ function base64ToBytes(b64){
   return bytes;
 }
 
-/* 懒加载乐谱引擎（仅首次打开乐谱时加载 ~3.5MB 的 wasm 打包） */
+/* 懒加载乐谱引擎（完全自托管：组件 JS/CSS、webmscore 引擎、音色库均随站点托管，无任何第三方依赖） */
 function ensureScoreEngine(){
   if(window.customElements&&customElements.get('score-display'))return Promise.resolve();
   if(_scoreEngineLoading)return _scoreEngineLoading;
@@ -3032,9 +3032,9 @@ function ensureScoreEngine(){
     link.rel='stylesheet';link.href='assets/score/score-display.css';
     document.head.appendChild(link);
     var s=document.createElement('script');
-    s.type='module';s.src='https://partitioncloud.github.io/musescore-web-display/score-display.rolldown.js';
+    s.type='module';s.src='assets/score/score-display.rolldown.js';
     s.onload=function(){customElements.whenDefined('score-display').then(resolve).catch(reject);};
-    s.onerror=function(){reject(new Error('乐谱引擎脚本加载失败（网络问题）'));};
+    s.onerror=function(){reject(new Error('乐谱引擎脚本加载失败（本地文件缺失或路径错误）'));};
     document.head.appendChild(s);
   });
   return _scoreEngineLoading;
