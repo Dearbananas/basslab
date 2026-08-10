@@ -494,6 +494,37 @@ a:hover{color:var(--accent2)}
 .review-note{background:var(--bg3);border-radius:8px;padding:10px 14px;margin-top:4px;white-space:pre-wrap;word-break:break-word;color:var(--fg)}
 .modal-sub{font-size:13px;color:var(--accent);font-weight:600;margin-bottom:4px}
 
+/* === 乐谱查看（MuseScore 引擎） === */
+.score-wrap{max-width:1000px;margin:0 auto}
+.score-upload{border:2px dashed var(--bg4);border-radius:14px;padding:30px;text-align:center;background:var(--bg2);transition:all .2s;cursor:pointer}
+.score-upload.drag{border-color:var(--accent);background:var(--bg3)}
+.score-upload-icon{font-size:42px;margin-bottom:8px}
+.score-upload-text{font-size:16px;font-weight:600;margin-bottom:6px}
+.score-upload-hint{font-size:12px;color:var(--fg3);margin-bottom:14px}
+.score-upload-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1a1a1a;border:none;border-radius:8px;padding:9px 22px;font-size:14px;font-weight:700;cursor:pointer}
+.score-viewer-wrap{margin-top:18px;min-height:120px;background:var(--bg2);border-radius:14px;padding:16px;position:relative}
+.score-viewer{min-height:120px}
+score-display{width:100%;display:block}
+.score-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--fg2);font-size:14px;background:var(--bg2);border-radius:14px}
+.score-error{margin-top:12px;background:rgba(233,69,96,.12);border:1px solid var(--accent2);color:#ff9bb0;border-radius:10px;padding:12px 16px;font-size:13px;line-height:1.7}
+.score-save-row{display:flex;gap:10px;margin-top:16px;align-items:center}
+.score-title-input{flex:1;background:var(--bg2);border:1px solid var(--bg4);border-radius:8px;padding:10px 14px;color:var(--fg);font-size:14px}
+.score-save-btn{background:linear-gradient(135deg,var(--accent3),#00b894);color:#06281f;border:none;border-radius:8px;padding:10px 20px;font-weight:700;cursor:pointer;font-size:14px}
+.score-list{margin-top:28px}
+.score-list-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px}
+.score-list-title{font-size:15px;font-weight:700;color:var(--fg)}
+.score-view-user{font-size:13px;color:var(--fg2)}
+.score-view-user select{background:var(--bg2);color:var(--fg);border:1px solid var(--bg4);border-radius:6px;padding:4px 8px}
+.score-empty{color:var(--fg3);font-size:14px;padding:18px;text-align:center;background:var(--bg2);border-radius:10px}
+.score-card{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--bg4);border-radius:10px;padding:12px 16px;margin-bottom:10px}
+.score-card-title{font-weight:600;font-size:14px}
+.score-card-meta{font-size:12px;color:var(--fg3);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap}
+.score-card-actions{display:flex;gap:8px;flex-shrink:0}
+.score-card-btn{background:var(--bg3);border:1px solid var(--bg4);color:var(--fg);border-radius:7px;padding:6px 14px;font-size:13px;cursor:pointer}
+.score-card-btn:hover{border-color:var(--accent)}
+.score-card-btn.del:hover{border-color:var(--accent2);color:#ff9bb0}
+@media(max-width:768px){.score-card{flex-direction:column;align-items:stretch}.score-card-actions{justify-content:flex-end}}
+
 /* === 推荐曲目（网易云嵌入） === */
 .song-item{cursor:pointer;transition:all .15s}
 .song-item:hover{background:var(--bg4);transform:translateX(4px)}
@@ -786,6 +817,7 @@ a:hover{color:var(--accent2)}
       <a class="nav-item" href="#fretboard-tool">交互指板</a>
       <a class="nav-item" href="#metronome-tool">节拍器与鼓机</a>
       <a class="nav-item" href="#inspiration-tool">灵感记录</a>
+      <a class="nav-item" href="#score-tool">乐谱查看</a>
     </div>
   </div>
 </nav>
@@ -1951,6 +1983,55 @@ a:hover{color:var(--accent2)}
   </div>
 </section>
 
+<!-- ====== 乐谱查看（MuseScore 引擎） ====== -->
+<section class="section" id="score-tool">
+  <div class="section-header">
+    <span class="section-tag">TOOL</span>
+    <h3>乐谱查看</h3>
+    <p>上传 MuseScore 文件（<b>.mscz / .mscx</b>）或 MusicXML（<b>.mxl / .musicxml</b>），即可像 musescore.com 那样渲染乐谱，并带光标跟随播放。全程纯前端——文件只在你的浏览器里解析，不会上传到任何第三方服务器；保存到云端后，<b>换设备登录也能查看自己的乐谱</b>。</p>
+  </div>
+
+  <div class="score-wrap">
+    <!-- 上传区 -->
+    <div class="score-upload" id="scoreDrop">
+      <input type="file" id="scoreFile" accept=".mscz,.mscx,.mxl,.musicxml,.xml" hidden>
+      <div class="score-upload-inner">
+        <div class="score-upload-icon">🎼</div>
+        <div class="score-upload-text">点击选择 或 拖拽乐谱文件到此处</div>
+        <div class="score-upload-hint">支持 .mscz / .mscx / .mxl / .musicxml（建议不超过 15MB）</div>
+        <button type="button" class="score-upload-btn" onclick="document.getElementById('scoreFile').click()">选择文件</button>
+      </div>
+    </div>
+
+    <!-- 查看器 -->
+    <div class="score-viewer-wrap">
+      <div class="score-viewer" id="scoreViewer"></div>
+      <div class="score-loading" id="scoreLoading" style="display:none">⏳ 正在加载乐谱引擎并解析…（首次约需几秒）</div>
+      <div class="score-error" id="scoreError" style="display:none"></div>
+    </div>
+
+    <!-- 保存行 -->
+    <div class="score-save-row" id="scoreSaveRow" style="display:none">
+      <input type="text" id="scoreTitle" class="score-title-input" placeholder="给这份乐谱起个名字…" maxlength="50">
+      <button type="button" class="score-save-btn" onclick="scoreSaveCurrent()">保存到云端</button>
+    </div>
+
+    <!-- 我的乐谱 -->
+    <div class="score-list">
+      <div class="score-list-head">
+        <div class="score-list-title">我的乐谱</div>
+        <div class="score-view-user" id="scoreViewUserWrap" style="display:none">查看：<select id="scoreViewUser" onchange="scoreSwitchUser(this.value)"></select></div>
+      </div>
+      <div id="scoreItems"></div>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">使用提示</div>
+    <p><b>播放</b>：渲染完成后，乐谱下方会出现播放控件，点击即可带光标跟随播放（首次播放需从 CDN 加载音色库，约几秒）。<b>隐私</b>：普通用户之间互相看不到对方的乐谱，只有管理员 Watermelon 可以切换查看所有人的乐谱。<b>兼容性</b>：webmscore 对最新版 MuseScore 文件支持有滞后，若 .mscz 无法打开，请用桌面 MuseScore 导出为 .mxl（MusicXML）后再上传。</p>
+  </div>
+</section>
+
 <!-- ====== FOOTER ====== -->
 <footer class="footer">
   <p>BassLab — 贝斯学习实验室</p>
@@ -2660,6 +2741,7 @@ function saveUsers(arr){localStorage.setItem('basslab_users',JSON.stringify(arr)
   try{checkinInit();}catch(e){console.error('checkinInit error:',e);}
   try{inspInit();}catch(e){console.error('inspInit error:',e);}
   try{taskInit();}catch(e){console.error('taskInit error:',e);}
+  try{scoreInit();}catch(e){console.error('scoreInit error:',e);}
 })();
 
 // === 退出登录 ===
@@ -2912,6 +2994,223 @@ async function ghDelete(path,sha,msg){
     body:JSON.stringify({message:msg,sha:sha})
   },15000);
   if(!resp.ok)throw new Error('GitHub delete error: '+resp.status);
+}
+
+/* ============ 乐谱查看（MuseScore 引擎 webmscore） ============ */
+var scoreCurrentFile=null;
+var scoreViewUser=null;
+var _scoreEngineLoading=null;
+
+function scoreExt(name){
+  var m=/\.([a-z0-9]+)$/i.exec(name||'');
+  if(!m)return null;
+  var e=m[1].toLowerCase();
+  if(e==='mscz')return 'mscz';
+  if(e==='mscx')return 'mscx';
+  if(e==='mxl')return 'mxl';
+  if(e==='musicxml')return 'musicxml';
+  if(e==='xml')return 'musicxml';
+  return null;
+}
+function scoreUserManifestPath(user){return 'data/scores/'+user+'.json';}
+function scoreBinPath(user,id,ext){return 'data/scores/'+user+'/'+id+'.'+ext;}
+
+function base64ToBytes(b64){
+  var bin=atob(b64);
+  var len=bin.length;
+  var bytes=new Uint8Array(len);
+  for(var i=0;i<len;i++)bytes[i]=bin.charCodeAt(i);
+  return bytes;
+}
+
+/* 懒加载乐谱引擎（仅首次打开乐谱时加载 ~3.5MB 的 wasm 打包） */
+function ensureScoreEngine(){
+  if(window.customElements&&customElements.get('score-display'))return Promise.resolve();
+  if(_scoreEngineLoading)return _scoreEngineLoading;
+  _scoreEngineLoading=new Promise(function(resolve,reject){
+    var link=document.createElement('link');
+    link.rel='stylesheet';link.href='assets/score/score-display.css';
+    document.head.appendChild(link);
+    var s=document.createElement('script');
+    s.type='module';s.src='https://partitioncloud.github.io/musescore-web-display/score-display.rolldown.js';
+    s.onload=function(){customElements.whenDefined('score-display').then(resolve).catch(reject);};
+    s.onerror=function(){reject(new Error('乐谱引擎脚本加载失败（网络问题）'));};
+    document.head.appendChild(s);
+  });
+  return _scoreEngineLoading;
+}
+
+function showScoreLoading(on){
+  var l=document.getElementById('scoreLoading');
+  if(l)l.style.display=on?'flex':'none';
+  if(on){var e=document.getElementById('scoreError');if(e)e.style.display='none';}
+}
+function showScoreError(msg){
+  var e=document.getElementById('scoreError');
+  if(e){e.textContent=msg;e.style.display='block';}
+}
+
+async function renderScoreUrl(url,ext){
+  showScoreLoading(true);
+  try{
+    await ensureScoreEngine();
+    var viewer=document.getElementById('scoreViewer');
+    if(viewer)viewer.innerHTML='';
+    var el=document.createElement('score-display');
+    el.setAttribute('src',url);
+    el.setAttribute('type',ext);
+    if(viewer)viewer.appendChild(el);
+    showScoreLoading(false);
+    var sr=document.getElementById('scoreSaveRow');
+    if(sr)sr.style.display='flex';
+  }catch(e){
+    showScoreLoading(false);
+    showScoreError('乐谱引擎加载失败：'+e.message+'。请检查网络后重试；若为 .mscz 打不开，可能是 MuseScore 版本过新（webmscore 对最新版支持有滞后），请改用桌面 MuseScore 导出为 .mxl(MusicXML) 后重试。');
+  }
+}
+
+async function openScoreFromFile(file){
+  var ext=scoreExt(file.name);
+  if(!ext){
+    alert('不支持的文件类型。请上传 MuseScore（.mscz/.mscx）或 MusicXML（.mxl/.musicxml/.xml）文件。');
+    return;
+  }
+  scoreCurrentFile=file;
+  var titleInput=document.getElementById('scoreTitle');
+  if(titleInput)titleInput.value=file.name.replace(/\.[^.]+$/,'');
+  var url=URL.createObjectURL(file);
+  await renderScoreUrl(url,ext);
+}
+
+/* 初始化：绑定上传/拖拽、渲染列表、管理员用户切换 */
+function scoreInit(){
+  var me=sessionStorage.getItem('basslab_user');
+  var role=sessionStorage.getItem('basslab_role');
+  if(role==='admin'){
+    var wrap=document.getElementById('scoreViewUserWrap');
+    if(wrap)wrap.style.display='inline-block';
+    scoreFillUserSelect();
+  }
+  scoreRenderList();
+  var inp=document.getElementById('scoreFile');
+  if(inp)inp.addEventListener('change',function(e){if(e.target.files&&e.target.files[0])openScoreFromFile(e.target.files[0]);});
+  var dz=document.getElementById('scoreDrop');
+  if(dz){
+    ['dragover','dragenter'].forEach(function(ev){dz.addEventListener(ev,function(e){e.preventDefault();dz.classList.add('drag');});});
+    ['dragleave','drop'].forEach(function(ev){dz.addEventListener(ev,function(e){e.preventDefault();dz.classList.remove('drag');});});
+    dz.addEventListener('drop',function(e){if(e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0])openScoreFromFile(e.dataTransfer.files[0]);});
+  }
+}
+
+function scoreFillUserSelect(){
+  var sel=document.getElementById('scoreViewUser');
+  if(!sel)return;
+  var users=getUsers()||[];
+  sel.innerHTML='';
+  users.forEach(function(u){
+    var o=document.createElement('option');
+    o.value=u.username;o.textContent=u.username;
+    sel.appendChild(o);
+  });
+  sel.value=sessionStorage.getItem('basslab_user');
+}
+
+function scoreSwitchUser(v){
+  scoreViewUser=v;
+  scoreRenderList();
+}
+
+async function scoreLoadManifest(user){
+  try{var r=await ghRead(scoreUserManifestPath(user));return r.data||[];}catch(e){return [];}
+}
+
+async function scoreSaveCurrent(){
+  if(!scoreCurrentFile){alert('请先上传一个乐谱文件');return;}
+  var user=sessionStorage.getItem('basslab_user');
+  var title=(document.getElementById('scoreTitle').value||'').trim()||scoreCurrentFile.name;
+  var ext=scoreExt(scoreCurrentFile.name);
+  var id=Date.now();
+  try{
+    if(scoreCurrentFile.size>15*1024*1024){
+      if(!confirm('该文件较大（'+(scoreCurrentFile.size/1048576).toFixed(1)+'MB），保存到云端可能较慢，仍要继续吗？'))return;
+    }
+    var buf=await scoreCurrentFile.arrayBuffer();
+    var b64=bytesToBase64(new Uint8Array(buf));
+    await ghWriteRaw(scoreBinPath(user,id,ext),b64,null,'score bin: '+user+' '+id);
+    var items=await scoreLoadManifest(user);
+    items.unshift({id:id,title:title,ext:ext,size:scoreCurrentFile.size,date:new Date().toLocaleString('zh-CN')});
+    await ghWrite(scoreUserManifestPath(user),items,null,'score manifest: '+user);
+    alert('已保存到云端，换设备登录也能看到这份乐谱');
+    scoreRenderList();
+  }catch(e){
+    alert('保存失败：'+e.message);
+  }
+}
+
+async function scoreOpenSaved(user,id,ext){
+  var path=scoreBinPath(user,id,ext);
+  var url='https://api.github.com/repos/'+GITHUB_CONFIG.owner+'/'+GITHUB_CONFIG.repo+'/contents/'+path;
+  try{
+    var resp=await fetchWithTimeout(url,{headers:{'Authorization':'token '+GITHUB_CONFIG.token,'Accept':'application/vnd.github+json'}},15000);
+    if(!resp.ok)throw new Error('GitHub '+resp.status);
+    var json=await resp.json();
+    var bin=base64ToBytes(json.content.replace(/\n/g,''));
+    var blob=new Blob([bin]);
+    var objUrl=URL.createObjectURL(blob);
+    await renderScoreUrl(objUrl,ext);
+    var items=await scoreLoadManifest(user);
+    var it=null;
+    for(var i=0;i<items.length;i++){if(items[i].id===id){it=items[i];break;}}
+    var ti=document.getElementById('scoreTitle');
+    if(it&&ti)ti.value=it.title;
+  }catch(e){
+    alert('打开失败：'+e.message);
+  }
+}
+
+async function scoreDelete(user,id,ext){
+  if(!confirm('确认删除该乐谱？此操作不可恢复。'))return;
+  try{
+    var path=scoreBinPath(user,id,ext);
+    var r=await ghRead(path);
+    if(r.sha)await ghDelete(path,r.sha,'delete score: '+user+' '+id);
+    var items=await scoreLoadManifest(user);
+    items=items.filter(function(x){return x.id!==id;});
+    await ghWrite(scoreUserManifestPath(user),items,null,'score manifest: '+user);
+    scoreRenderList();
+  }catch(e){
+    alert('删除失败：'+e.message);
+  }
+}
+
+async function scoreRenderList(){
+  var me=sessionStorage.getItem('basslab_user');
+  var role=sessionStorage.getItem('basslab_role');
+  var viewUser=scoreViewUser||me;
+  var c=document.getElementById('scoreItems');
+  if(!c)return;
+  c.innerHTML='<div class="score-empty">⏳ 加载中...</div>';
+  var items=await scoreLoadManifest(viewUser);
+  if(items.length===0){
+    c.innerHTML='<div class="score-empty">'+(role==='admin'&&viewUser!==me?'该用户还没有保存的乐谱。':'还没有保存的乐谱。上传一份并保存到云端吧～')+'</div>';
+    return;
+  }
+  var html='';
+  items.forEach(function(it){
+    var sizeStr='';
+    if(it.size){sizeStr=it.size>1048576?(it.size/1048576).toFixed(1)+'MB':Math.round(it.size/1024)+'KB';}
+    html+='<div class="score-card">'+
+      '<div class="score-card-main">'+
+        '<div class="score-card-title">'+escapeHtml(it.title)+'</div>'+
+        '<div class="score-card-meta"><span>'+it.date+'</span>'+(sizeStr?'<span>'+sizeStr+'</span>':'')+'<span>. '+it.ext+'</span></div>'+
+      '</div>'+
+      '<div class="score-card-actions">'+
+        '<button type="button" class="score-card-btn" onclick="scoreOpenSaved(\''+viewUser+'\','+it.id+',\''+it.ext+'\')">打开</button>'+
+        '<button type="button" class="score-card-btn del" onclick="scoreDelete(\''+viewUser+'\','+it.id+',\''+it.ext+'\')">删除</button>'+
+      '</div>'+
+    '</div>';
+  });
+  c.innerHTML=html;
 }
 
 function ensureUserData(data,user){
