@@ -3471,7 +3471,12 @@ async function taskLoad(){
   return taskCloud.data;
 }
 async function taskSave(){
-  taskCloud.sha=await ghWrite(TASK_CLOUD_PATH,taskCloud.data,taskCloud.sha,'task update');
+  window._taskSaving=true;            // 标记本地写入中，轮询跳过本次刷新避免覆盖
+  try{
+    taskCloud.sha=await ghWrite(TASK_CLOUD_PATH,taskCloud.data,taskCloud.sha,'task update');
+  }finally{
+    window._taskSaving=false;
+  }
 }
 
 async function taskInit(){
@@ -3481,6 +3486,39 @@ async function taskInit(){
   }
   try{await taskRender();}catch(e){console.error('taskRender error:',e);}
   maybeShowTaskToast();
+  startTaskPolling();   // 启动后台轮询，发布/提交后无需点开任务栏也能即时收到提醒
+}
+
+/* 后台轮询：每隔一段时间重新拉取云端任务，刷新角标/横幅，并在出现新任务时弹出提醒
+   - 普通用户：出现新的「待认领」任务 → 弹「新任务待认领」
+   - 管理员：出现新的「待审核」任务 → 弹「待你审核」
+   写入中(_taskSaving)跳过，避免覆盖本地编辑；网络抖动忽略，下次再试。 */
+var taskPollTimer=null;
+function startTaskPolling(){
+  if(taskPollTimer)return;
+  if(!sessionStorage.getItem('basslab_role'))return;
+  taskPollTimer=setInterval(async function(){
+    try{
+      if(window._taskSaving)return;
+      var role=sessionStorage.getItem('basslab_role');
+      var prevOpen=taskCloud.data?taskCloud.data.tasks.filter(function(t){return t.status==='open';}).length:0;
+      var prevSub=taskCloud.data?taskCloud.data.tasks.filter(function(t){return t.status==='submitted';}).length:0;
+      var r=await ghRead(TASK_CLOUD_PATH);   // 始终拉取云端最新
+      if(!r||!r.data)return;
+      taskCloud.data=r.data;
+      if(!taskCloud.data.tasks)taskCloud.data.tasks=[];
+      taskCloud.sha=r.sha;
+      updateTaskBadge();
+      updateTaskBanner(role);
+      var nowOpen=taskCloud.data.tasks.filter(function(t){return t.status==='open';}).length;
+      var nowSub=taskCloud.data.tasks.filter(function(t){return t.status==='submitted';}).length;
+      if(role==='user'&&nowOpen>prevOpen){
+        showTaskToast('🎯 有新的任务待认领！点击查看并完成可获得奖励～','立即查看');
+      }else if(role==='admin'&&nowSub>prevSub){
+        showTaskToast('📝 有 '+(nowSub-prevSub)+' 个任务提交待你审核！','去审核');
+      }
+    }catch(e){console.warn('task poll err:',e);}
+  },20000);
 }
 
 function openTaskPanel(){
@@ -3489,6 +3527,11 @@ function openTaskPanel(){
   // 每次打开都重新判定 admin 身份，确保发布面板可见（防止页面加载初始化异常导致按钮缺失）
   var role=sessionStorage.getItem('basslab_role');
   document.getElementById('taskAdminPanel').style.display=(role==='admin')?'block':'none';
+  // 打开时强制从云端拉取最新任务（修复：之前仅在 taskCloud.data 为空时才拉，导致点开也看不到新发布的任务）
+  openTaskRefresh();
+}
+async function openTaskRefresh(){
+  try{await taskLoad();}catch(e){console.warn('任务刷新失败，使用本地缓存',e);}
   taskRender();
 }
 function closeTaskPanel(){
@@ -3610,9 +3653,9 @@ function showTaskReward(t){
   document.getElementById('rewardOverlay').classList.add('show');
 }
 
-async function taskRender(){
+async function taskRender(force){
   var c=document.getElementById('taskCards');
-  if(!taskCloud.data)await taskLoad();
+  if(force||!taskCloud.data)await taskLoad();
   var tasks=taskCloud.data.tasks;
   var role=sessionStorage.getItem('basslab_role');
   var user=sessionStorage.getItem('basslab_user');
