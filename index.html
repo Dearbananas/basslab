@@ -2253,6 +2253,18 @@ var inspCloudCache={};            // { user: {data:[], sha} }
 var inspAudioUrls={};             // { id: objectURL } 会话内缓存
 var INSP_MAX_SECONDS=120;         // 单次录音最长时长（控制文件体积）
 
+/* 灵感本地缓存（网络失败时兜底，避免频繁「加载失败」） */
+function saveInspCache(user,items){
+  try{localStorage.setItem('basslab_insp_cache_'+user,JSON.stringify({data:items,ts:Date.now()}));}catch(e){}
+}
+function loadInspCache(user){
+  try{
+    var s=localStorage.getItem('basslab_insp_cache_'+user);
+    if(!s)return null;
+    return JSON.parse(s).data;
+  }catch(e){return null;}
+}
+
 function inspUserPath(user){return 'data/inspirations/'+user+'.json';}
 function inspAudioPath(owner,id){return 'data/insp_audio/'+owner+'_'+id+'.webm';}
 
@@ -2273,9 +2285,20 @@ function bytesToBase64(bytes){
 }
 
 async function inspLoadUser(user){
-  var r=await ghRead(inspUserPath(user));
-  inspCloudCache[user]={data:r.data||[],sha:r.sha};
-  return r.data||[];
+  try{
+    var r=await ghRead(inspUserPath(user));
+    inspCloudCache[user]={data:r.data||[],sha:r.sha};
+    saveInspCache(user,r.data||[]);
+    return r.data||[];
+  }catch(e){
+    // 网络失败：尝试本地缓存兜底（之前成功加载过的数据）
+    var cached=loadInspCache(user);
+    if(cached){
+      inspCloudCache[user]={data:cached,sha:null,cached:true};
+      return cached;
+    }
+    throw e;
+  }
 }
 async function inspGetAudioUrl(owner,id){
   if(inspAudioUrls[id])return inspAudioUrls[id];
@@ -2431,11 +2454,14 @@ async function inspRenderList(){
   c.innerHTML='<div class="insp-empty">⏳ 加载中...</div>';
   try{
     var items=await inspLoadUser(user);
+    var cached=inspCloudCache[user]&&inspCloudCache[user].cached;
     if(items.length===0){
       c.innerHTML='<div class="insp-empty">还没有保存的灵感，录一段或写一段谱子试试吧～</div>';
       return;
     }
-    var html='';
+    var html=cached
+      ? '<div class="insp-empty" style="color:#b8860b">⚠️ 当前显示的是本地缓存（刚才网络未连上，可能不是最新）。<button class="insp-del-btn" onclick="inspRenderList()">重试联网</button></div>'
+      : '';
     for(var i=0;i<items.length;i++){
       var d=items[i];
       if(d.type==='audio'){
@@ -2476,7 +2502,7 @@ function inspInit(){
   var sel=document.getElementById('inspViewUser');
   if(role==='admin'){
     wrap.style.display='inline-flex';
-    var users=loadUsers();
+    var users=getUsers();
     sel.innerHTML=users.map(function(u){
       return '<option value="'+u.username+'"'+(u.username===user?' selected':'')+'>'+u.username+(u.role==='admin'?'（管理员）':'')+'</option>';
     }).join('');
@@ -2506,8 +2532,6 @@ function inspInsertTabTemplate(type){
   };
   inspInsertText(templates[type]||templates.basic);
 }
-
-inspRenderList();
 
 /* === 鼓机 === */
 var drumAC=null,drumRunning=false,drumTimer=null;
