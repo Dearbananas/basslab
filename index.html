@@ -2919,8 +2919,20 @@ function loadCheckinCache(){
   }catch(e){return null;}
 }
 
-/* GitHub API 读取签到数据（带重试 + 缓存兜底） */
-async function githubReadCheckins(){
+/* GitHub Pages CDN 读取（与站点同源，国内浏览器更稳，无鉴权，无 sha） */
+function ghCdnUrl(path){
+  return 'https://'+GITHUB_CONFIG.owner.toLowerCase()+'.github.io/'+GITHUB_CONFIG.repo+'/'+path+'?t='+Date.now();
+}
+async function ghReadCdn(path){
+  var resp=await fetchWithTimeout(ghCdnUrl(path),{},10000);
+  if(resp.status===404)return {data:null,sha:null,viaCdn:true};
+  if(!resp.ok)throw new Error('CDN '+resp.status);
+  var txt=await resp.text();
+  return {data:JSON.parse(txt),sha:null,viaCdn:true};
+}
+
+/* GitHub API 读取签到数据（带重试） */
+async function githubReadCheckinsApi(){
   var url='https://api.github.com/repos/'+GITHUB_CONFIG.owner+'/'+GITHUB_CONFIG.repo+'/contents/'+GITHUB_CONFIG.path;
   var lastErr=null;
   for(var attempt=0;attempt<3;attempt++){
@@ -2940,37 +2952,67 @@ async function githubReadCheckins(){
       if(attempt<2)await new Promise(function(r){setTimeout(r,1000);});
     }
   }
-  /* 3 次全部失败，尝试本地缓存 */
-  var cache=loadCheckinCache();
-  if(cache){return{data:cache.data,sha:null,cached:true};}
   throw lastErr;
 }
 
-/* GitHub API 写入签到数据（含冲突重试） */
+/* 读取签到：API 优先（拿最新数据+sha），失败回退 Pages CDN（同源更稳），再失败用本地缓存兜底 */
+async function githubReadCheckins(){
+  try{
+    return await githubReadCheckinsApi();
+  }catch(eApi){
+    try{
+      return await ghReadCdn(GITHUB_CONFIG.path);
+    }catch(eCdn){
+      var cache=loadCheckinCache();
+      if(cache)return {data:cache.data,sha:null,cached:true};
+      throw eCdn;
+    }
+  }
+}
+
+/* GitHub API 写入签到数据（含冲突重试；sha 缺失时自动补取，避免 409 死循环） */
 async function githubWriteCheckins(data,sha){
   var url='https://api.github.com/repos/'+GITHUB_CONFIG.owner+'/'+GITHUB_CONFIG.repo+'/contents/'+GITHUB_CONFIG.path;
-  var content=utf8ToBase64(JSON.stringify(data,null,2));
-  var body={message:'checkin: '+getLocalDate(),content:content};
-  if(sha)body.sha=sha;
-  var resp=await fetchWithTimeout(url,{
-    method:'PUT',
-    headers:{'Authorization':'token '+GITHUB_CONFIG.token,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
-    body:JSON.stringify(body)
-  },15000);
-  if(resp.status===409){
-    var retry=await githubReadCheckins();
-    var merged=retry.data;
-    for(var u in data){merged[u]=data[u];}
-    return await githubWriteCheckins(merged,retry.sha);
+  /* sha 缺失（例如从 CDN 读取时拿不到）时，先尝试从 API 获取当前 sha，便于更新已有文件 */
+  if(!sha){
+    try{ var cur=await githubReadCheckinsApi(); sha=cur.sha; }catch(e){}
   }
-  if(!resp.ok)throw new Error('GitHub write error: '+resp.status);
-  var json=await resp.json();
-  saveCheckinCache(data);
-  return json.content.sha;
+  var lastErr=null;
+  for(var attempt=0;attempt<3;attempt++){
+    try{
+      var content=utf8ToBase64(JSON.stringify(data,null,2));
+      var body={message:'checkin: '+getLocalDate(),content:content};
+      if(sha)body.sha=sha;
+      var resp=await fetchWithTimeout(url,{
+        method:'PUT',
+        headers:{'Authorization':'token '+GITHUB_CONFIG.token,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
+        body:JSON.stringify(body)
+      },15000);
+      if(resp.status===409){
+        /* 冲突：重新读取（API 优先拿 sha，失败则 CDN），合并后重试 */
+        try{
+          var retry=await githubReadCheckins();
+          sha=retry.sha;
+          var merged=retry.data;
+          for(var u in data){merged[u]=data[u];}
+          data=merged;
+        }catch(e){}
+        continue;
+      }
+      if(!resp.ok)throw new Error('GitHub write error: '+resp.status);
+      var json=await resp.json();
+      saveCheckinCache(data);
+      return json.content.sha;
+    }catch(e){
+      lastErr=e;
+      if(attempt<2)await new Promise(function(r){setTimeout(r,1000);});
+    }
+  }
+  throw lastErr;
 }
 
 /* === 通用云端读写（灵感 / 任务共用） === */
-async function ghRead(path){
+async function ghReadApi(path){
   var url='https://api.github.com/repos/'+GITHUB_CONFIG.owner+'/'+GITHUB_CONFIG.repo+'/contents/'+path;
   var lastErr=null;
   for(var attempt=0;attempt<3;attempt++){
@@ -2990,22 +3032,43 @@ async function ghRead(path){
   }
   throw lastErr;
 }
+/* 通用读取：API 优先，失败回退 Pages CDN（同源更稳） */
+async function ghRead(path){
+  try{
+    return await ghReadApi(path);
+  }catch(eApi){
+    return await ghReadCdn(path);
+  }
+}
 async function ghWriteRaw(path,base64content,sha,msg){
   var url='https://api.github.com/repos/'+GITHUB_CONFIG.owner+'/'+GITHUB_CONFIG.repo+'/contents/'+path;
-  var body={message:msg,content:base64content};
-  if(sha)body.sha=sha;
-  var resp=await fetchWithTimeout(url,{
-    method:'PUT',
-    headers:{'Authorization':'token '+GITHUB_CONFIG.token,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
-    body:JSON.stringify(body)
-  },15000);
-  if(resp.status===409){
-    var retry=await ghRead(path);
-    return await ghWriteRaw(path,base64content,retry.sha,msg);
+  /* sha 缺失时先尝试从 API 获取当前 sha，便于更新已有文件（避免 409 死循环） */
+  if(!sha){
+    try{ var cur=await ghReadApi(path); sha=cur.sha; }catch(e){}
   }
-  if(!resp.ok)throw new Error('GitHub write error: '+resp.status);
-  var json=await resp.json();
-  return json.content.sha;
+  var lastErr=null;
+  for(var attempt=0;attempt<3;attempt++){
+    var body={message:msg,content:base64content};
+    if(sha)body.sha=sha;
+    try{
+      var resp=await fetchWithTimeout(url,{
+        method:'PUT',
+        headers:{'Authorization':'token '+GITHUB_CONFIG.token,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
+        body:JSON.stringify(body)
+      },15000);
+      if(resp.status===409){
+        try{ var retry=await ghRead(path); sha=retry.sha; }catch(e){}
+        continue;
+      }
+      if(!resp.ok)throw new Error('GitHub write error: '+resp.status);
+      var json=await resp.json();
+      return json.content.sha;
+    }catch(e){
+      lastErr=e;
+      if(attempt<2)await new Promise(function(r){setTimeout(r,1000);});
+    }
+  }
+  throw lastErr;
 }
 async function ghWrite(path,obj,sha,msg){
   return await ghWriteRaw(path,utf8ToBase64(JSON.stringify(obj,null,2)),sha,msg);
